@@ -1,0 +1,187 @@
+//#include "SDFileManagement.h"
+#include "Button.h"
+#include "Menu.h"
+#include "HeaterControl.h"
+
+bool btSet = false;
+volatile unsigned long time = 0;
+unsigned long nextSampleTime = 0;
+
+class ButtonTest : Implements ButtonAction{
+private:
+public:
+	ButtonAction::Level btLevel = ButtonAction::Level::BUTTONLOW;
+	int btParam = 0;
+	ButtonTest(){}
+	void createButton(int id){
+		if(id>= 0 && id < 8){
+			Serial.println(F("Creating PortD Button"));
+			new PortDButton(id , this, id,5);
+		}else if(id >7 && id < 14){
+			Serial.println(F("Creating PortB Button"));
+			new PortBButton(id , this, id);
+		}else if(id >= A0 && id <= A5){
+			Serial.println(F("Creating PortC Button"));
+			new PortCButton(id , this, id);
+		}
+	}
+	void buttonAction(ButtonAction::Level level, int param){
+		btSet = true;
+		this->btLevel = level;
+		this->btParam = param;
+	}
+};
+
+ButtonTest *bt1;
+unsigned int portdCnt = 0;
+unsigned long iTimeSt = 0;
+unsigned long iTimeEnd = 0;
+
+void intTimer(){
+	if(portdCnt >0 && millis() > iTimeEnd+100l){
+		long elapsed = iTimeEnd - iTimeSt;
+		Serial.print("Int cnt =");Serial.print(portdCnt);Serial.print(" :");Serial.print(elapsed);Serial.print(" :");Serial.println(((float)portdCnt /(float)elapsed));
+		portdCnt = 0;
+	}
+}
+
+
+ISR (PCINT0_vect) {			// D8 -> D13 PortB
+	PortBButton::buttonCheck(PINB,millis());
+}
+
+ISR (PCINT1_vect) {
+	HeaterControl::checkACZeroCrossing();		// A0 -> A5
+	PortCButton::buttonCheck(PINC,millis());
+}
+
+ISR (PCINT2_vect) {			// D0 -> D7 PortD
+	if(portdCnt == 0){
+		iTimeSt = millis();
+	}
+	portdCnt++;
+	iTimeEnd = millis();
+	PortDButton::buttonCheck(PIND,millis());
+}
+
+Display *myDisp;
+DisplayText *welcome;
+DisplayText *flash;
+
+class MainMenu: Implements MenuAction{
+private:
+public:
+	void action(int param){
+		Serial.print(F("Top Menu Item selected:"));Serial.println(param);
+		switch(param){
+		case 2:
+			char buff[27];
+			const char *fmt = "SRAM: %d";
+			DisplayText dispElement(buff, 26 , myDisp, 1, 1, 2);
+			myDisp->tftScreen.background(0,0,0);
+			sprintf(buff, fmt,freeRam());
+
+			dispElement.setBg(0, 0, 0);
+			dispElement.setFg(255, 255, 255);
+			dispElement.setCol(0);
+			dispElement.setRow(3);
+			dispElement.setText(buff);
+			dispElement.show();
+
+			Serial.println(buff);
+			while(!btSet){
+				intTimer();
+				delay(10);
+			}
+
+		default:
+			break;
+		}
+	}
+	void button(int level, int param){
+		Serial.print(F("App button: "));Serial.print(level);Serial.print(F(" Level:"));Serial.println(level);
+	}
+};
+MainMenu app;
+TempDisplay *temps = new TempDisplay();
+Menu *menu = NULL;
+MenuItem myMenu[] = {
+		{"Temps",temps,1,false},
+		{"Ram Usage",&app,2,false},
+		{"Heater",new HeaterControl(),3,false}
+};
+
+//SDFileManagement *sdManager;
+
+int freeRam() ;
+void setup()
+{
+
+	Serial.begin(115200);
+
+	bt1 = new ButtonTest();
+	bt1->createButton(3);
+//	bt1->createButton(5);
+//	bt1->createButton(6);
+//
+	myDisp = new Display(0,0,255,255,255,255);
+	int numberItems = sizeof(myMenu)/sizeof(MenuItem);
+	menu = new Menu((MenuItem*)myMenu, numberItems, 5,6,4,myDisp);
+
+//	sdManager = new SDFileManagement();
+//	sdManager->testSD();
+
+//	sdManager->~SDFileManagement();
+
+//	welcome = new DisplayText(20 ,myDisp, 0, 0, 2);
+//	welcome->show((char *)F("Welcome"));
+
+//	flash = new DisplayText(20 ,myDisp, 8, 0, 2);
+//	flash->setText("Time");
+
+
+//	Serial.print(F("startup Handler: "));Serial.println((unsigned int)(myMenu->handler),HEX);
+//	Serial.print(F("startup Handler act: "));Serial.println((unsigned int)(myMenu->handler->action),HEX);
+//	Serial.print(F("startup temps: "));Serial.println((unsigned int)(temps),HEX);
+
+	Serial.print(F("Startup SRAM left: ")); Serial.println(freeRam());
+
+	Serial.println(F("Setup Done"));
+
+
+}
+
+void loop()
+{
+	static int x = 0;
+	static int y = 0;
+	static bool showMe = false;
+
+	time = millis();
+	intTimer();
+
+	menu->update();
+
+
+	/*
+	if(time>nextSampleTime){
+		welcome->move(x++,++y);
+		showMe = !showMe;
+		if(showMe)
+			flash->show();
+		else
+			flash->remove();
+		x %= (welcome->chrSize[2][XCOLUMNS]-strlen(welcome->text)+2);
+		y %= welcome->chrSize[2][YLINES];
+	}
+	*/
+
+	if(btSet){
+	  	Serial.print(F("Button Level:"));
+	  	Serial.print(bt1->btLevel,HEX);
+	  	Serial.print(F(" Param:"));
+	  	Serial.println(bt1->btParam);
+	  	btSet = false;
+	}
+	temps->update();
+}

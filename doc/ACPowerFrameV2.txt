@@ -1,0 +1,146 @@
+60 hz*2=120hz = 8.3ms per 1/2 cycle which is fixed due to AC Freq.
+Framesize is setable. Framesize of 120 = 1 frame/second, framesize of 60 = 2 frames/second etc
+
+ACCntrl
+Input 0->64
+SuperCycle (Frame) of 64 1/2 pulses.
+
+00-> Fire for zero cycles. Zero power
+01-> Fire on 1 cycle skip 63, %pwr = 1/64 = 1.5% Fire for 1 cycle
+02-> Fire on 2 cycles skip 62. %pwr = 2/64 = 3%. fire for 2 cycles
+03-> Fire on 3 cycles, skip 61 cycles %pwr = 3/64 = 4.5%. fire for 3 cycles
+32-> Fire on 32 cycles, skip 32 cycles %pwr = 32/64 = 50%.fire for 32 cycles
+64-> Fire on 64 cycles, Fire for 64 cycles 100% Power
+
+Every zero crossing pulse.
+ - inc cycle counter. When 64, reset to 0
+ - When counter = 0 -> start of frame
+     +- Start of frame, load current rotary counter
+ - if loaded cnt >0, fire and decrement loaded cnt
+
+Alt alg
+-Fires left, skips left
+If skips > fire, then decrement skips
+else fire and decrement fireCount
+ 
+Arduino Timers Registers:
+Timers 0,2:
+==============
+TCCRnA - Timer/Counter Control Register A 
+ Bits 7:6 Compare Output Mode Pin A (OCnA)
+ Bits 5:4 Compare Output Mode Pin B (OCnB)
+ Bits 1:0 Waveform Generation Mode (WGMn1:0)
+
+TCCRnB - Timer/Counter Control Register B
+ Bits 7   Force Output Compare A (FOCnA)
+ Bits 6   Force Output Compare B (FOCnB)
+ Bits 3   Waveform Generation Mode (WGMn2) -To be combined with WGM bits in TCCRnA 
+ Bits 2:0 Clock Select ( CSn2:0) The three clock select bits select the clock source to be used by the Timer/Counter
+
+TCNTn - Timer/Counter Register - The actual timer counter value
+
+OCRnA - Output Compare Register A
+OCRnB - Output Compare Register B
+
+TIMSKn - Timer/Counter Interrupt Mask Register
+ Bit 2 - OCIEnB: Timer/Counter Output Compare Match B Interrupt Enable
+ Bit 1 - OCIEnA: Timer/Counter0 Output Compare Match A Interrupt Enable
+ Bit 0 - TOIEn: Timer/Counter0 Overflow Interrupt Enable
+
+Timer 1:
+==============
+TCCR1A - Timer/Counter1 Control Register A
+TCCR1B - Timer/Counter1 Control Register B
+ Bit 7 - ICNC1: Input Capture Noise Canceler
+ Bit 6 - ICES1: Input Capture Edge Select
+ Bit 4:3 - WGM13:2: Waveform Generation Mode (Combine with WGM bits in TCCR1A)
+ Bit 2:0 - CS12:0: Clock Select (CSn2:0)
+
+TCCR1C - Timer/Counter1 Control Register C
+ Bit 7 - FOC1A: Force Output Compare for Channel A
+ Bit 6 - FOC1B: Force Output Compare for Channel B
+
+TCNT1H and TCNT1L - Timer/Counter1
+Timer/Counter I/O locations (TCNT1H and TCNT1L, combined TCNT1) give direct access
+
+OCR1AH and OCR1AL - Output Compare Register 1 A
+OCR1BH and OCR1BL - Output Compare Register 1 B
+ICR1H and ICR1L - Input Capture Register 1
+TIMSK1 - Timer/Counter1 Interrupt Mask Register
+ Bit 5 - ICIE1: Timer/Counter1, Input Capture Interrupt Enable
+ Bit 2 - OCIE1B: Timer/Counter1, Output Compare B Match Interrupt Enable
+ Bit 1 - OCIE1A: Timer/Counter1, Output Compare A Match Interrupt Enable
+ Bit 0 - TOIE1: Timer/Counter1, Overflow Interrupt Enable
+
+TIFR1 - Timer/Counter1 Interrupt Flag Register
+ Bit 5 - ICF1: Timer/Counter1, Input Capture Flag
+ Bit 2 - OCF1B: Timer/Counter1, Output Compare B Match Flag
+ Bit 1 - OCF1A: Timer/Counter1, Output Compare A Match Flag
+ Bit 0 - TOV1: Timer/Counter1, Overflow Flag
+
+Freq of timer=clk/(prescale*(count+1)
+
+----------------
+Analog inputs
+	3 temperature probes (A0,A1,A2)
+Dig Inputs
+	1 AC Zero Crossing indication (d16/A3)
+
+Analog Outputs
+	0
+
+Display outputs
+	1 LED Red Green Heating / at Temp/ Overheating (d15/A4)
+
+	TFT 5 (SPI+Reset)
+		- *SCK SPI CLK (d13)
+		- *SDA MOSI (d11)
+		- *CS SPI (d10)
+		- A0 D/C (Data/Control) (d9) [AKA DC Data / Command, RS Register Select, A0 Address Select]
+		- Reset (d8)
+	SDCard
+		- CS (d14/A5)
+		- MISO (d12)
+Digital Outputs
+	1 AC Heater control (d7)
+	1 Cooling Fan control PWM (d2)
+Selector Inputs
+	2 Rotary position
+		- A (d6)
+		- B (d5)
+	1 Rotary Switch (d4)
+	1 Buttons
+		- B1 Heat Off Emergency over-ride (d3) ??
+
+Serial I/O 2Pins
+	- rx (d0)
+	- tx (d1)
+Total
+17 Didgital Pins
+3 Analog Pins
+
+
+Reflow Profile Array of 5 pts. Each pt is id by Time(in sec),Temp(in C)
+
+
+Menu:
+	View/Select Profile
+	Run
+	Manual Temp setting/plotting
+	Off
+	View Last Run
+	Save Run
+	Reset
+	Profile select stop point
+
+Graph / plot
+	Profile length / 100 positions = plot rate
+	400 seconds profile length / 100 positions = plot every 4 seconds
+	800 /100 = plot every 8 seconds etc
+
+
+-----------------
+4n25 Opto Isolator
+Heater DC14v
+Ri = (14-1.4)/50ma = 250R
+Ro = (5-.2)/(50ma*.2) = 480R
