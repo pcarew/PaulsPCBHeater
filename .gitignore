@@ -11,3 +11,5 @@
 *.cppold
 *.ar
 *old
+ACPwrCntl.ino-new
+makefile
