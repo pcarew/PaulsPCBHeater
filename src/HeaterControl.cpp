@@ -59,9 +59,7 @@ extern DisplayText *displayElement;
 void HeaterControl::menuAction(int param){				// Runs under System UI Thread
 	int i = 200;
 
-	cli();
 	myDisp->tftScreen.background(0,255,0);
-	sei();
 	displayElement->setBg(0, 255, 0);
 	displayElement->setFg(255, 0, 0);
 	while(!cancelled && i > 0){

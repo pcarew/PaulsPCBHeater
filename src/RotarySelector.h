@@ -75,8 +75,6 @@ public:
 
 	RotarySelector(int portDpinA, int portDpinB, int portDselectorPin, RotaryAction *action, int param );
 	~RotarySelector(){}
-	void notificationRegister(RotaryAction *requester);
-	void deRegister();
 
 	void buttonAction(ButtonAction::Level level, int param);
 	void tick();

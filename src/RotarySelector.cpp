@@ -15,13 +15,6 @@ RotarySelector::RotarySelector(int portDpinA, int portDpinB, int portDselectorPi
 		this->selector = new PortDButton(portDselectorPin,this,RotarySelector::S,SELDBAMOUNT);
 }
 
-void RotarySelector::notificationRegister(RotaryAction *requester){
-	this->rotaryAction = requester;
-}
-void RotarySelector::deRegister(){
-	this->rotaryAction = NULL;
-}
-
 void RotarySelector::buttonAction(ButtonAction::Level level, int pinSelector) {		// This is called whenever the rotary selector is rotated causing an interrupt
 //	Serial.print("Rot BA:");Serial.print(pinSelector);Serial.print(F(" Level:"));Serial.println(level);
 	switch(pinSelector){
