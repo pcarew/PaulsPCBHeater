@@ -29,7 +29,6 @@ void TempDisplay::menuAction(int param) {
 	// Running on System UI thread
 	static const char *fmt = "%s: %d.%dC  ";
 
-//	Serial.print(F("Displaying Temps with:"));Serial.println(param);delay(10);
 	displayElement->setText(dispBuff);
 
 	myDisp->tftScreen.background(0,255,0);
@@ -63,6 +62,8 @@ void TempDisplay::menuAction(int param) {
 	}
 }
 
+/*
 void TempDisplay::rotaryAction(const int type, int level, RSE::Dir direction, int param){		// type is ROTATE or SELECT
 			Serial.print(F("TD Dir:"));Serial.println(direction);
 }
+*/

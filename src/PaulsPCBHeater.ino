@@ -58,7 +58,7 @@ ISR (PCINT1_vect) {
 }
 
 ISR (PCINT2_vect) {			// D0 -> D7 PortD
-		Serial.print(F("STID:"));Serial.println(currt->tid);
+//		Serial.print(F("STID:"));Serial.println(currt->tid);
 	PortDButton::buttonCheck(PIND,millis());
 //		Serial.print(F("FTID:"));Serial.println(currt->tid);
 }

@@ -15,7 +15,6 @@ extern unsigned long nextDisplayTime;
 
 class TempDisplay: Implements MenuAction{
 private:
-//	const char tmpFmt[16] = "%s: %d.%dC";
 public:
 
 	TempProbe *ambiant;
@@ -25,8 +24,7 @@ public:
 
 	TempDisplay();
 	void menuAction(int param) ;
-	void rotaryAction(const int type, int level, RSE::Dir direction, int param);		// type is ROTATE or SELECT
-//	void displayTemps(int param) ;
+//	void rotaryAction(const int type, int level, RSE::Dir direction, int param);		// type is ROTATE or SELECT
 	void update();
 
 	~TempDisplay() {}

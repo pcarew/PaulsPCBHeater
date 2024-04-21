@@ -90,29 +90,29 @@ void HeaterControl::rotaryAction(const int type, int level, RSE::Dir direction, 
 //			Serial.print(F("HC Dir:"));Serial.println(direction);
 	switch(type){
 		case RotaryAction::ROTATE:
-			Serial.print(F("Heater Rotate"));
+//						Serial.print(F("Heater Rotate"));
 			switch(direction){
 				case RSE::FW:
-					Serial.println(F("Heater Rotate FW"));
+//						Serial.println(F("Heater Rotate FW"));
 					if(HeaterControl::powerPercentage<100)
 						HeaterControl::powerPercentage++;
 					break;
 				case RSE::RV:
-					Serial.println(F("Heater Rotate RV"));
+//						Serial.println(F("Heater Rotate RV"));
 					if(HeaterControl::powerPercentage > 0)
 						HeaterControl::powerPercentage--;
 					break;
 				case RSE::NC:
-					Serial.println(F("Heater Rotate NC"));
+//						Serial.println(F("Heater Rotate NC"));
 					break;
 			}
 			break;
 		case RotaryAction::SELECT:
 			if(level == ButtonAction::BUTTONLOW){
-					Serial.println(F("Heater ButtonAction Low"));
+//						Serial.println(F("Heater ButtonAction Low"));
 				HeaterControl::heaterEnabled = !HeaterControl::heaterEnabled;
 			}else{
-					Serial.println(F("Heater ButtonAction HIGH"));
+//						Serial.println(F("Heater ButtonAction HIGH"));
 			}
 		break;
 	}
@@ -125,9 +125,9 @@ void HeaterControl::rotaryAction(const int type, int level, RSE::Dir direction, 
 void HeaterControl::checkACZeroCrossing(){
 		int portcValues	= PINC&(PCMSK_Z);
 		int nz	= (portcValues&PCMSK_Z);								// New z value
-//Serial.println(F("Checking ZeroCrossing"));
+//			Serial.println(F("Checking ZeroCrossing"));
 		if(HeaterControl::prevZeroCrossingState & ~nz){								// High to low
-//Serial.println(F("zeroCrossing"));
+//			Serial.println(F("zeroCrossing"));
 			zeroCount++;												// Used for Hz Calculation
 			zeroCrossing();
 		}
@@ -169,7 +169,7 @@ void HeaterControl::frameDetectionAndFiring(){
 	static int frameFireCount = 0;
 	static int skipCount = FRAMESIZE;								// Skip entire 1st frame
 	static int cycleCount = 0;
-//	Serial.println(F("Cycle ISR Called"));							// Dangerous for an ISR derived call
+//				Serial.println(F("Cycle ISR Called"));							// Dangerous for an ISR derived call
 	++cycleCount %= FRAMESIZE;
 
 	if(!cycleCount){

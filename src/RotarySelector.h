@@ -82,7 +82,6 @@ public:
 	void tick();
 };
 
-// https://dronebotworkshop.com/interrupts/
-// Pin Change Ports
+// Pin Change Ports https://dronebotworkshop.com/interrupts/
 
 #endif

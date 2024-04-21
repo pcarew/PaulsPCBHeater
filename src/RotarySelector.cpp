@@ -23,7 +23,7 @@ void RotarySelector::deRegister(){
 }
 
 void RotarySelector::buttonAction(ButtonAction::Level level, int pinSelector) {		// This is called whenever the rotary selector is rotated causing an interrupt
-	Serial.print("Rot BA:");Serial.print(pinSelector);Serial.print(F(" Level:"));Serial.println(level);
+//	Serial.print("Rot BA:");Serial.print(pinSelector);Serial.print(F(" Level:"));Serial.println(level);
 	switch(pinSelector){
 	case RotarySelector::S:
 //		Serial.println("Selector");
@@ -52,7 +52,7 @@ void RotarySelector::tick(){
 	    	 this->dir = RSE::Dir::RV;
 	     }
 	   }else{
-		 Serial.println(F("No AChange"));
+//		 Serial.println(F("No AChange"));
 	   	 this->dir = RSE::Dir::NC;
 	   }
 	   aLastState = aState; // Updates the previous state of the outputA with the current state
