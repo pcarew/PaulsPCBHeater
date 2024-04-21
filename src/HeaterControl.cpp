@@ -61,17 +61,22 @@ void HeaterControl::heaterEnable(bool enable){						// Enable/disable heater out
 
 void HeaterControl::setPercentagePwr(unsigned char percentage){
 	HeaterControl::powerPercentage = percentage;
-	HeaterControl::powerCounter = (unsigned char)(((unsigned)percentage*FRAMESIZE)/100);	// Turn % into actual power on count
+	HeaterControl::updatePowerCounter();
+}
+void HeaterControl::updatePowerCounter(){
+	HeaterControl::powerCounter = (unsigned char)(((unsigned)HeaterControl::powerPercentage*FRAMESIZE)/100);	// Turn % into actual power on count
 }
 void HeaterControl::setRawPwr(unsigned char count){					// Called to set required raw power
 	if (count > FRAMESIZE){
 		HeaterControl::powerCounter = FRAMESIZE;
 	}else
 		HeaterControl::powerCounter = count;
-
-	HeaterControl::powerPercentage = (HeaterControl::powerCounter*100)/FRAMESIZE;
+	HeaterControl::updatePowerPercentage();
 }
 
+	void HeaterControl::updatePowerPercentage(){						// Sets power percentage based on existing power count
+		HeaterControl::powerPercentage = (HeaterControl::powerCounter*100)/FRAMESIZE;
+	}
 
 // Port C ISR Driven
 //Following methods are driven via Zero Crossing interrupt
@@ -182,6 +187,7 @@ void HeaterControl::rotaryAction(const int type, int level, RSE::Dir direction, 
 //						Serial.println(F("Heater Rotate NC"));
 					break;
 			}
+			HeaterControl::updatePowerCounter();
 			break;
 		case RotaryAction::SELECT:
 			if(level == ButtonAction::BUTTONLOW){
