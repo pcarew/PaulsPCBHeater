@@ -10,7 +10,7 @@
 
 bool cancelled = false;
 volatile unsigned long time = 0;
-unsigned long nextSampleTime = 0;
+unsigned long nextDisplayTime = 0;
 
 Display *myDisp; //= new Display(0,0,255,255,255,255);
 DisplayText *displayElement;//	= new DisplayText(NULL,myDisp, 1 , 1, 2 );
@@ -58,7 +58,7 @@ ISR (PCINT1_vect) {
 }
 
 ISR (PCINT2_vect) {			// D0 -> D7 PortD
-//		Serial.print(F("STID:"));Serial.println(currt->tid);
+		Serial.print(F("STID:"));Serial.println(currt->tid);
 	PortDButton::buttonCheck(PIND,millis());
 //		Serial.print(F("FTID:"));Serial.println(currt->tid);
 }
@@ -66,11 +66,12 @@ ISR (PCINT2_vect) {			// D0 -> D7 PortD
 
 Ram ramApp;
 TempDisplay *temps = new TempDisplay();
+HeaterControl *heater = new HeaterControl();
 Menu *menu = NULL;
 MenuItem myMenu[] = {
 		{"Temps",temps,1,false},
 		{"Unused SRam",&ramApp,2,false},
-		{"Heater",new HeaterControl(),3,false}
+		{"Heater",heater,3,false}
 };
 
 //SDFileManagement *sdManager;
@@ -88,33 +89,38 @@ void setup()
 	int numberItems = sizeof(myMenu)/sizeof(MenuItem);
 	menu = new Menu((MenuItem*)myMenu, numberItems, 5,6,4,myDisp); // PinA:5, PinB:6, PinSel:4
 
-//	sdManager = new SDFileManagement();
-//	sdManager->testSD();
-
-//	sdManager->~SDFileManagement();
-
-//	welcome = new DisplayText(20 ,myDisp, 0, 0, 2);
-//	welcome->show((char *)F("Welcome"));
-
-//	flash = new DisplayText(20 ,myDisp, 8, 0, 2);
-//	flash->setText("Time");
-
-
-//	Serial.print(F("startup Handler: "));Serial.println((unsigned int)(myMenu->handler),HEX);
-//	Serial.print(F("startup Handler act: "));Serial.println((unsigned int)(myMenu->handler->action),HEX);
-//	Serial.print(F("startup temps: "));Serial.println((unsigned int)(temps),HEX);
-
 	PCBHeaterTasks::startup();
 
 	Serial.println(F("Setup Done"));
 }
 
+//IMPORT int pos_stats();
+//IMPORT long taskAvgTime;
+//IMPORT long taskASwitches;
+//IMPORT long switches;
+//#define TSKAVGCNT 2						// Averaged over 10 cycles
+//long threadAvgTime = 1;
+long threadSwitches = 0;
 void loop()
 {
-  	Serial.println(F("Loop"));
+//	static  long startTime;
+//	static  long endTime;
+//	static unsigned long periodEnd1 =0;
+//		threadSwitches++;
+//			startTime = millis();
+//  	Serial.println(F("Loop"));
 	time = millis();
+	/*
+	if(time>periodEnd1){
+		periodEnd1 = time+1000;	// Every 1 second
+		Serial.print(F(" POS Switches Hz:"));Serial.print(pos_stats()); Serial.print(F(" TaskA Avg: "));Serial.print(taskAvgTime);Serial.print(F(" TaskA Switches:"));Serial.println(taskASwitches);
+		Serial.print(F(" POS Switches Hz:"));Serial.print(pos_stats()); Serial.print(F(" Loop  lst: "));Serial.print(threadAvgTime);Serial.print(F(" Loop  Switches:"));Serial.println(threadSwitches);
+		taskASwitches = 0;
+		threadSwitches = 0;
+	}
+	*/
 
-	menu->update();
+	menu->menuInvoke();
 	/*
 	if(cancelled){
 	  	Serial.print(F("Button Level:"));
@@ -125,5 +131,8 @@ void loop()
 	}
 	*/
 //	chack_all_tcb();
+//			endTime = millis();
+//			threadAvgTime = (threadAvgTime * (TSKAVGCNT-1) + (endTime - startTime)) / TSKAVGCNT;
+//			threadAvgTime = (endTime - startTime);
 	pause();
 }

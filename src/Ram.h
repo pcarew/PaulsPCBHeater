@@ -28,7 +28,7 @@ public:
   		return (int)&stackPositionPtr - (__brkval == 0 ?
 		  	  	(int)&__heap_start : (int) __brkval);
 	}
-	void action(int param){
+	void menuAction(int param){
 		char dispBuff[27];
 		const char *fmt = "SRAM: %d";
 		displayElement->setText(dispBuff);

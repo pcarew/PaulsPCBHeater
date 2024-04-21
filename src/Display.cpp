@@ -5,9 +5,9 @@ Display:: Display(int br,int bg, int bb):Display(br,bg,bb,255,255,255){}
 Display:: Display(int br,int bg, int bb, int fr, int fg, int fb){
 	this->setFg(fr, fg, fb);
 	this->setBg(br,bg,bb);
-	cli();
 	this->tftScreen.begin();
 	this->tftScreen.setRotation(TFTROTATE180);
+	cli();
 	this->tftScreen.background(br, bg, bb);
 	sei();
 //	Serial.println(F("Display Created"));
@@ -64,7 +64,6 @@ void DisplayText::show(){
 	int xpix = this->col*this->chrSize[this->textSize][CHRW];
 	int ypix = this->row*this->chrSize[this->textSize][CHRH];
 
-	cli();
 	this->disp->tftScreen.setTextSize(this->textSize);
 //	this->disp->tftScreen.stroke(this->fr, this->fg, this->fb);
 	this->disp->tftScreen.setTextColor(
@@ -74,7 +73,6 @@ void DisplayText::show(){
 	this->disp->tftScreen.setCursor(xpix, ypix);
 	this->disp->tftScreen.print(this->text);
 	//this->disp->tftScreen.text(this->text, xpix, ypix);
-	sei();
 }
 
 bool DisplayText::show(char *newText){
@@ -93,7 +91,6 @@ bool DisplayText::show(char *newText){
 		delay(10);
 		while(1);
 	}
-		cli();
 		this->disp->tftScreen.setTextSize(this->textSize);
 		this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
 		this->disp->tftScreen.text(this->text, xpix, ypix);
@@ -101,7 +98,6 @@ bool DisplayText::show(char *newText){
 				// Write new
 		this->disp->tftScreen.stroke(this->fr, this->fg, this->fb);
 		this->disp->tftScreen.text(newText, xpix,ypix);
-		sei();
 		this->text = newText;
 	}
 
@@ -136,7 +132,6 @@ void DisplayText::move(int col, int row){
 	int newYpix = row*this->chrSize[this->textSize][CHRH];
 
 			// Wipe out previous
-	cli();
 	this->disp->tftScreen.setTextSize(this->textSize);
 	this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
 	this->disp->tftScreen.text(this->text, origXpix, origYpix);
@@ -144,7 +139,6 @@ void DisplayText::move(int col, int row){
 			// Write new
 	this->disp->tftScreen.stroke(this->fr, this->fg, this->fb);
 	this->disp->tftScreen.text(this->text, newXpix,newYpix);
-	sei();
 	this->col = col;
 	this->row = row;
 }
@@ -164,11 +158,9 @@ void DisplayText::remove(){
 	int newYpix = row*this->chrSize[this->textSize][CHRH];
 
 			// Wipe out previous
-	cli();
 	this->disp->tftScreen.setTextSize(this->textSize);
 	this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
 	this->disp->tftScreen.text(this->text, origXpix, origYpix);
-	sei();
 }
 
 bool DisplayText::setText(char *newText){

@@ -35,7 +35,7 @@ typedef	unsigned char	BOOL;
 
 #define STACK_CHECKS TRUE
 
-#define STACKSIZE	(unsigned)121	/* Size of system mem used for task stacks.			*/
+#define STACKSIZE	(unsigned)221	/* Size of system mem used for task stacks.			*/
 #define	MAXNOTASKS	5
 
 

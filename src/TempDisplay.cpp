@@ -17,6 +17,7 @@ TempDisplay::TempDisplay(){
 }
 
 void TempDisplay::update(){
+	// Running on TaskA thread
 	this->ambiant->update();
 	this->brdBot->update();
 	this->brdTop->update();
@@ -24,7 +25,8 @@ void TempDisplay::update(){
 }
 extern Ram  ramApp;
 
-void TempDisplay::action(int param) {
+void TempDisplay::menuAction(int param) {
+	// Running on System UI thread
 	static const char *fmt = "%s: %d.%dC  ";
 
 //	Serial.print(F("Displaying Temps with:"));Serial.println(param);delay(10);
@@ -37,8 +39,7 @@ void TempDisplay::action(int param) {
 
 	while(!cancelled){
 		time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
-//		this->update();						// Update Temp Readings
-		if(time>nextSampleTime){
+		if(time>nextDisplayTime){
 
 			double tempReading = this->ambiant->getTemperature();
 			sprintf(dispBuff, fmt,"Amb",(int)tempReading,(unsigned int)((unsigned long)(tempReading*100.0))%100);
@@ -55,9 +56,13 @@ void TempDisplay::action(int param) {
 			displayElement->setCol(0); displayElement->setRow(4); displayElement->setText(dispBuff); displayElement->show();
 			Serial.println(dispBuff);
 
-			nextSampleTime = time+2050l;
-			Serial.print(F("Ram free"));Serial.println(ramApp.freeRam());delay(10);
+			nextDisplayTime = time+2050l;
+			Serial.print(F("Ram free"));Serial.println(ramApp.freeRam());//delay(10);
 		}
 		pause();
 	}
+}
+
+void TempDisplay::rotaryAction(const int type, int level, RSE::Dir direction, int param){		// type is ROTATE or SELECT
+			Serial.print(F("TD Dir:"));Serial.println(direction);
 }

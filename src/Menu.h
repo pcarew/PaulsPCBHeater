@@ -9,17 +9,19 @@
 #define MENU_H
 
 #include "Button.h"
-#include "RotarySelector.h"
 #include "Display.h"
+#include "RotarySelector.h"
 
 //typedef void (*SelectAction)(int param);
 //typedef void (*SelectButton)(int param);
 
-Interface MenuAction{
+class Menu;		// foward declaration
+Interface MenuAction: Implements RotaryAction{
 private:
 public:
 	~MenuAction(){}
-	virtual void action(int param) =0;
+	virtual void menuAction(int param) =0;
+	void rotaryAction(const int type, int level, RSE::Dir direction, int param){};		// type is ROTATE or SELECT. 'level only used for SELECT
 //	virtual void button(int level, int param) =0;
 };
 
@@ -36,6 +38,7 @@ public:
 class Menu : Implements RotaryAction{
 
 private:
+public:
 	DisplayText *menuLine ;
 //	char menuLineBuff[27];
 	MenuItem *menuItems = NULL;
@@ -51,15 +54,14 @@ private:
 //	Button *select = NULL;
 	bool inMenu = true;
 
-public:
 	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display);
 	void showMenu();
 	void showMenuLine();
 
 	void rotaryAction(const int type, int counterOrLevel, RSE::Dir direction, int param);		// type is ROTATE or SELECT
 //	void buttonAction(Level level, int param);
-	void update();
-	void checkTxtSize(char id);
+	void menuInvoke();
+//	void checkTxtSize(char id);
 };
 
 #endif /* MENU_H */

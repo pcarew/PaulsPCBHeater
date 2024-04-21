@@ -11,7 +11,7 @@
 extern bool cancelled;
 extern Display *myDisp;
 extern volatile unsigned long time;
-extern unsigned long nextSampleTime;
+extern unsigned long nextDisplayTime;
 
 class TempDisplay: Implements MenuAction{
 private:
@@ -24,7 +24,8 @@ public:
 
 
 	TempDisplay();
-	void action(int param) ;
+	void menuAction(int param) ;
+	void rotaryAction(const int type, int level, RSE::Dir direction, int param);		// type is ROTATE or SELECT
 //	void displayTemps(int param) ;
 	void update();
 

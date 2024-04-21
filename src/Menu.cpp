@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include "Ram.h"
+#include "RotarySelector.h"
 
 #define MENUITEMTEXTSIZE 2
 IMPORT bool cancelled;
@@ -12,7 +13,7 @@ Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selec
 	this->nextMenuItemId		= 0;
 	this->menuItemCount			= menuSize;
 	this->display				= display;
-	this->rotary	= new RotarySelector(portDPinA, portDPinB, selectPin, this, 5 ,  menuSize-1); // A:D5, B:D6 on PCBHeater 'selectPin' button on the rotary selector (D4 on PCBHeater)
+	this->rotary	= new RotarySelector(portDPinA, portDPinB, selectPin, this, 5 ); // A:D5, B:D6 on PCBHeater 'selectPin' button on the rotary selector (D4 on PCBHeater)
 
 //	this->menuLine	= new DisplayText(this->menuLineBuff,27,this->display, this->posCol , this->posRow, MENUITEMTEXTSIZE );
 	this->menuLine	= new DisplayText(NULL,this->display, this->posCol , this->posRow, MENUITEMTEXTSIZE );
@@ -21,7 +22,7 @@ Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selec
 //	this->showMenu(); // Not needed here AJPC
 };
 
-extern Ram ramApp;
+//extern Ram ramApp;
 void Menu::showMenu(){
 
 	cli();
@@ -33,7 +34,6 @@ void Menu::showMenu(){
 		this->menuLine->setRow(i);
 		this->menuLine->setCol(2);
 //		this->menuLine->setTextSize(MENUITEMTEXTSIZE);
-		this->checkTxtSize('a');
 		this->menuLine->show();
 	}
 	/*
@@ -46,6 +46,7 @@ void Menu::showMenu(){
 	*/
 	this->showMenuLine();
 }
+/*
 void Menu::checkTxtSize(char id){
 //	Serial.print(F("Check Here:"));Serial.println(ramApp.freeRam());
 	if(this == NULL || this->menuLine == NULL){
@@ -60,8 +61,9 @@ void Menu::checkTxtSize(char id){
 		while(1);
 	}
 }
+*/
 
-void Menu::update(){ // Called from System thread
+void Menu::menuInvoke(){ // Called from System thread
 	if(this->currentMenuItemId < 0) this->showMenu();
 
 	if(this->currentMenuItemPtr->selected == true){
@@ -70,7 +72,7 @@ void Menu::update(){ // Called from System thread
 		cancelled = false;
 		MenuAction *handler = this->currentMenuItemPtr->handler;	// AJPC This is on the stack!!!
 		this->inMenu = false;
-		handler->action(this->currentMenuItemPtr->param);	// Invoke selected menu handler AJPC
+		handler->menuAction(this->currentMenuItemPtr->param);	// Invoke selected menu handler AJPC
 		this->inMenu = true;
 		this->showMenu();
 	}
@@ -95,33 +97,46 @@ void Menu::showMenuLine(){
 	this->menuLine->setRow(this->currentMenuItemId);
 	this->menuLine->setCol(2);
 	this->menuLine->invert();
-	this->checkTxtSize('b'); // AJPC
 	this->menuLine->show();
 	this->menuLine->invert();
 }
 
-void Menu::rotaryAction(const int type, int counterOrLevel, RSE::Dir direction, int param){		// type is ROTATE or SELECT, driven from **Interrupt**
+void Menu::rotaryAction(const int type, int level, RSE::Dir direction, int param){		// type is ROTATE or SELECT, driven from **Interrupt**
 	if(this->inMenu){
-		this->checkTxtSize('c'); // AJPC
 		switch(type){
 			case RotaryAction::ROTATE:
-				Serial.println(F("Menu Rotate"));delay(100);
-				if(counterOrLevel >=0 && counterOrLevel < this->menuItemCount){
-					this->nextMenuItemId = counterOrLevel;
-					this->nextMenuItemPtr = &this->menuItems[counterOrLevel];
+				Serial.print(F("Menu Rotate. Cnt: "));Serial.print(level);
+				switch(direction){
+					case RSE::FW:
+						Serial.println(F(" UP"));
+						if(this->nextMenuItemId < this->menuItemCount-1)
+							this->nextMenuItemId++;
+						break;
+					case RSE::RV:
+						Serial.println(F(" DOWN"));
+						if(this->nextMenuItemId > 0)
+							this->nextMenuItemId--;
+						break;
+					case RSE::NC:
+						Serial.println(F(" NC"));
+						break;
 				}
+				this->nextMenuItemPtr = &this->menuItems[this->nextMenuItemId];
 				break;
 			case RotaryAction::SELECT:
-				if(counterOrLevel == ButtonAction::BUTTONLOW){
-					Serial.println(F("Menu ButtonAction"));delay(100);
+				if(level == ButtonAction::BUTTONLOW){
+					Serial.println(F("Menu ButtonAction"));
 					this->currentMenuItemPtr->selected = true;
 				}else{
-					Serial.println(F("Menu ButtonAction HIGH"));delay(100);
+					Serial.println(F("Menu ButtonAction HIGH"));
 				}
 			break;
+			default: break;
 		}
 	}else{
-		Serial.println(F("Menu ButtonAction NIM"));delay(1000);
+		// Pass through to invoked application
+		Serial.print(F("Menu RotaryAction NIM T:"));Serial.print(type);Serial.print(F(" L:"));Serial.print(level);Serial.print(F(" D:"));Serial.println(direction);
+		this->currentMenuItemPtr->handler->rotaryAction(type, level, direction, param);
 	}
 }
 /*

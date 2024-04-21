@@ -9,18 +9,32 @@
 #include "pos/pos.h"
 #include "PCBHeaterTasks.h"
 #include "TempDisplay.h"
+#include "HeaterControl.h"
 
 IMPORT TempDisplay *temps;
+IMPORT HeaterControl *heater;
 
 	//void (*TaskType)(volatile TCB *);
+#define TSKAVGCNT 2						// Averaged over 10 cycles
+long taskAvgTime = 1;
+long taskASwitches = 0;
 void PCBHeaterTasks::taskA(volatile TCB *tcb){
 	volatile TCB *localTcb = tcb;
 	char taskLetter = (char)('A'+tcb->tid - 1);
 	char tid = tcb->tid;
+	static  long startTime;
+	static  long endTime;
 
 	FOREVER{
-		Serial.println(F("Task A"));
+		taskASwitches++;
+//		Serial.println(F("Task A"));
+//			startTime = millis();
 		temps->update();
+//			endTime = millis();
+		heater->process();
+
+//			taskAvgTime = (taskAvgTime * (TSKAVGCNT-1) + (endTime - startTime)) / TSKAVGCNT;
+//			taskAvgTime = endTime - startTime;
 		pause();
 	}
 }
@@ -47,7 +61,7 @@ void PCBHeaterTasks::taskC(volatile TCB *tcb){
 	}
 }
 
-#define PCBSTACKSIZE	(unsigned)120 //95 //110 //176 //240
+#define PCBSTACKSIZE	(unsigned)220 //95 //110 //176 //240
 
 void PCBHeaterTasks::startup(){
 	const bool showStats = false;

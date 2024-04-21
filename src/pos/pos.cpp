@@ -360,7 +360,19 @@ BOOL stack_check(TCB *tcb,BOOL show)
 	}
 	return TRUE;
 }
-
+#define POSPERIOD (1000)
+//#define POSHZSCALE  (1000.0/(double)POSPERIOD)
+int pos_stats(){	// return number of task switches per second
+	static unsigned long periodEnd = 0;
+	static int hz = 0;
+	if(millis() > periodEnd){
+		periodEnd = millis()+POSPERIOD;
+//		hz = (int)((double)switches * POSHZSCALE);
+		hz = (int)(switches );
+		switches = 0;
+	}
+	return hz;
+}
 void chack_all_tcb(){
 	TCB *tcb;
 	tcb = nextt;

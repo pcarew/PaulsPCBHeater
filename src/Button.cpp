@@ -9,8 +9,9 @@
 		int pinState  = (portState & this->pcmskBit);
 		bool pinChanged  = (pinState  ^ this->lastPinState)>0?true:false;			// Bit pos value turned into true/false
 		if(pinChanged == true){
+			Serial.print(F("PinCh-DB:"));Serial.println(this->debounceAmount);
 			if(timestamp > this->debounceTimeout ){									// Handle wrap-around/overflow??
-				this->debounceTimeout = timestamp+DBTIME;
+				this->debounceTimeout = timestamp+this->debounceAmount;
 				this->buttonAction->buttonAction( (pinState>0?ButtonAction::Level::BUTTONHIGH : ButtonAction::Level::BUTTONLOW), this->param);
 				this->lastPinState = pinState;				// Save new state
 			}

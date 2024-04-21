@@ -2,12 +2,15 @@
 #include "pos/pos.h"
 #include "HeaterControl.h"
 
+#include "RotarySelector.h"
+
 	// Init statics
 unsigned long HeaterControl::periodEnd		= 0;
-long HeaterControl::zeroCount				= 0;
+unsigned int HeaterControl::zeroCount				= 0;
 unsigned int HeaterControl::zHz				= 0;			// Holds the calculated AC frequency based upon AC Zero crossings. It should be 60Hz
 bool HeaterControl::heaterEnabled			= false;
 unsigned char HeaterControl::powerCounter	= 0;			// The count of firings within Frame that equates with % as set by 'setPercentagePwr'
+unsigned char HeaterControl::powerPercentage= 0;			// The percentage power being applied
 int HeaterControl::prevZeroCrossingState	= LOW;
 
 	// Menu buffers
@@ -16,6 +19,10 @@ extern char dispBuff[];
 const char *HeaterControl::fmt = "Heater Control";
 
 HeaterControl::HeaterControl(){
+	// Pin Change Interrupt setup
+	PCICR = PCICR|PCIR_PORTC;
+	// Port C Pins
+	PCMSK1 = PCMSK_Z;
 }
 
 void HeaterControl::process(){
@@ -31,30 +38,25 @@ void HeaterControl::heaterEnable(bool enable){						// Enable/disable heater out
 	heaterEnabled = enable;
 }
 void HeaterControl::setPercentagePwr(unsigned char percentage){
-	powerCounter = (unsigned char)(((unsigned)percentage*FRAMESIZE)/100);	// Turn % into actual power on count
+	HeaterControl::powerPercentage = percentage;
+	HeaterControl::powerCounter = (unsigned char)(((unsigned)percentage*FRAMESIZE)/100);	// Turn % into actual power on count
 }
 void HeaterControl::setRawPwr(unsigned char count){					// Called to set required raw power
 	if (count > FRAMESIZE){
-		powerCounter = FRAMESIZE;
+		HeaterControl::powerCounter = FRAMESIZE;
 	}else
-		powerCounter = count;
+		HeaterControl::powerCounter = count;
+
+	HeaterControl::powerPercentage = (HeaterControl::powerCounter*100)/FRAMESIZE;
 }
 
-void HeaterControl::hzDetermination(unsigned long currentTime)				// Only accurate if called often enough to detect periodEnd time. IE must be called at least 1 / millisecond or better
-{
-	if(currentTime > periodEnd){
-		periodEnd = currentTime + MEASUREMENT_PERIOD;
-		zHz = zeroCount * HZ_MULTIPLIER;
-		zeroCount = 0;
-	}
-}
 
-// Used for Testing
+// Used for UI
 extern bool cancelled;
 extern Display *myDisp;
 extern DisplayText *displayElement;
 
-void HeaterControl::action(int param){
+void HeaterControl::menuAction(int param){				// Runs under System UI Thread
 	int i = 200;
 
 	cli();
@@ -63,13 +65,58 @@ void HeaterControl::action(int param){
 	displayElement->setBg(0, 255, 0);
 	displayElement->setFg(255, 0, 0);
 	while(!cancelled && i > 0){
-		sprintf(dispBuff, "Cnt: %d  \n",i--);
-		displayElement->setCol(0); displayElement->setRow(2); displayElement->setText((char *)dispBuff); displayElement->show();
+		time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
+		if(time>nextDisplayTime){
+			nextDisplayTime = time+250l;
+			displayElement->setCol(0);  displayElement->setText((char *)dispBuff);
+
+			sprintf(dispBuff, "Htr :%s ",HeaterControl::heaterEnabled?"On":"Off ");
+			 displayElement->setRow(1);  displayElement->show();
+			sprintf(dispBuff, "zHz : %d  \nzCnt: %d  ",zHz,zeroCount);
+			 displayElement->setRow(2);  displayElement->show();
+			sprintf(dispBuff, "Pwr %%  : %d  ", HeaterControl::powerPercentage);
+			 displayElement->setRow(4);  displayElement->show();
+			sprintf(dispBuff, "Pwr Raw: %d  ", HeaterControl::powerCounter);
+			 displayElement->setRow(5);  displayElement->show();
+		}
 		pause();
 	}
 
+	HeaterControl::heaterEnabled = false;
 }
 
+void HeaterControl::rotaryAction(const int type, int level, RSE::Dir direction, int param){		// type is ROTATE or SELECT
+
+//			Serial.print(F("HC Dir:"));Serial.println(direction);
+	switch(type){
+		case RotaryAction::ROTATE:
+			Serial.print(F("Heater Rotate"));
+			switch(direction){
+				case RSE::FW:
+					Serial.println(F("Heater Rotate FW"));
+					if(HeaterControl::powerPercentage<100)
+						HeaterControl::powerPercentage++;
+					break;
+				case RSE::RV:
+					Serial.println(F("Heater Rotate RV"));
+					if(HeaterControl::powerPercentage > 0)
+						HeaterControl::powerPercentage--;
+					break;
+				case RSE::NC:
+					Serial.println(F("Heater Rotate NC"));
+					break;
+			}
+			break;
+		case RotaryAction::SELECT:
+			if(level == ButtonAction::BUTTONLOW){
+					Serial.println(F("Heater ButtonAction Low"));
+				HeaterControl::heaterEnabled = !HeaterControl::heaterEnabled;
+			}else{
+					Serial.println(F("Heater ButtonAction HIGH"));
+			}
+		break;
+	}
+}
 
 
 
@@ -78,12 +125,39 @@ void HeaterControl::action(int param){
 void HeaterControl::checkACZeroCrossing(){
 		int portcValues	= PINC&(PCMSK_Z);
 		int nz	= (portcValues&PCMSK_Z);								// New z value
-
+//Serial.println(F("Checking ZeroCrossing"));
 		if(HeaterControl::prevZeroCrossingState & ~nz){								// High to low
+//Serial.println(F("zeroCrossing"));
 			zeroCount++;												// Used for Hz Calculation
-			frameDetectionAndFiring();
+			zeroCrossing();
 		}
 		HeaterControl::prevZeroCrossingState = nz;
+}
+
+#define LED_PIN   A4
+void HeaterControl::zeroCrossing(){
+	static int ledStatus = LOW;
+	digitalWrite(HTR_PIN,LOW);
+	frameDetectionAndFiring();
+	if(!(zeroCount%60)) ledStatus = ~ledStatus;
+	digitalWrite(LED_PIN,ledStatus);
+
+	/*
+	++ledCntr %=100;	// divide freq by 100 for led visibility
+	if(!ledCntr){
+		ledV = !ledV;
+		digitalWrite(HTR_PIN,ledV);
+	}
+	*/
+}
+
+void HeaterControl::hzDetermination(unsigned long currentTime)				// Only accurate if called often enough to detect periodEnd time. IE must be called at least 1 / millisecond or better
+{
+	if(currentTime > periodEnd){
+		periodEnd = currentTime + MEASUREMENT_PERIOD;
+		zHz = (int) (((double)zeroCount) * HZ_MULTIPLIER);
+		zeroCount = 0;
+	}
 }
 
 void HeaterControl::fire(){

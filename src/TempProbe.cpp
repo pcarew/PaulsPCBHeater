@@ -14,11 +14,12 @@ double TempProbe::getTemperature() {
 	return temperature;
 }
 
+#define TEMPAVGLEN 2
 void TempProbe::readProbe() {
 	double instTemp ;
-	for(int i = 0; i< 50;i++){
+	for(int i = 0; i< TEMPAVGLEN;i++){
 			instTemp = (double)(((double)analogRead(this->pin)*1000.0)/1023.0);
-			temperature = (temperature*49.0+instTemp)/50.0;
+			temperature = (temperature*(double)(TEMPAVGLEN-1)+instTemp)/(double)TEMPAVGLEN;
 	}
 }
 
