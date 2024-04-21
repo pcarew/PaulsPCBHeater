@@ -1,0 +1,13 @@
+*~
+*.o
+*.d
+*.elf
+*.hex
+*.eep
+*.mk
+*.cppx
+*.hx
+*.hold
+*.cppold
+*.ar
+*old
