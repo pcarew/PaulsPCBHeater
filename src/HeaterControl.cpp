@@ -6,7 +6,7 @@
 
 	// Init statics
 unsigned long HeaterControl::periodEnd		= 0;
-unsigned int HeaterControl::zeroCount				= 0;
+unsigned int HeaterControl::zeroCount		= 0;
 unsigned int HeaterControl::zHz				= 0;			// Holds the calculated AC frequency based upon AC Zero crossings. It should be 60Hz
 bool HeaterControl::heaterEnabled			= false;
 unsigned char HeaterControl::powerCounter	= 0;			// The count of firings within Frame that equates with % as set by 'setPercentagePwr'
@@ -86,12 +86,12 @@ void HeaterControl::checkACZeroCrossing(){								// Called from PortC ISR
 
 #define LED_PIN   A4
 void HeaterControl::zeroCrossing(){
-	static int ledStatus = LOW;
+	static unsigned ledCount = 0;
 	digitalWrite(HTR_PIN,LOW);
 	zeroCount++;												// Used for Hz Calculation
+	ledCount++;
 	frameDetectionAndFiring();
-	if(!(zeroCount%60)) ledStatus = ~ledStatus;
-	digitalWrite(LED_PIN,ledStatus);
+	if(!(ledCount%60)) digitalWrite(LED_PIN,!digitalRead(LED_PIN));
 
 	/*
 	++ledCntr %=100;	// divide freq by 100 for led visibility
