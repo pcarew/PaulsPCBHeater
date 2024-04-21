@@ -163,7 +163,7 @@ void HeaterControl::menuAction(int param){
 		pause();
 	}
 
-	HeaterControl::heaterEnabled = false;
+//	HeaterControl::heaterEnabled = false;
 }
 
 void HeaterControl::rotaryAction(const int type, int level, RSE::Dir direction, int param){		// type is ROTATE or SELECT Called from PortD ISR
