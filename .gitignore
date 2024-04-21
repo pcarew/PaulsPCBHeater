@@ -13,3 +13,5 @@
 *old
 ACPwrCntl.ino-new
 makefile
+*.map
+Release/*
