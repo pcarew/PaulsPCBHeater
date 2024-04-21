@@ -22,9 +22,9 @@ Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selec
 
 void Menu::showMenu(){
 
-	cli();
+//	cli();
 	this->display->tftScreen.background(this->display->br, this->display->bg, this->display->bb);
-	sei();
+//	sei();
 
 	this->menuLine->setCol(2);
 	for(int i=0;i<this->menuItemCount;i++){
