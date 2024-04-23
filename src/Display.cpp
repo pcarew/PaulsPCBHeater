@@ -7,9 +7,9 @@ Display:: Display(int br,int bg, int bb, int fr, int fg, int fb){
 	this->setBg(br,bg,bb);
 	this->tftScreen.begin();
 	this->tftScreen.setRotation(TFTROTATE180);
-	cli();
+//	cli();
 	this->tftScreen.background(br, bg, bb);
-	sei();
+//	sei();
 //	Serial.println(F("Display Created"));
 }
 void Display::setFg(int r, int g, int b){
