@@ -87,7 +87,7 @@ void setup()
 	cnclButton->createButton(3);
 
 	int numberItems = sizeof(myMenu)/sizeof(MenuItem);
-	menu = new Menu((MenuItem*)myMenu, numberItems, 5,6,4,myDisp); // PinA:5, PinB:6, PinSel:4
+	menu = new Menu((MenuItem*)myMenu, numberItems, 5,6,4,myDisp,1,1); // PinA:5, PinB:6, PinSel:4
 
 	PCBHeaterTasks::startup();
 
