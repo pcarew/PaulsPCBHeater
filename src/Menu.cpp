@@ -35,13 +35,14 @@ void Menu::showMenu(){
 //			Serial.print(F("Menu clr Time: "));Serial.println(profileTime);
 //	sei();
 
+	this->currentMenuItemId = 0;
+	this->currentMenuItemPtr = this->menuItems;
 	this->menuLine->setCol(this->posCol);
 	for(int i=0;i<this->menuItemCount;i++){
 		this->menuLine->setText((char*)(this->menuItems[i].prompt));
 		this->menuLine->setRow(i+this->posRow);
 		this->menuLine->show();
 	}
-	this->currentMenuItemId = 0;
 	this->showSelectedMenuLine();
 }
 
