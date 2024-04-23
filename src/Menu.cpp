@@ -5,14 +5,16 @@
 #define MENUITEMTEXTSIZE 2
 IMPORT bool cancelled;
 
-Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display ){
-	this->menuItems				= menu;
+Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display, int row, int col ){
+	this->menuItems			= menu;
 	this->currentMenuItemPtr	= menu;
 	this->nextMenuItemPtr		= menu;
 	this->currentMenuItemId		= -1;
 	this->nextMenuItemId		= 0;
-	this->menuItemCount			= menuSize;
-	this->display				= display;
+	this->menuItemCount		= menuSize;
+	this->display			= display;
+	this->posRow			= row;
+	this->posCol			= col;
 	this->rotary	= new RotarySelector(portDPinA, portDPinB, selectPin, this, 5 ); // A:D5, B:D6 on PCBHeater 'selectPin' button on the rotary selector (D4 on PCBHeater)
 
 	this->menuLine	= new DisplayText(NULL,this->display, this->posCol , this->posRow, MENUITEMTEXTSIZE );
@@ -21,17 +23,25 @@ Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selec
 };
 
 void Menu::showMenu(){
+//	static  long startTime;
+//	static  long endTime;
+//	static  long profileTime;;
 
 //	cli();
+//			startTime = millis();
 	this->display->tftScreen.background(this->display->br, this->display->bg, this->display->bb);
+//			endTime = millis();
+//			profileTime = endTime - startTime;
+//			Serial.print(F("Menu clr Time: "));Serial.println(profileTime);
 //	sei();
 
-	this->menuLine->setCol(2);
+	this->menuLine->setCol(this->posCol);
 	for(int i=0;i<this->menuItemCount;i++){
 		this->menuLine->setText((char*)(this->menuItems[i].prompt));
-		this->menuLine->setRow(i);
+		this->menuLine->setRow(i+this->posRow);
 		this->menuLine->show();
 	}
+	this->currentMenuItemId = 0;
 	this->showSelectedMenuLine();
 }
 
@@ -59,8 +69,8 @@ void Menu::menuInvoke(){ // Called from System thread
 }
 void Menu::showSelectedMenuLine(){
 	this->menuLine->setText((char*)this->currentMenuItemPtr->prompt);
-	this->menuLine->setRow(this->currentMenuItemId);
-	this->menuLine->setCol(2);
+	this->menuLine->setRow(this->currentMenuItemId+this->posRow);
+	this->menuLine->setCol(this->posCol);
 	this->menuLine->invert();
 	this->menuLine->show();
 	this->menuLine->invert();
