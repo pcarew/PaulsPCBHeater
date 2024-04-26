@@ -1,3 +1,5 @@
+#ifndef PaulsPCBHeater_INO
+#define PaulsPCBHeater_INO
 //#include "SDFileManagement.h"
 #include "pos/pos.h"
 #include "Button.h"
@@ -136,3 +138,5 @@ void loop()
 //			threadAvgTime = (endTime - startTime);
 	pause();
 }
+
+#endif
