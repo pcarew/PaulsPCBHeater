@@ -1,4 +1,3 @@
-
 #ifndef TempProbe_H
 #define TempProbe_H
 #include "Arduino.h"
