@@ -1,0 +1,35 @@
+Test git update.
+/Wire up+Test Temp detection including noise reduction
+/Design and test zero crossing detection
+/Determine how to control blower
+/Design Schematic
+/clear/disable specific intr instead of 'all' intr.
+/Design/implement Menu classes
+/Read Port initial state when setting up Pinchange interrupts
+/Create shared display element
+/Implement POS tasking
+/2 Tasks - System and Background tasks
+
+ /Design Application architecture
+ Design graph drawing Class
+ Design minimal FuzzyLogic controller for heater 
+ Determine EEPROM and/or SD access
+ Move POS Stack check to call-able function
+ 
+
+ Features:
+ Select Profile
+ make profile
+ run profile
+ record run
+ use FL to control specific temps
+ draw actual temps on top of profile
+ 
+ classes
+ SD Card / file management
+ Profile Management
+ Temperature control
+ Graphics profile drawing
+ 
+Move Menu Return button to Menu class
+Allow Rotary pass through to applications
