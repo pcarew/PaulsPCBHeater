@@ -15,3 +15,5 @@ ACPwrCntl.ino-new
 makefile
 *.map
 Release/*
+/.project
+/.cproject

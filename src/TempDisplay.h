@@ -1,3 +1,5 @@
+#ifndef TempDisplay_H
+#define TempDisplay_H
 #include <arduino.h>
 #include "Button.h"
 #include "Display.h"
@@ -29,3 +31,5 @@ public:
 
 	~TempDisplay() {}
 };
+
+#endif
