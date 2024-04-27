@@ -24,18 +24,8 @@ Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selec
 };
 
 void Menu::showMenu(){
-//	static  long startTime;
-//	static  long endTime;
-//	static  long profileTime;;
 
-//	cli();
-//			startTime = millis();
 	this->display->tftScreen.background(this->display->br, this->display->bg, this->display->bb);
-
-//			endTime = millis();
-//			profileTime = endTime - startTime;
-//			Serial.print(F("Menu clr Time: "));Serial.println(profileTime);
-//	sei();
 
 	this->currentMenuItemId = 0;
 	this->currentMenuItemPtr = this->menuItems;
