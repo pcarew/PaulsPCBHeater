@@ -5,6 +5,12 @@
 #define MENUITEMTEXTSIZE 2
 IMPORT bool cancelled;
 
+/*
+void menuColours(DisplayText *dt, char p){
+Serial.print(F("Menu '"));Serial.print(p);Serial.print(F("' BR:")); Serial.print(dt->br); Serial.print(F(" BG:")); Serial.print(dt->bg); Serial.print(F(" BB:")); Serial.println(dt->bb);
+Serial.print(F("Menu '"));Serial.print(p);Serial.print(F("' FR:")); Serial.print(dt->fr); Serial.print(F(" FG:")); Serial.print(dt->fg); Serial.print(F(" FB:")); Serial.println(dt->fb);
+}
+*/
 Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display, int row, int col ){
 	this->menuItems			= menu;
 	this->currentMenuItemPtr	= menu;
@@ -43,7 +49,6 @@ void Menu::showMenu(){
 void Menu::menuInvoke(){ // Called from System thread
 	if(this->currentMenuItemId < 0) this->showMenu();
 
-	delay(50);
 	if(this->currentMenuItemPtr->selected == true){
 //		Serial.print(F("Selecting: "));Serial.print(this->currentMenuItemId); Serial.println(this->currentMenuItemPtr->prompt);
 		this->currentMenuItemPtr->selected = false;
@@ -52,12 +57,17 @@ void Menu::menuInvoke(){ // Called from System thread
 		this->inMenu = false;
 		handler->menuAction(this->currentMenuItemPtr->param);	// Invoke selected menu handler AJPC
 		this->inMenu = true;
-	delay(150);
 		this->showMenu();
 	}
 
 	if(this->currentMenuItemId != this->nextMenuItemId){
+	this->menuLine->setText((char*)this->currentMenuItemPtr->prompt);
+	this->menuLine->setRow(this->currentMenuItemId+this->posRow);
+	this->menuLine->setCol(this->posCol);
+	this->menuLine->setBg(this->display->br, this->display->bg, this->display->bb);
+	this->menuLine->setFg(this->display->fr, this->display->fg, this->display->fb);
 		this->menuLine->show();									// Turn off inversion
+
 		this->currentMenuItemId = this->nextMenuItemId;
 		this->currentMenuItemPtr = this->nextMenuItemPtr;
 
@@ -65,6 +75,8 @@ void Menu::menuInvoke(){ // Called from System thread
 	}
 }
 void Menu::showSelectedMenuLine(){
+	this->menuLine->setBg(this->display->br, this->display->bg, this->display->bb);
+	this->menuLine->setFg(this->display->fr, this->display->fg, this->display->fb);
 	this->menuLine->setText((char*)this->currentMenuItemPtr->prompt);
 	this->menuLine->setRow(this->currentMenuItemId+this->posRow);
 	this->menuLine->setCol(this->posCol);

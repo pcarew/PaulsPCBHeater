@@ -54,11 +54,6 @@ void DisplayText::setBg(int r, int g, int b){
 void DisplayText::show(){
 //	int pixsz=strlen(this->text)*this->chrSize[this->textSize][CHRW];
 
-	if(this->textSize != 2){
-		Serial.print(F("Show Text Size Error:"));Serial.println(this->textSize);
-		delay(10);
-		while(1);
-	}
 	if(this->textSize > MAXCHRSIZE) return;
 
 	int xpix = this->col*this->chrSize[this->textSize][CHRW];

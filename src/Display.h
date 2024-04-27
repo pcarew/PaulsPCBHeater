@@ -65,7 +65,7 @@ public:
 //	int textLength;
 	int col, row;			// Column Number, Line Number
 
-	int bb=BB, bg=BG, br=BR, fb=FB, fg=FG, fr=FR;
+	int bb=BB, bg=BG, br=BR, fb=FB, fg=FG, fr=FR;		// Display text have their own colours, separate from the default ones in the top level Display
 	int textSize = 1;
 	char *text;			// Space to be allocated by caller
 

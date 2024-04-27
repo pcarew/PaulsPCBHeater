@@ -123,6 +123,17 @@ void loop()
 	*/
 
 	menu->menuInvoke();
+
+	displayElement->setCol(0);
+	displayElement->setRow(0);
+	displayElement->setText((char *)dispBuff);
+	sprintf(dispBuff, "Htr:%s ",HeaterControl::heaterEnabled?"On":"Off ");
+
+	displayElement->setBg(0, 255, 0);
+	displayElement->setFg(255, 0, 0);
+	displayElement->show();
+
+
 	/*
 	if(cancelled){
 	  	Serial.print(F("Button Level:"));
