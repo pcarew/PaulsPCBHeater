@@ -17,7 +17,8 @@ Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selec
 	this->posCol			= col;
 	this->rotary	= new RotarySelector(portDPinA, portDPinB, selectPin, this, 5 ); // A:D5, B:D6 on PCBHeater 'selectPin' button on the rotary selector (D4 on PCBHeater)
 
-	this->menuLine	= new DisplayText(NULL,this->display, this->posCol , this->posRow, MENUITEMTEXTSIZE );
+//	this->menuLine	= new DisplayText(NULL,this->display, this->posCol , this->posRow, MENUITEMTEXTSIZE );
+	this->menuLine	= displayElement;
 
 	menu->selected	= false;
 };
@@ -30,6 +31,7 @@ void Menu::showMenu(){
 //	cli();
 //			startTime = millis();
 	this->display->tftScreen.background(this->display->br, this->display->bg, this->display->bb);
+
 //			endTime = millis();
 //			profileTime = endTime - startTime;
 //			Serial.print(F("Menu clr Time: "));Serial.println(profileTime);
@@ -38,6 +40,8 @@ void Menu::showMenu(){
 	this->currentMenuItemId = 0;
 	this->currentMenuItemPtr = this->menuItems;
 	this->menuLine->setCol(this->posCol);
+	this->menuLine->setBg(this->display->br, this->display->bg, this->display->bb);
+	this->menuLine->setFg(this->display->fr, this->display->fg, this->display->fb);
 	for(int i=0;i<this->menuItemCount;i++){
 		this->menuLine->setText((char*)(this->menuItems[i].prompt));
 		this->menuLine->setRow(i+this->posRow);
@@ -49,6 +53,7 @@ void Menu::showMenu(){
 void Menu::menuInvoke(){ // Called from System thread
 	if(this->currentMenuItemId < 0) this->showMenu();
 
+	delay(50);
 	if(this->currentMenuItemPtr->selected == true){
 //		Serial.print(F("Selecting: "));Serial.print(this->currentMenuItemId); Serial.println(this->currentMenuItemPtr->prompt);
 		this->currentMenuItemPtr->selected = false;
@@ -57,6 +62,7 @@ void Menu::menuInvoke(){ // Called from System thread
 		this->inMenu = false;
 		handler->menuAction(this->currentMenuItemPtr->param);	// Invoke selected menu handler AJPC
 		this->inMenu = true;
+	delay(150);
 		this->showMenu();
 	}
 
