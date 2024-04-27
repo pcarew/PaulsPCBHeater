@@ -144,3 +144,11 @@ Graph / plot
 Heater DC14v
 Ri = (14-1.4)/50ma = 250R
 Ro = (5-.2)/(50ma*.2) = 480R
+
+Adafruit TFT Driver
+--------------------------------------------
+TFT\1.0.6\src\utility\Adafruit_ST7735.cpp
+
+#define MADCTL_RGB 0x00		//AJPC Addresses reversed Red and Blue issue
+//#define MADCTL_RGB 0x08
+#define MADCTL_MH  0x04
