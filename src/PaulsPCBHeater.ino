@@ -125,27 +125,22 @@ void loop()
 	menu->menuInvoke();
 
 	displayElement->setText((char *)dispBuff);
-	displayElement->setCol(0);
-	displayElement->setRow(0);
-	sprintf(dispBuff, "H:%s A:%d B:%d T:%d",
-			HeaterControl::heaterEnabled?"On":"Off ",
-			(int) TempDisplay::ambient.getTemperature(),
-			(int) TempDisplay::brdBot.getTemperature(),
-			(int) TempDisplay::brdTop.getTemperature()
-			);
-
 	displayElement->setBg(0, 255, 0);
 	displayElement->setFg(255, 0, 0);
+	displayElement->setCol(1);
+	displayElement->setRow(0);
+	sprintf(dispBuff, "H:%s A:%d",
+			HeaterControl::heaterEnabled?"On  ":"Off ",
+			(int) TempDisplay::ambient.getTemperature()
+			);
 	displayElement->show();
 
-	/*
-	sprintf(dispBuff, "H:%s A:%d B:%d T:%d",
-			HeaterControl::heaterEnabled?"On":"Off ",
-			(int) TempDisplay::ambient.getTemperature(),
+	displayElement->setRow(1);
+	sprintf(dispBuff, "B:%d   T:%d",
 			(int) TempDisplay::brdBot.getTemperature(),
 			(int) TempDisplay::brdTop.getTemperature()
 			);
-			*/
+	displayElement->show();
 
 	/*
 	if(cancelled){
