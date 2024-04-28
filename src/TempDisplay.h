@@ -19,17 +19,17 @@ class TempDisplay: Implements MenuAction{
 private:
 public:
 
-	TempProbe *ambiant;
-	TempProbe *brdBot;
-	TempProbe *brdTop;
+	static TempProbe ambient;
+	static TempProbe brdBot;
+	static TempProbe brdTop;
 
 
-	TempDisplay();
+//	TempDisplay();
 	void menuAction(int param) ;
 //	void rotaryAction(const int type, int level, RSE::Dir direction, int param);		// type is ROTATE or SELECT
 	void update();
 
-	~TempDisplay() {}
+//	~TempDisplay() {}
 };
 
 #endif

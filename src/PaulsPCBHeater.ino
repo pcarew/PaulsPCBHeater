@@ -67,11 +67,11 @@ ISR (PCINT2_vect) {			// D0 -> D7 PortD
 
 
 Ram ramApp;
-TempDisplay *temps = new TempDisplay();
+TempDisplay temps;
 HeaterControl *heater = new HeaterControl();
 Menu *menu = NULL;
 MenuItem myMenu[] = {
-		{"Temps",temps,1,false},
+		{"Temps",&temps,1,false},
 		{"Unused SRam",&ramApp,2,false},
 		{"Heater",heater,3,false}
 };
@@ -124,15 +124,28 @@ void loop()
 
 	menu->menuInvoke();
 
+	displayElement->setText((char *)dispBuff);
 	displayElement->setCol(0);
 	displayElement->setRow(0);
-	displayElement->setText((char *)dispBuff);
-	sprintf(dispBuff, "Htr:%s ",HeaterControl::heaterEnabled?"On":"Off ");
+	sprintf(dispBuff, "H:%s A:%d B:%d T:%d",
+			HeaterControl::heaterEnabled?"On":"Off ",
+			(int) TempDisplay::ambient.getTemperature(),
+			(int) TempDisplay::brdBot.getTemperature(),
+			(int) TempDisplay::brdTop.getTemperature()
+			);
 
 	displayElement->setBg(0, 255, 0);
 	displayElement->setFg(255, 0, 0);
 	displayElement->show();
 
+	/*
+	sprintf(dispBuff, "H:%s A:%d B:%d T:%d",
+			HeaterControl::heaterEnabled?"On":"Off ",
+			(int) TempDisplay::ambient.getTemperature(),
+			(int) TempDisplay::brdBot.getTemperature(),
+			(int) TempDisplay::brdTop.getTemperature()
+			);
+			*/
 
 	/*
 	if(cancelled){
