@@ -50,7 +50,7 @@ public:
 	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display):Menu(menu, menuSize, portDPinA, portDPinB, selectPin, display, 0, 0  ){}
 	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display, int row, int col  );
 	void showMenu();
-	void showSelectedMenuLine();
+	void highlightSelectedMenuLine();
 
 	void rotaryAction(const int type, int counterOrLevel, RSE::Dir direction, int param);		// type is ROTATE or SELECT
 	void menuInvoke();
