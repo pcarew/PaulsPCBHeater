@@ -35,17 +35,17 @@ class Menu : Implements RotaryAction{
 private:
 public:
 	DisplayText *menuLine ;
-	MenuItem *menuItems = NULL;
-	MenuItem *currentMenuItemPtr = NULL;
-	MenuItem *nextMenuItemPtr = NULL;
-	int currentMenuItemId = 0;
-	int nextMenuItemId = 0;
-	int menuItemCount;
-	Display *display;
-	int posRow = 0;
-	int posCol = 0;
-	RotarySelector *rotary = NULL;
-	bool inMenu = true;
+	MenuItem *menuItems			= NULL;
+	MenuItem *currentMenuItemPtr= NULL;
+	MenuItem *nextMenuItemPtr	= NULL;
+	int currentMenuItemId		= 0;
+	int nextMenuItemId			= 0;
+	int menuItemCount			= 0;
+	Display *display			= NULL;
+	int posRow					= 0;
+	int posCol					= 0;
+	RotarySelector *rotary		= NULL;
+	bool inMenu					= true;
 
 	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display):Menu(menu, menuSize, portDPinA, portDPinB, selectPin, display, 0, 0  ){}
 	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display, int row, int col  );

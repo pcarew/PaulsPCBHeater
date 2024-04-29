@@ -12,9 +12,9 @@
 #include "pos/pos.h"
 
 
-extern Display *myDisp;
-extern bool cancelled;
-extern DisplayText *displayElement;
+IMPORT Display myDisp;
+IMPORT bool cancelled;
+IMPORT DisplayText displayElement;
 
 class Ram: Implements MenuAction{
 private:
@@ -31,18 +31,18 @@ public:
 	void menuAction(int param){
 		char dispBuff[27];
 		const char *fmt = "SRAM: %d";
-		displayElement->setText(dispBuff);
+		displayElement.setText(dispBuff);
 
-		DisplayText dispElement(dispBuff, myDisp, 1, 1, 2);
-		myDisp->tftScreen.background(0,0,0);
+//		DisplayText dispElement(dispBuff, &myDisp, 1, 1, 2);
+		myDisp.tftScreen.background(0,0,0);
 		sprintf(dispBuff, fmt,this->freeRam());
 
-		dispElement.setBg(0, 0, 0);
-		dispElement.setFg(255, 255, 255);
-		dispElement.setCol(0);
-		dispElement.setRow(3);
-		dispElement.setText(dispBuff);
-		dispElement.show();
+		displayElement.setBg(0, 0, 0);
+		displayElement.setFg(255, 255, 255);
+		displayElement.setCol(0);
+		displayElement.setRow(3);
+		displayElement.setText(dispBuff);
+		displayElement.show();
 
 		Serial.println(dispBuff);
 		while(!cancelled){

@@ -38,6 +38,7 @@ public:
 	Display();
 	Display(int br,int bg, int bb);
 	Display(int br,int bg, int bb, int fr, int fg, int fb);
+	void setup();
 
 	void setFg(int r, int g, int b);
 	void setBg(int r, int g, int b);

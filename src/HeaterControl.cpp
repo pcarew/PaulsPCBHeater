@@ -21,6 +21,9 @@ const char *HeaterControl::fmt = "Heater Control";
 
 // Creation /Setup
 HeaterControl::HeaterControl(){
+}
+
+void HeaterControl::setup(){
 	// Pin Change Interrupt setup
 	PCICR = PCICR|PCIR_PORTC;
 	// Port C Pins
@@ -28,9 +31,6 @@ HeaterControl::HeaterControl(){
 
 	pinMode(LED_PIN, OUTPUT);
 	pinMode(HTR_PIN, OUTPUT);
-}
-
-void HeaterControl::setup(){
 	HeaterControl::heaterEnable(true);					// Enable/disable heater output
 }
 
@@ -135,30 +135,30 @@ void HeaterControl::frameDetectionAndFiring(){
 
 // Used for UI
 extern bool cancelled;
-extern Display *myDisp;
-extern DisplayText *displayElement;
+extern Display myDisp;
+extern DisplayText displayElement;
 
 // User Interface for Heater Control. Runs under System UI Thread
 void HeaterControl::menuAction(int param){
 	int i = 200;
 
-	myDisp->tftScreen.background(0,255,0);
-	displayElement->setBg(0, 255, 0);
-	displayElement->setFg(255, 0, 0);
+	myDisp.tftScreen.background(0,255,0);
+	displayElement.setBg(0, 255, 0);
+	displayElement.setFg(255, 0, 0);
 	while(!cancelled && i > 0){
 		time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
 		if(time>nextDisplayTime){
 			nextDisplayTime = time+500l;
-			displayElement->setCol(0);  displayElement->setText((char *)dispBuff);
+			displayElement.setCol(0);  displayElement.setText((char *)dispBuff);
 
 			sprintf(dispBuff, "Htr:%s ",HeaterControl::heaterEnabled?"On":"Off ");
-			 displayElement->setRow(1);  displayElement->show();
+			 displayElement.setRow(1);  displayElement.show();
 			sprintf(dispBuff, "zHz: %d \nzCnt:%d ",zHz,zeroCount);
-			 displayElement->setRow(2);  displayElement->show();
+			 displayElement.setRow(2);  displayElement.show();
 			sprintf(dispBuff, "Pwr%% : %d  ", HeaterControl::powerPercentage);
-			 displayElement->setRow(4);  displayElement->show();
+			 displayElement.setRow(4);  displayElement.show();
 			sprintf(dispBuff, "Pwr Raw:%d  ", HeaterControl::powerCounter);
-			 displayElement->setRow(5);  displayElement->show();
+			 displayElement.setRow(5);  displayElement.show();
 		}
 		pause();
 	}

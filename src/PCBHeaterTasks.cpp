@@ -8,10 +8,10 @@
 #include "arduino.h"
 #include "pos/pos.h"
 #include "PCBHeaterTasks.h"
-#include "TempDisplay.h"
 #include "HeaterControl.h"
+#include "TempMonitoring.h"
 
-IMPORT TempDisplay *temps;
+IMPORT TempMonitoring temps;
 IMPORT HeaterControl *heater;
 
 	//void (*TaskType)(volatile TCB *);
@@ -29,7 +29,7 @@ void PCBHeaterTasks::taskA(volatile TCB *tcb){
 		taskASwitches++;
 //		Serial.println(F("Task A"));
 //			startTime = millis();
-		temps->update();
+		temps.update();
 //			endTime = millis();
 		heater->process();
 

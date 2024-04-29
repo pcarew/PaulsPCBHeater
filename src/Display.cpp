@@ -5,12 +5,11 @@ Display:: Display(int br,int bg, int bb):Display(br,bg,bb,255,255,255){}
 Display:: Display(int br,int bg, int bb, int fr, int fg, int fb){
 	this->setFg(fr, fg, fb);
 	this->setBg(br,bg,bb);
+}
+void Display::setup(){
 	this->tftScreen.begin();
 	this->tftScreen.setRotation(TFTROTATE180);
-//	cli();
 	this->tftScreen.background(br, bg, bb);
-//	sei();
-//	Serial.println(F("Display Created"));
 }
 void Display::setFg(int r, int g, int b){
 	this->fr = r;
@@ -81,11 +80,6 @@ bool DisplayText::show(char *newText){
 		int ypix = this->row*this->chrSize[this->textSize][CHRH];
 
 				// Wipe out previous
-	if(this->textSize != 2){
-		Serial.print(F("Show Text Size Error:"));Serial.println(this->textSize);
-		delay(10);
-		while(1);
-	}
 		this->disp->tftScreen.setTextSize(this->textSize);
 		this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
 		this->disp->tftScreen.text(this->text, xpix, ypix);
@@ -112,11 +106,6 @@ void DisplayText::invert(){
 	this->fb = bb;
 }
 void DisplayText::move(int col, int row){
-	if(this->textSize != 2){
-		Serial.print(F("Move Text Size Error:"));Serial.println(this->textSize);
-		delay(10);
-		while(1);
-	}
 	if(this->textSize > MAXCHRSIZE) return;
 
 	int pixsz=strlen(this->text)*this->chrSize[this->textSize][CHRW];
@@ -138,11 +127,6 @@ void DisplayText::move(int col, int row){
 	this->row = row;
 }
 void DisplayText::remove(){
-	if(this->textSize != 2){
-		Serial.print(F("Remove Text Size Error:"));Serial.println(this->textSize);
-		delay(10);
-		while(1);
-	}
 	if(this->textSize > MAXCHRSIZE) return;
 
 	int pixsz=strlen(this->text)*this->chrSize[this->textSize][CHRW];

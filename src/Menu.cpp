@@ -4,6 +4,7 @@
 
 #define MENUITEMTEXTSIZE 2
 IMPORT bool cancelled;
+IMPORT DisplayText displayElement;
 
 Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display, int row, int col ){
 	this->menuItems				= menu;
@@ -17,9 +18,10 @@ Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selec
 	this->posCol				= col;
 	this->rotary				= new RotarySelector(portDPinA, portDPinB, selectPin, this, 5 ); // A:D5, B:D6 on PCBHeater 'selectPin' button on the rotary selector (D4 on PCBHeater)
 
-	this->menuLine	= displayElement;
+	this->menuLine	= &displayElement;
 
-	menu->selected	= false;
+	menu[0].selected	= false;
+//	menu->selected	= false;
 };
 
 void Menu::showMenu(){

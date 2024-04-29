@@ -4,22 +4,19 @@
 #include "pos/pos.h"
 #include "Button.h"
 #include "Menu.h"
-#include "TempDisplay.h"
 #include "HeaterControl.h"
 #include "PCBHeaterTasks.h"
 #include "Ram.h"
 #include "Display.h"
+#include "TempMonitoring.h"
 
 bool cancelled = false;
 volatile unsigned long time = 0;
 unsigned long nextDisplayTime = 0;
 
-Display *myDisp; //= new Display(0,0,255,255,255,255);
-DisplayText *displayElement;//	= new DisplayText(NULL,myDisp, 1 , 1, 2 );
-char dispBuff[27];
 
-DisplayText *welcome;
-DisplayText *flash;
+//DisplayText *welcome;
+//DisplayText *flash;
 
 class CancelButton : Implements ButtonAction{
 private:
@@ -66,15 +63,21 @@ ISR (PCINT2_vect) {			// D0 -> D7 PortD
 }
 
 
+char dispBuff[27];
+Display myDisp = Display(0,0,255,255,255,255);
+DisplayText displayElement = DisplayText(NULL,&myDisp, 1 , 1, 2 );
+
 Ram ramApp;
-TempDisplay temps;
-HeaterControl *heater = new HeaterControl();
-Menu *menu = NULL;
+TempMonitoring temps;
+HeaterControl heater;
+//Menu *menu = NULL;
 MenuItem myMenu[] = {
 		{"Temps",&temps,1,false},
 		{"Unused SRam",&ramApp,2,false},
-		{"Heater",heater,3,false}
+		{"Heater",&heater,3,false}
 };
+#define	NUMBERITEMS ( sizeof(myMenu)/sizeof(MenuItem))
+Menu menu = Menu( (MenuItem*)myMenu, NUMBERITEMS, 5,6,4,&myDisp,2,1); // PinA:5, PinB:6, PinSel:4, starting at Row 2, col 1
 
 //SDFileManagement *sdManager;
 
@@ -82,14 +85,17 @@ void setup()
 {
 
 	Serial.begin(115200);
-	myDisp = new Display(0,0,255,255,255,255);
-	displayElement	= new DisplayText(NULL,myDisp, 1 , 1, 2 );
+	Serial.println(F("Setup Started"));
+
+	myDisp.setup();
 
 	cnclButton = new CancelButton();
 	cnclButton->createButton(3);
 
-	int numberItems = sizeof(myMenu)/sizeof(MenuItem);
-	menu = new Menu((MenuItem*)myMenu, numberItems, 5,6,4,myDisp,2,1); // PinA:5, PinB:6, PinSel:4, starting at Row 2, col 1
+//	int numberItems = sizeof(myMenu)/sizeof(MenuItem);
+//	menu = new Menu((MenuItem*)myMenu, numberItems, 5,6,4,myDisp,2,1); // PinA:5, PinB:6, PinSel:4, starting at Row 2, col 1
+
+	HeaterControl::setup();
 
 	PCBHeaterTasks::startup();
 
@@ -122,25 +128,25 @@ void loop()
 	}
 	*/
 
-	menu->menuInvoke();
+	menu.menuInvoke();
 
-	displayElement->setText((char *)dispBuff);
-	displayElement->setBg(0, 255, 0);
-	displayElement->setFg(255, 0, 0);
-	displayElement->setCol(1);
-	displayElement->setRow(0);
+	displayElement.setText((char *)dispBuff);
+	displayElement.setBg(0, 255, 0);
+	displayElement.setFg(255, 0, 0);
+	displayElement.setCol(1);
+	displayElement.setRow(0);
 	sprintf(dispBuff, "H:%s A:%d",
 			HeaterControl::heaterEnabled?"On  ":"Off ",
-			(int) TempDisplay::ambient.getTemperature()
+			(int) TempMonitoring::ambient.getTemperature()
 			);
-	displayElement->show();
+	displayElement.show();
 
-	displayElement->setRow(1);
+	displayElement.setRow(1);
 	sprintf(dispBuff, "B:%d   T:%d",
-			(int) TempDisplay::brdBot.getTemperature(),
-			(int) TempDisplay::brdTop.getTemperature()
+			(int) TempMonitoring::brdBot.getTemperature(),
+			(int) TempMonitoring::brdTop.getTemperature()
 			);
-	displayElement->show();
+	displayElement.show();
 
 	/*
 	if(cancelled){

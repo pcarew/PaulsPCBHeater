@@ -10,12 +10,8 @@
 #define BRDBOT_SENSOR A1
 #define BRDTOP_SENSOR A2
 
-extern bool cancelled;
-extern Display *myDisp;
-extern volatile unsigned long time;
-extern unsigned long nextDisplayTime;
 
-class TempDisplay: Implements MenuAction{
+class TempMonitoring: Implements MenuAction{
 private:
 public:
 
