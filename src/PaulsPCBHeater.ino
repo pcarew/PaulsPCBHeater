@@ -87,7 +87,7 @@ void setup()
 	Serial.begin(115200);
 	Serial.println(F("Setup Started"));
 
-//	myDisp.setup();
+	myDisp.setup();
 
 	cnclButton = new CancelButton();
 	cnclButton->createButton(3);
