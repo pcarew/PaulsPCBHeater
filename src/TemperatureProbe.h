@@ -2,14 +2,14 @@
 #define TempProbe_H
 #include "Arduino.h"
 
-class TempProbe {
+class TemperatureProbe {
 	private:
 	char type;
 	int pin;
 	double temperature=0.0 ;
 
 	public:
-	TempProbe (char type, int pin);
+	TemperatureProbe (char type, int pin);
 	char getType();
 	double getTemperature();
 	void readProbe() ;

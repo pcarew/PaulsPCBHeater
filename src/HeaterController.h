@@ -16,7 +16,7 @@ extern volatile unsigned long time;
 extern unsigned long nextDisplayTime;
 
 
-class HeaterControl : Implements MenuAction{
+class HeaterController : Implements MenuAction{
 private:
 public:
 	static unsigned long periodEnd;
@@ -31,8 +31,8 @@ public:
 //	static const char *fmt;						// = "%s: %d.%dC  ";
 	static const char *fmt;						// = "Heater Control";
 
-	HeaterControl();
-	~HeaterControl(){}
+	HeaterController();
+	~HeaterController(){}
 	static void process();
 	static void setPercentagePwr(unsigned char percentage);		// Called by Temperature control to set required heater power
 	static void updatePowerPercentage();						// Sets power percentage based on existing power count

@@ -1,21 +1,22 @@
 
-#include "Arduino.h"
-#include "TempProbe.h"
+#include "TemperatureProbe.h"
 
-TempProbe::TempProbe (char type, int pin){
+#include "Arduino.h"
+
+TemperatureProbe::TemperatureProbe (char type, int pin){
 	this->type = type;
 	this->pin = pin;
 }
 
-char TempProbe::getType(){
+char TemperatureProbe::getType(){
 	return this->type;
 }
-double TempProbe::getTemperature() {
+double TemperatureProbe::getTemperature() {
 	return temperature;
 }
 
 #define TEMPAVGLEN 2
-void TempProbe::readProbe() {
+void TemperatureProbe::readProbe() {
 	double instTemp ;
 	for(int i = 0; i< TEMPAVGLEN;i++){
 			instTemp = (double)(((double)analogRead(this->pin)*1000.0)/1023.0);
@@ -23,6 +24,6 @@ void TempProbe::readProbe() {
 	}
 }
 
-void TempProbe::update() {
+void TemperatureProbe::update() {
 	this->readProbe();
 }

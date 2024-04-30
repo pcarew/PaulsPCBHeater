@@ -4,11 +4,11 @@
 #include "pos/pos.h"
 #include "Button.h"
 #include "Menu.h"
-#include "HeaterControl.h"
 #include "PCBHeaterTasks.h"
 #include "Ram.h"
 #include "Display.h"
-#include "TempMonitoring.h"
+#include "HeaterController.h"
+#include "TemperatureMonitoring.h"
 
 bool cancelled = false;
 volatile unsigned long time = 0;
@@ -52,7 +52,7 @@ ISR (PCINT0_vect) {			// D8 -> D13 PortB
 }
 
 ISR (PCINT1_vect) {
-	HeaterControl::checkACZeroCrossing();		// A0 -> A5
+	HeaterController::checkACZeroCrossing();		// A0 -> A5
 	PortCButton::buttonCheck(PINC,millis());
 }
 
@@ -68,8 +68,8 @@ Display myDisp = Display(0,0,255,255,255,255);
 DisplayText displayElement = DisplayText(NULL,&myDisp, 1 , 1, 2 );
 
 Ram ramApp;
-TempMonitoring temps;
-HeaterControl heater;
+TemperatureMonitoring temps;
+HeaterController heater;
 //Menu *menu = NULL;
 MenuItem myMenu[] = {
 		{"Temps",&temps,1,false},
@@ -87,7 +87,7 @@ void setup()
 	Serial.begin(115200);
 	Serial.println(F("Setup Started"));
 
-	myDisp.setup();
+//	myDisp.setup();
 
 	cnclButton = new CancelButton();
 	cnclButton->createButton(3);
@@ -95,7 +95,7 @@ void setup()
 //	int numberItems = sizeof(myMenu)/sizeof(MenuItem);
 //	menu = new Menu((MenuItem*)myMenu, numberItems, 5,6,4,myDisp,2,1); // PinA:5, PinB:6, PinSel:4, starting at Row 2, col 1
 
-	HeaterControl::setup();
+	HeaterController::setup();
 
 	PCBHeaterTasks::startup();
 
@@ -136,15 +136,15 @@ void loop()
 	displayElement.setCol(1);
 	displayElement.setRow(0);
 	sprintf(dispBuff, "H:%s A:%d",
-			HeaterControl::heaterEnabled?"On  ":"Off ",
-			(int) TempMonitoring::ambient.getTemperature()
+			HeaterController::heaterEnabled?"On  ":"Off ",
+			(int) TemperatureMonitoring::ambient.getTemperature()
 			);
 	displayElement.show();
 
 	displayElement.setRow(1);
 	sprintf(dispBuff, "B:%d   T:%d",
-			(int) TempMonitoring::brdBot.getTemperature(),
-			(int) TempMonitoring::brdTop.getTemperature()
+			(int) TemperatureMonitoring::brdBot.getTemperature(),
+			(int) TemperatureMonitoring::brdTop.getTemperature()
 			);
 	displayElement.show();
 

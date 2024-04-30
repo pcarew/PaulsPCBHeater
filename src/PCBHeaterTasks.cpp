@@ -8,11 +8,13 @@
 #include "arduino.h"
 #include "pos/pos.h"
 #include "PCBHeaterTasks.h"
-#include "HeaterControl.h"
-#include "TempMonitoring.h"
 
-IMPORT TempMonitoring temps;
-IMPORT HeaterControl *heater;
+#include "HeaterController.h"
+#include "TemperatureMonitoring.h"
+#include "TemperatureController.h"
+
+IMPORT TemperatureMonitoring temps;
+IMPORT HeaterController *heater;
 
 	//void (*TaskType)(volatile TCB *);
 #define TSKAVGCNT 2						// Averaged over 10 cycles
@@ -32,6 +34,8 @@ void PCBHeaterTasks::taskA(volatile TCB *tcb){
 		temps.update();
 //			endTime = millis();
 		heater->process();
+
+		TemperatureController::update();
 
 //			taskAvgTime = (taskAvgTime * (TSKAVGCNT-1) + (endTime - startTime)) / TSKAVGCNT;
 //			taskAvgTime = endTime - startTime;

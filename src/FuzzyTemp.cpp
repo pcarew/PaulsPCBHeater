@@ -1,53 +1,57 @@
+#include "FuzzyTemp.h"
+
 #include "Arduino.h"
 #include "FuzzyLogic.h"
-#include "FuzzyRPM.h"
+#include "FuzzyTemp.h"
 
-// RPM Input fuzzy sets
-#define TOOSLOW 0
-#define SOMEWHATSLOW 1
+// Controlled value Input fuzzy sets
+#define TOOLOW 0
+#define SOMEWHATLOW 1
 #define ABOUTRIGHT 2
-#define SOMEWHATFAST 3
-#define TOOFAST 4
+#define SOMEWHATHIGH 3
+#define TOOHIGH 4
 
 // PWM Output fuzzy sets
-#define SPEEDUP 0
-#define SPEEDUPSOME 1
+#define INCREASE 0
+#define INCREASESOME 1
 #define NOCHANGE 2
-#define SLOWDOWNSOME 3
-#define SLOWDOWN 4
+#define REDUCESOME 3
+#define REDUCE 4
 
-double errorPercentage(double actual,double desired) ;
-double getRateOfChange(double currentValue, double *prevValue);
+//double errorPercentage(double actual,double desired) ;
+//double getRateOfChange(double currentValue, double *prevValue);
 
-double prevErrPercent	 = 0.0;
+//double prevErrPercent	 = 0.0;
+//int fuzzyModel;
 
-int fuzzyModel;
+double FuzzyTemp::prevErrPercent	= 0.0;
+int FuzzyTemp::fuzzyModel			= FULLMODEL;
 
 InputFuzzySet minInSets[] = {
 			// L   T   R
-			{leftShoulder, {-150,-100,0}},		// Too Slow
-			{rightShoulder, {0, 100, 150}},		// Too Fast
+			{leftShoulder, {-150,-100,0}},		// Too Low
+			{rightShoulder, {0, 100, 150}},		// Too High
 		};
 InputFuzzySet inSets[] = {
 			// L   T   R
-			{leftShoulder, {-150,-100,-50}},		// Too Slow
-			{triangle, {-100, -50, 0}},				// Somewhat Slow
+			{leftShoulder, {-150,-100,-50}},		// Too Low
+			{triangle, {-100, -50, 0}},				// Somewhat Low
 			{triangle, { -20, 0, 20}},				// About Right
-			{triangle, {0, 50, 100}},				// Somewhat Fast
-			{rightShoulder, {50, 100, 150}},		// Too Fast
+			{triangle, {0, 50, 100}},				// Somewhat High
+			{rightShoulder, {50, 100, 150}},		// Too High
 		};
 OutputFuzzySet minOutSets[] = {
-			{triangleWeight, {0,25,50}},		// Speed Up
-			{triangleWeight, {-55, -25, 0}},	// Slow Down
+			{triangleWeight, {0,25,50}},		// Increase
+			{triangleWeight, {-55, -25, 0}},	// Reduce
 		};
 /*
 InputFuzzySet errorFzSets[] = {
 			// L   T   R
-			{leftShoulder, {-150,-100,-50}},		// Too Slow
-			{triangle, {-100, -50, 0}},				// Somewhat Slow
+			{leftShoulder, {-150,-100,-50}},		// Too Low
+			{triangle, {-100, -50, 0}},				// Somewhat Low
 			{triangle, { -50, 0, 50}},				// About Right
-			{triangle, {0, 50, 100}},				// Somewhat Fast
-			{rightShoulder, {50, 100, 150}},		// Too Fast
+			{triangle, {0, 50, 100}},				// Somewhat High
+			{rightShoulder, {50, 100, 150}},		// Too High
 		};
 InputFuzzySet DerrorDTFzSets[] = {
 			// L   T   R
@@ -67,60 +71,60 @@ InputFuzzySet *DerrorDTFzSets = errorFzSets;		// Defined using same ranges
 OutputFuzzySet outSets[] = {
 		/*
 		// 20% Max 		+20% -> -20%
-			{triangleWeight, {10,20,30}},		// Speed Up
-			{triangleWeight, {0, 10, 20}},		// Speed Up some
+			{triangleWeight, {10,20,30}},		// Increase
+			{triangleWeight, {0, 10, 20}},		// Increase some
 			{triangleWeight, { -10, 0, 10}},	// No Change
-			{triangleWeight, {-20, -10, 0}},	// Slow Down some
-			{triangleWeight, {-30, -20, -10}},	// Slow Down
+			{triangleWeight, {-20, -10, 0}},	// Reduce some
+			{triangleWeight, {-30, -20, -10}},	// Reduce
 		};
 		*/
 
 		// 50%Max
-			{triangleWeight, {25,50,75}},		// Speed Up
-			{triangleWeight, {0, 25, 50}},		// Speed Up some
+			{triangleWeight, {25,50,75}},		// Increase
+			{triangleWeight, {0, 25, 50}},		// Increase some
 			{triangleWeight, { -25, 0, 25}},	// No Change
-			{triangleWeight, {-50, -25, 0}},	// Slow Down some
-			{triangleWeight, {-75, -50, -25}},	// Slow Down
+			{triangleWeight, {-50, -25, 0}},	// Reduce some
+			{triangleWeight, {-75, -50, -25}},	// Reduce
 		};
 
 		/*
 		// 100% Max
-			{triangleWeight, {50,100,150}},		// Speed Up
-			{triangleWeight, {0, 50, 100}},		// Speed Up some
+			{triangleWeight, {50,100,150}},		// Increase
+			{triangleWeight, {0, 50, 100}},		// Increase some
 			{triangleWeight, { -50, 0, 50}},	// No Change
-			{triangleWeight, {-100, -50, 0}},	// Slow Down some
-			{triangleWeight, {-150, -100, -50}},	// Slow Down
+			{triangleWeight, {-100, -50, 0}},	// Reduce some
+			{triangleWeight, {-150, -100, -50}},	// Reduce
 		};
 		*/
 
 
-OutputFuzzySet *rpmChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
-//				TOOSLOW 			SOMEWHATSLOW 		ABOUTRIGHT 				SOMEWHATFAST		TOOFAST
+OutputFuzzySet *valueChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
+//				TOOLOW 			SOMEWHATLOW 		ABOUTRIGHT 				SOMEWHATHIGH		TOOHIGH
 		{ // Quickly Converging
-				&outSets[NOCHANGE], &outSets[SLOWDOWN], &outSets[SLOWDOWNSOME], &outSets[SPEEDUP], &outSets[NOCHANGE],
+				&outSets[NOCHANGE], &outSets[REDUCE], &outSets[REDUCESOME], &outSets[INCREASE], &outSets[NOCHANGE],
 		},
 		{ // Slowly Converging
-				&outSets[SPEEDUP], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[SLOWDOWN],
+				&outSets[INCREASE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[REDUCE],
 		},
 		{ // Zero Convergence
-				&outSets[SPEEDUP], &outSets[SPEEDUPSOME], &outSets[NOCHANGE], &outSets[SLOWDOWNSOME], &outSets[SLOWDOWN],
+				&outSets[INCREASE], &outSets[INCREASESOME], &outSets[NOCHANGE], &outSets[REDUCESOME], &outSets[REDUCE],
 		},
 		{ // Slowly Diverging
-				&outSets[SPEEDUP], &outSets[SPEEDUPSOME], &outSets[SLOWDOWNSOME], &outSets[SLOWDOWNSOME], &outSets[SLOWDOWN],
+				&outSets[INCREASE], &outSets[INCREASESOME], &outSets[REDUCESOME], &outSets[REDUCESOME], &outSets[REDUCE],
 		},
 		{ // Quickly Diverging
-				&outSets[SPEEDUP], &outSets[SPEEDUP], &outSets[SLOWDOWNSOME], &outSets[SLOWDOWN], &outSets[SLOWDOWN],
+				&outSets[INCREASE], &outSets[INCREASE], &outSets[REDUCESOME], &outSets[REDUCE], &outSets[REDUCE],
 		},
 };
 
-double getRpmChangePercent(double actualRpm, double desiredRpm){
+double FuzzyTemp::getValueChangePercent(double actualValue, double desiredValue){
 
 	double weight					= 0.0;
 	double station					= 0.0;
 
-	double errPercent				= errorPercentage(actualRpm, desiredRpm);
+	double errPercent				= errorPercentage(actualValue, desiredValue);
 	double dErrordt 				= getRateOfChange(errPercent, &prevErrPercent);
-//	double dErrordt 				= getRateOfChange(actualRpm, &prevErrPercent);
+//	double dErrordt 				= getRateOfChange(actualValue, &prevErrPercent);
 
 
 	double totalWeight				= 0.0;
@@ -131,8 +135,8 @@ double getRpmChangePercent(double actualRpm, double desiredRpm){
 	case MINIMALMODEL:
 	{
 		// Run the following rules
-			//"If speed is Too slow then increase PWM to the speed controller to Speed up", // name
-			//"If speed is Too fast then decrease PWM to the speed controller to Slow down"
+			//"If Too low then increase PWM to the controller to Increase",
+			//"If Too fast then decrease PWM to the controller to Reduce"
 		int ruleList[] = {0,4};
 		//for(unsigned int rule=0;rule < sizeof(ruleList)/sizeof(int);rule++){
 			//weight = runRuleSingular(errPercent, &inSets[ruleList[rule]],&outSets[ruleList[rule]],&station);
@@ -147,11 +151,11 @@ double getRpmChangePercent(double actualRpm, double desiredRpm){
 	}
 	case JUSTERRORMODEL:
 		// Run the following rules
-			//"If speed is Too slow then increase PWM to the speed controller to Speed up", // name
-			//"If speed is Too fast then decrease PWM to the speed controller to Slow down"
-			//"If speed is About right then Not much change needed in PWM to the speed controller"
-			//"If speed is Somewhat Fast then Slow Down Some in PWM to the speed controller"
-			//"If speed is Somewhat Slow then Speed Up Some in PWM to the speed controller"
+			//"If Too slow then increase PWM to the controller to Increase", // name
+			//"If Too fast then decrease PWM to the controller to Reduce"
+			//"If About right then Not much change needed in PWM to the controller"
+			//"If Somewhat High then Reduce Some in PWM to the controller"
+			//"If Somewhat Low then Increase Some in PWM to the controller"
 		for(unsigned int ruleNo=0;ruleNo < sizeof(outSets)/sizeof(OutputFuzzySet);ruleNo++){
 			weight = runRuleSingular(errPercent, &inSets[ruleNo],&outSets[ruleNo],&station);
 			totalWeight			+= weight;
@@ -163,7 +167,7 @@ double getRpmChangePercent(double actualRpm, double desiredRpm){
 			for(unsigned int errorFzId=0;errorFzId < NOERRORFUZZYSETS;errorFzId++){
 				InputFuzzySet *DerrorDtFzSet	= &DerrorDTFzSets[DerrorDtFzId];
 				InputFuzzySet *errorFzSet		= &errorFzSets[errorFzId];
-				OutputFuzzySet *outFzSet		= rpmChange[DerrorDtFzId][errorFzId];
+				OutputFuzzySet *outFzSet		= valueChange[DerrorDtFzId][errorFzId];
 
 				weight = runRuleTwin(errPercent, errorFzSet, dErrordt, DerrorDtFzSet ,outFzSet, &station);
 				totalWeight			+= weight;
@@ -181,12 +185,12 @@ double getRpmChangePercent(double actualRpm, double desiredRpm){
 	return change;
 }
 
-double errorPercentage(double actual,double desired) {
+double FuzzyTemp::errorPercentage(double actual,double desired) {
 	if(desired == 0.0) return 0.0;
 	else return (actual/desired)*100.0 - 100.0;		// Turn measured speed into a +/- %
 }
 
-double getRateOfChange(double currentValue, double *prevValue){			// per period
+double FuzzyTemp::getRateOfChange(double currentValue, double *prevValue){			// per period
 	double rateOfChange = currentValue - *prevValue;
 	/*
 	double rateOfChange = 0.0;
