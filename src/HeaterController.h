@@ -2,7 +2,7 @@
 #define HeaterControl_H
 #include "Menu.h"
 
-#define FRAMESIZE ((int)15)
+#define FRAMESIZE ((int)60)
 #define HTR_PIN   7				// D7
 #define Z_PIN	3		//A3 PCMSK1 Bit#3 in PortC
 #define PCMSK_Z (1<<Z_PIN)				// zPin

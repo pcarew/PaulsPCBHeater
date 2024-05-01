@@ -60,7 +60,11 @@ void HeaterController::heaterEnable(bool enable){						// Enable/disable heater 
 }
 
 void HeaterController::setPercentagePwr(unsigned char percentage){
-	HeaterController::powerPercentage = percentage;
+	if(percentage > 100)
+		HeaterController::powerPercentage = 100;
+	else
+		HeaterController::powerPercentage = percentage;
+
 	HeaterController::updatePowerCounter();
 }
 void HeaterController::updatePowerCounter(){
@@ -71,6 +75,7 @@ void HeaterController::setRawPwr(unsigned char count){					// Called to set requ
 		HeaterController::powerCounter = FRAMESIZE;
 	}else
 		HeaterController::powerCounter = count;
+
 	HeaterController::updatePowerPercentage();
 }
 

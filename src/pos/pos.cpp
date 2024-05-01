@@ -206,14 +206,15 @@ BOOL start_pos(BOOL system)
 					// Start task swapping by switching stacks
 	//Serial.print("Starting First Task "); Serial.print(currt->tid); Serial.print("\r\n");
 	if(system){
-					// This thread becomes the system task
+					// This thread becomes the system task. System task created above
 			Serial.print(F("Leaving System Thread &systemTcb-sp: ")); Serial.print((unsigned)&systemTcb->sp,HEX);
 			Serial.print(F(" systemTcb->sp:")); Serial.print((unsigned)systemTcb->sp,HEX);
 			Serial.print(F(" csp:")); Serial.print((unsigned)csp,HEX);
 			Serial.print(F(" *csp:")); Serial.println((unsigned)*csp,HEX);
+			delay(50); //AJPC
 		result = swap_s(&(systemTcb->sp),csp);		/* Swap stacks of tasks.	*/
 
-			Serial.print(F("Result for starting POS with system task "));				/* We should never get here!	*/
+			Serial.print(F("Result for starting POS with system task "));
 			Serial.println((unsigned)result);
 	}else{
 			Serial.print("Leaving System Thread &sys_sp: "); Serial.print((unsigned)&sys_sp,HEX);

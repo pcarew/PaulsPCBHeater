@@ -135,14 +135,14 @@ void loop()
 	displayElement.setFg(255, 0, 0);
 	displayElement.setCol(1);
 	displayElement.setRow(0);
-	sprintf(dispBuff, "H:%s A:%d",
-			HeaterController::heaterEnabled?"On  ":"Off ",
+	sprintf(dispBuff, "H:%s A:%3d",
+			HeaterController::heaterEnabled?" On":"Off",
 			(int) TemperatureMonitoring::ambient.getTemperature()
 			);
 	displayElement.show();
 
 	displayElement.setRow(1);
-	sprintf(dispBuff, "B:%d   T:%d",
+	sprintf(dispBuff, "B:%3d T:%3d",
 			(int) TemperatureMonitoring::brdBot.getTemperature(),
 			(int) TemperatureMonitoring::brdTop.getTemperature()
 			);

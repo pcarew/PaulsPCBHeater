@@ -11,7 +11,7 @@
 #include "Extensions.h"
 #include "menu.h"
 
-#define TC_MEASUREMENT_PERIOD 1000
+#define TC_MEASUREMENT_PERIOD 250
 
 class TemperatureController: Implements MenuAction {
 	static unsigned long periodEnd;
@@ -19,7 +19,7 @@ public:
 	static int desiredTemp;						// Target
 	static int desiredSlope;					// Speed to target  deg/minute
 
-	static unsigned char valueBeingChanged;
+	static double valueBeingChanged;
 	static double prevTempReading;
 
 //	TemperatureController();

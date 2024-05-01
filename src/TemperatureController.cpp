@@ -11,9 +11,9 @@
 #include "HeaterController.h"
 
 unsigned long TemperatureController::periodEnd	= 0;
-int TemperatureController::desiredTemp			= 0;					// Target
+int TemperatureController::desiredTemp			= 150;					// Target
 int TemperatureController::desiredSlope			= 0;					// Speed to target  deg/minute
-unsigned char TemperatureController::valueBeingChanged	= 0;
+double TemperatureController::valueBeingChanged	= 0;
 double TemperatureController::prevTempReading	= 0;
 
 /*
@@ -39,13 +39,7 @@ void TemperatureController::update(){				// Called from Tasking
 		periodEnd = timeNow + TC_MEASUREMENT_PERIOD;
 		valueDetermination();					// Will either use slope or target temperature
 		updateHeater();
-//	showRpm(timeNow);
-//	showRevs(timeNow);
-//	showLed();
-//	go(timeNow);
-//	speedIn(timeNow);
-
-	 // Get current Bottom Temp
+//		Serial.println(F("--------"));
 	}
 
 }
@@ -53,8 +47,10 @@ void TemperatureController::update(){				// Called from Tasking
 void TemperatureController::valueDetermination() {
 		double tempReading = TemperatureMonitoring::brdBot.getTemperature();
 //		double tempErrPercent = (TemperatureController::desiredTemp - tempReading) / TemperatureController::desiredTemp;
-			valueBeingChanged = (unsigned char) FuzzyTemp::getValueChangePercent(tempReading,(double)TemperatureController::desiredTemp);
-			/* AJPC Ignore using slope while in development
+		valueBeingChanged = FuzzyTemp::getValueChangePercent(tempReading,(double)TemperatureController::desiredTemp) ;
+			Serial.print(F("T: "));Serial.print(tempReading);Serial.print(F(", DT:"));Serial.print(TemperatureController::desiredTemp);Serial.print(F(", V:"));Serial.println(valueBeingChanged);
+
+		/* AJPC Ignore using slope while in development
 		if(abs(tempErrPercent) < 10.0){	// Use Target Temp
 			valueBeingChanged = (unsigned char) FuzzyTemp::getValueChangePercent(tempReading,(double)TemperatureController::desiredTemp);
 		}else{							// Use Slope
@@ -65,7 +61,8 @@ void TemperatureController::valueDetermination() {
 		prevTempReading = tempReading;
 }
 void TemperatureController::updateHeater(){
-	HeaterController::setPercentagePwr(valueBeingChanged);									// Called by Temperature control to set required heater power
+	HeaterController::setPercentagePwr( (valueBeingChanged<0?(unsigned char)0:(unsigned char) valueBeingChanged) );				// Heater cant accept negative values
+
 
 	/*
 		if(pwm<MINIMUMPWM)pwm = MINIMUMPWM;

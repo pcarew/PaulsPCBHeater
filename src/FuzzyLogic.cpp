@@ -12,12 +12,14 @@ double predicate(double input, InputFuzzySet *inSet){
 		FuzzySetData *inSetData				= NULL;
 		inSetData							= &inSet->setData;
 		getFuzzyValue						= inSet->fuzzify;
-		double fuzzyValue					= getFuzzyValue(input, inSetData );
+		double fuzzyValue					= getFuzzyValue(input, inSetData );				// Through pointer to a function
 	return fuzzyValue;
 }
 double runRuleSingular(double input, InputFuzzySet *inSet,OutputFuzzySet *outSet,double *station){											// if 'A' then 'Consequent'
 		double fuzzyValue					= predicate(input, inSet);
+//		Serial.print("Fv:");Serial.print(fuzzyValue);
 		double consequent					= getConsequentValue(fuzzyValue,outSet, station);
+//		Serial.print(" Fc:");Serial.println(consequent);
 		return consequent;
 }
 double runRuleTwin(double inputA, InputFuzzySet *inSetA, double inputB, InputFuzzySet *inSetB ,OutputFuzzySet *outSet,double *station){		// if 'A' and 'B' the 'Consequent'
@@ -26,7 +28,7 @@ double runRuleTwin(double inputA, InputFuzzySet *inSetA, double inputB, InputFuz
 		double fuzzyValueB					= predicate(inputB, inSetB);
 //		Serial.print("FB:");Serial.print(fuzzyValueB);
 		double fuzzyValue					= min(fuzzyValueA, fuzzyValueB);					// fvA & fvB
-//		Serial.print("Fz:");Serial.print(fuzzyValue);
+//		Serial.print("Fz:");Serial.println(fuzzyValue);
 		double consequent					= getConsequentValue(fuzzyValue,outSet, station);
 		return consequent;
 }
@@ -37,7 +39,7 @@ double getConsequentValue(double fuzzyValue,OutputFuzzySet *outSet,double *stati
 		outSetData								= &outSet->setData;
 		double weight;
 
-		weight									= getWeightedValues(fuzzyValue, outSetData, station);
+		weight									= getWeightedValues(fuzzyValue, outSetData, station);		// Called via a function pointer
 		return weight;
 }
 
