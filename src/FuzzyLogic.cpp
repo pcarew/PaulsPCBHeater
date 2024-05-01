@@ -99,7 +99,7 @@ double triangleWeight(double fuzzyValue, FuzzySetData *setData, double *fuzzySta
 	*fuzzyStation = setData->topCorner;
 	//Serial.print("\nTriangleWt:");Serial.print("RC:"); Serial.print(setData->rightCorner);Serial.print("TC:"); Serial.print(setData->topCorner);Serial.print("FV:");Serial.print(fuzzyValue);
 	//Serial.print("Wt:");Serial.print((setData->rightCorner - setData->topCorner) * fuzzyValue);Serial.print("\n");
-	return (setData->rightCorner - setData->topCorner) * fuzzyValue;
+	return (setData->rightCorner - setData->leftCorner) * fuzzyValue/2;
 }
 
 /*
