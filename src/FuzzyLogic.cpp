@@ -90,16 +90,20 @@ double leftShoulder(double crispValue, FuzzySetData *setData){
 
 /*
  * 1.0    T
- *       / \
- *      /   \
- * 0.0 L.....R
+ *       / \                   ---      ^
+ *      /   \                 /   \     | Fuzzy value height
+ * 0.0 L.....R           0.0 L.....R    v
  *
  */
 double triangleWeight(double fuzzyValue, FuzzySetData *setData, double *fuzzyStation){
 	*fuzzyStation = setData->topCorner;
 	//Serial.print("\nTriangleWt:");Serial.print("RC:"); Serial.print(setData->rightCorner);Serial.print("TC:"); Serial.print(setData->topCorner);Serial.print("FV:");Serial.print(fuzzyValue);
 	//Serial.print("Wt:");Serial.print((setData->rightCorner - setData->topCorner) * fuzzyValue);Serial.print("\n");
-	return (setData->rightCorner - setData->leftCorner) * fuzzyValue/2;
+	double base = (setData->rightCorner - setData->leftCorner) ;
+	double trapizoidArea	=  (base*(2-fuzzyValue)*fuzzyValue )/ 2;		// area = (b+a)h/2    b is base, 'a' is calculated as base*(1-fuzzyValue)
+//	double triangleArea	= base * fuzzyValue/2;								// Small triangle height based upon fuzzyValue.
+//	Serial.print(F("TrapA:"));Serial.print(trapizoidArea);Serial.print(F(" TriA:"));Serial.println(triangleArea);
+	return trapizoidArea;
 }
 
 /*

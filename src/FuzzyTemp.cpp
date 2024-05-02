@@ -26,7 +26,7 @@
 //int fuzzyModel;
 
 double FuzzyTemp::prevErrPercent	= 0.0;
-int FuzzyTemp::fuzzyModel			= JUSTERRORMODEL; //FULLMODEL;		// MINIMALMODEL JUSTERRORMODEL  FULLMODEL
+int FuzzyTemp::fuzzyModel			= FULLMODEL;		// MINIMALMODEL JUSTERRORMODEL  FULLMODEL
 
 InputFuzzySet minInSets[] = {
 			// L   T   R
@@ -49,7 +49,7 @@ InputFuzzySet inSets[] = {
 			// L   T   R
 			{leftShoulder, {-150,-100,-50}},		// Too Low
 			{triangle, {-100, -50, 0}},				// Somewhat Low
-			{triangle, { -20, 0, 20}},				// About Right
+			{triangle, { -5, 0, 5}},				// About Right
 			{triangle, {0, 50, 100}},				// Somewhat High
 			{rightShoulder, {50, 100, 150}},		// Too High
 		};
@@ -111,10 +111,12 @@ InputFuzzySet *DerrorDTFzSets = errorFzSets;		// Defined using same ranges
 OutputFuzzySet *valueChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
 //				TOOLOW 			SOMEWHATLOW 		ABOUTRIGHT 				SOMEWHATHIGH		TOOHIGH
 		{ // Quickly Converging
-				&outSets[NOCHANGE], &outSets[REDUCE], &outSets[REDUCESOME], &outSets[INCREASE], &outSets[NOCHANGE],
+//				&outSets[NOCHANGE], &outSets[REDUCE], &outSets[REDUCESOME], &outSets[INCREASE], &outSets[NOCHANGE],
+				&outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[INCREASESOME], &outSets[NOCHANGE], &outSets[NOCHANGE],
 		},
 		{ // Slowly Converging
-				&outSets[INCREASE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[REDUCE],
+//				&outSets[INCREASE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[REDUCE],
+				&outSets[INCREASE], &outSets[INCREASESOME], &outSets[INCREASESOME], &outSets[NOCHANGE], &outSets[REDUCE],
 		},
 		{ // Zero Convergence
 //				&outSets[INCREASE], &outSets[INCREASESOME], &outSets[NOCHANGE], &outSets[REDUCESOME], &outSets[REDUCE],
@@ -122,7 +124,7 @@ OutputFuzzySet *valueChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
 		},
 		{ // Slowly Diverging
 //				&outSets[INCREASE], &outSets[INCREASESOME], &outSets[REDUCESOME], &outSets[REDUCESOME], &outSets[REDUCE],
-				&outSets[INCREASE], &outSets[INCREASEMORE], &outSets[REDUCESOME], &outSets[REDUCESOME], &outSets[REDUCE],
+				&outSets[INCREASE], &outSets[INCREASE], &outSets[REDUCESOME], &outSets[REDUCESOME], &outSets[REDUCE],
 		},
 		{ // Quickly Diverging
 				&outSets[INCREASE], &outSets[INCREASE], &outSets[REDUCESOME], &outSets[REDUCE], &outSets[REDUCE],
