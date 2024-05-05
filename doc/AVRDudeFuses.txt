@@ -1,7 +1,13 @@
-To Return Arduino Target to normal Arduino program loading, after being used with DWire, the fuses need to be reset.
-Using the DebugWire intermediate system (operates as a stk500 v1 programmer), issue the following command line:
+To Return Arduino Target to normal Arduino program loading, after being used with DWire ( https://github.com/felias-fogg/dw-link/blob/master/docs/manual.md ), the fuses need to be reset.
+Using the DebugWire programmer Arduino (operates as a stk500 v1 programmer), issue the following command line:
+
 avrdude  -c stk500v1 -p m328p -PCOM3 -b 19200 -U hfuse:w:0xD9:m
 
 These next two commands read the status of the target Arduino:
 avrdude -c stk500v1 -p m328p -P COM3 -b 19200 -v
 avrdude  -c stk500v1 -p m328p -PCOM3 -U hfuse:r:-:h
+
+
+After resetting the fuses, the Arduino Bootloader must be re-installed in the target.
+Follow this guide: https://support.arduino.cc/hc/en-us/articles/4841602539164-Burn-the-bootloader-on-UNO-Mega-and-classic-Nano-using-another-Arduino
+Use the Boatloader programmer cable to cable between Programmer abd target boards
