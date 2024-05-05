@@ -12,12 +12,12 @@
 #define TOOHIGH 4
 
 // PWM Output fuzzy sets
-#define INCREASE 0
-#define INCREASEMORE 1
-#define INCREASESOME 2
+#define FULLHEAT 0
+#define MOREHEAT 1
+#define SOMEHEAT 2
 #define NOCHANGE 3
-#define REDUCESOME 4
-#define REDUCE 5
+#define LESSHEAT 4
+#define NOHEAT	 5
 
 //double errorPercentage(double actual,double desired) ;
 //double getRateOfChange(double currentValue, double *prevValue);
@@ -35,23 +35,23 @@ InputFuzzySet minInSets[] = {
 		};
 	/* Max 25%
 OutputFuzzySet minOutSets[] = { // Max 25%
-			{triangleWeight, {0,25,50}},		// Increase
-			{triangleWeight, {-55, -25, 0}},	// Reduce
+			{triangleWeight, {0,25,50}},		// FullHeat
+			{triangleWeight, {-55, -25, 0}},	// NoHeat
 		};
 		*/
 
 OutputFuzzySet minOutSets[] = {	// Max 100%
-			{triangleWeight, {0,100,150}},		// Increase
-			{triangleWeight, {-150, -100, 0}},	// Reduce
+			{triangleWeight, {0,100,150}},		// FullHeat
+			{triangleWeight, {-150, -100, 0}},	// NoHeat
 		};
 
 InputFuzzySet inSets[] = {
 			// L   T   R
-			{leftShoulder, {-150,-100,-50}},		// Too Low
-			{triangle, {-100, -50, 0}},				// Somewhat Low
-			{triangle, { -5, 0, 5}},				// About Right
-			{triangle, {0, 50, 100}},				// Somewhat High
-			{rightShoulder, {50, 100, 150}},		// Too High
+			{leftShoulder, {-150,-100,-50}},		// Too Low			/ Quickly Converging (Improving fast)
+			{triangle, {-100, -50, 0}},				// Somewhat Low		/ Slowly Converging	(Slow improvement)
+			{triangle, { -2.5, 0, 2.5}},				// About Right		/ Zero Convergence	( Not moving)
+			{triangle, {0, 50, 100}},				// Somewhat High	/ Slowly Diverging	( Getting worse)
+			{rightShoulder, {50, 100, 150}},		// Too High			/ Quickly Diverging	(Quickly getting worse)
 		};
 /*
 InputFuzzySet errorFzSets[] = {
@@ -75,31 +75,31 @@ InputFuzzySet DerrorDTFzSets[] = {
 OutputFuzzySet outSets[] = {
 		/*
 		// 20% Max 		+20% -> -20%
-			{triangleWeight, {10,20,30}},		// Increase
-			{triangleWeight, {0, 10, 20}},		// Increase some
+			{triangleWeight, {10,20,30}},		// FullHeat
+			{triangleWeight, {0, 10, 20}},		// SomeHeat
 			{triangleWeight, { -10, 0, 10}},	// No Change
-			{triangleWeight, {-20, -10, 0}},	// Reduce some
-			{triangleWeight, {-30, -20, -10}},	// Reduce
+			{triangleWeight, {-20, -10, 0}},	// LessHeat
+			{triangleWeight, {-30, -20, -10}},	// NoHeat
 		};
 		*/
 
 		/*
 		// 50%Max
-			{triangleWeight, {25,50,75}},		// Increase
-			{triangleWeight, {0, 25, 50}},		// Increase some
+			{triangleWeight, {25,50,75}},		// FullHeat
+			{triangleWeight, {0, 25, 50}},		// SomeHeat
 			{triangleWeight, { -25, 0, 25}},	// No Change
-			{triangleWeight, {-50, -25, 0}},	// Reduce some
-			{triangleWeight, {-75, -50, -25}},	// Reduce
+			{triangleWeight, {-50, -25, 0}},	// LessHeat
+			{triangleWeight, {-75, -50, -25}},	// NoHeat
 		};
 
 		*/
 		// 100% Max
-			{triangleWeight, {50,100,150}},		// Increase
-			{triangleWeight, {50,75,100}},		// Increase more
-			{triangleWeight, {0, 50, 100}},		// Increase some
-			{triangleWeight, { -50, 0, 50}},	// No Change
-			{triangleWeight, {-100, -50, 0}},	// Reduce some
-			{triangleWeight, {-150, -100, -50}},	// Reduce
+			{triangleWeight, {50,100,150}},		// FullHeat
+			{triangleWeight, {50,75,100}},		// More Heat
+			{triangleWeight, {0, 50, 100}},		// SomeHeat
+			{triangleWeight, { -25, 0, 25}},	// No Change
+			{triangleWeight, {-100, -50, 0}},	// LessHeat
+			{triangleWeight, {-150, -100, -50}},	// NoHeat
 		};
 
 InputFuzzySet *errorFzSets = inSets;				// Defined using same ranges
@@ -111,23 +111,23 @@ InputFuzzySet *DerrorDTFzSets = errorFzSets;		// Defined using same ranges
 OutputFuzzySet *valueChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
 //				TOOLOW 			SOMEWHATLOW 		ABOUTRIGHT 				SOMEWHATHIGH		TOOHIGH
 		{ // Quickly Converging
-//				&outSets[NOCHANGE], &outSets[REDUCE], &outSets[REDUCESOME], &outSets[INCREASE], &outSets[NOCHANGE],
-				&outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[INCREASESOME], &outSets[NOCHANGE], &outSets[NOCHANGE],
+//				&outSets[NOCHANGE], &outSets[NOHEAT], &outSets[LESSHEAT], &outSets[FULLHEAT], &outSets[NOCHANGE],
+				&outSets[SOMEHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE],
 		},
 		{ // Slowly Converging
-//				&outSets[INCREASE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[REDUCE],
-				&outSets[INCREASE], &outSets[INCREASESOME], &outSets[INCREASESOME], &outSets[NOCHANGE], &outSets[REDUCE],
+//				&outSets[FULLHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
+				&outSets[FULLHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
 		},
 		{ // Zero Convergence
-//				&outSets[INCREASE], &outSets[INCREASESOME], &outSets[NOCHANGE], &outSets[REDUCESOME], &outSets[REDUCE],
-				&outSets[INCREASE], &outSets[INCREASEMORE], &outSets[NOCHANGE], &outSets[REDUCESOME], &outSets[REDUCE],
+//				&outSets[FULLHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[LESSHEAT], &outSets[NOHEAT],
+				&outSets[FULLHEAT], &outSets[MOREHEAT], &outSets[NOCHANGE], &outSets[LESSHEAT], &outSets[NOHEAT],
 		},
 		{ // Slowly Diverging
-//				&outSets[INCREASE], &outSets[INCREASESOME], &outSets[REDUCESOME], &outSets[REDUCESOME], &outSets[REDUCE],
-				&outSets[INCREASE], &outSets[INCREASE], &outSets[REDUCESOME], &outSets[REDUCESOME], &outSets[REDUCE],
+//				&outSets[FULLHEAT], &outSets[SOMEHEAT], &outSets[LESSHEAT], &outSets[LESSHEAT], &outSets[NOHEAT],
+				&outSets[FULLHEAT], &outSets[MOREHEAT], &outSets[SOMEHEAT], &outSets[LESSHEAT], &outSets[NOHEAT],
 		},
 		{ // Quickly Diverging
-				&outSets[INCREASE], &outSets[INCREASE], &outSets[REDUCESOME], &outSets[REDUCE], &outSets[REDUCE],
+				&outSets[FULLHEAT], &outSets[FULLHEAT], &outSets[MOREHEAT], &outSets[NOHEAT], &outSets[NOHEAT],
 		},
 };
 
@@ -150,8 +150,8 @@ double FuzzyTemp::getValueChangePercent(double actualValue, double desiredValue)
 	case MINIMALMODEL:
 	{
 		// Run the following rules
-			//"If Too low then increase PWM to the controller to Increase",
-			//"If Too fast then decrease PWM to the controller to Reduce"
+			//"If Too low then increase PWM to the controller to FullHeat",
+			//"If Too fast then decrease PWM to the controller to NoHeat"
 		// ** As there is only 1 Output membership function on either side of zero, the consequent will be the 'staion' value of the appropriate side **
 
 //		int ruleList[] = {0,4};
@@ -169,11 +169,11 @@ double FuzzyTemp::getValueChangePercent(double actualValue, double desiredValue)
 	}
 	case JUSTERRORMODEL:
 		// Run the following rules
-			//"If Too slow then increase PWM to the controller to Increase", // name
-			//"If Too fast then decrease PWM to the controller to Reduce"
+			//"If Too slow then increase PWM to the controller to FullHeat", // name
+			//"If Too fast then decrease PWM to the controller to NoHeat"
 			//"If About right then Not much change needed in PWM to the controller"
-			//"If Somewhat High then Reduce Some in PWM to the controller"
-			//"If Somewhat Low then Increase Some in PWM to the controller"
+			//"If Somewhat High then LessHeat in PWM to the controller"
+			//"If Somewhat Low then SomeHeat in PWM to the controller"
 //		for(unsigned int ruleNo=0;ruleNo < sizeof(outSets)/sizeof(OutputFuzzySet);ruleNo++){
 		for(unsigned int ruleNo=0;ruleNo < sizeof(inSets)/sizeof(InputFuzzySet);ruleNo++){
 			weight = runRuleSingular(errPercent, &inSets[ruleNo],&outSets[ruleNo],&station);
