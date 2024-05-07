@@ -10,14 +10,8 @@
 #include "HeaterController.h"
 #include "TemperatureMonitoring.h"
 #include "ProfileController.h"
+#include "SystemData.h"
 
-bool cancelled = false;
-volatile unsigned long time = 0;
-unsigned long nextDisplayTime = 0;
-
-
-//DisplayText *welcome;
-//DisplayText *flash;
 
 class CancelButton : Implements ButtonAction{
 private:
@@ -27,7 +21,6 @@ public:
 	CancelButton(){}
 	void createButton(int id){
 		if(id>= 0 && id < 8){
-//			Serial.println(F("Creating PortD Button"));
 			new PortDButton(id , this, id, 5);
 			/*
 		}else if(id >7 && id < 14){
@@ -58,33 +51,22 @@ ISR (PCINT1_vect) {
 }
 
 ISR (PCINT2_vect) {			// D0 -> D7 PortD
-//		Serial.print(F("STID:"));Serial.println(currt->tid);
 	PortDButton::buttonCheck(PIND,millis());
-//		Serial.print(F("FTID:"));Serial.println(currt->tid);
 }
 
 
-char dispBuff[27];
-Display systemDisplay = Display(0,0,255,255,255,255);
-DisplayText displayElement = DisplayText(NULL,&systemDisplay, 1 , 1, 2 );
-
-/* System Components */
+/* System Support Components */
 Ram ramApp;
-TemperatureMonitoring tempMonitor;
-HeaterController heaterController;
-ProfileController profileController;
 
 //Menu *menu = NULL;
 MenuItem mainMenuItems[] = {
-		{"Temps",&tempMonitor,1,false},
-		{"Unused SRam",&ramApp,2,false},
-		{"Heater",&heaterController,3,false},
-		{"ProCont",&profileController,4,false}
+		{"Unused SRam",&ramApp,SystemId+1,false},
+		{"Temps",&tempMonitor,TempMonId,false},
+		{"Heater",&heaterController,HeaterConrolId,false},
+		{"ProCont",&profileController,ProfileControlId,false}
 };
 #define	NUMBERITEMS ( sizeof(mainMenuItems)/sizeof(MenuItem))
 Menu mainMenu = Menu( (MenuItem*)mainMenuItems, NUMBERITEMS, 5,6,4,&systemDisplay,2,1); // PinA:5, PinB:6, PinSel:4, starting at Row 2, col 1
-
-//SDFileManagement *sdManager;
 
 void setup()
 {
@@ -96,9 +78,6 @@ void setup()
 
 	cnclButton = new CancelButton();
 	cnclButton->createButton(3);
-
-//	int numberItems = sizeof(myMenu)/sizeof(MenuItem);
-//	menu = new Menu((MenuItem*)myMenu, numberItems, 5,6,4,myDisp,2,1); // PinA:5, PinB:6, PinSel:4, starting at Row 2, col 1
 
 	HeaterController::setup();
 
@@ -153,15 +132,6 @@ void loop()
 			);
 	displayElement.show();
 
-	/*
-	if(cancelled){
-	  	Serial.print(F("Button Level:"));
-	  	Serial.print(cnclButton->btLevel,HEX);
-	  	Serial.print(F(" Param:"));
-	  	Serial.println(cnclButton->btParam);
-	  	cancelled = false;
-	}
-	*/
 //	chack_all_tcb();
 //			endTime = millis();
 //			threadAvgTime = (threadAvgTime * (TSKAVGCNT-1) + (endTime - startTime)) / TSKAVGCNT;
