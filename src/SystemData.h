@@ -13,6 +13,7 @@
 #include "ProfileController.h"
 #include "HeaterController.h"
 #include "Display.h"
+#include "Ram.h"
 
 #define SystemId			0
 #define TempMonId			10
@@ -32,4 +33,5 @@ IMPORT TemperatureMonitoring tempMonitor;
 IMPORT HeaterController heaterController;
 IMPORT ProfileController profileController;
 
+IMPORT Ram ramApp;
 #endif /* SYSTEMDATA_H_ */

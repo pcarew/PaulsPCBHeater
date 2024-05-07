@@ -55,8 +55,6 @@ ISR (PCINT2_vect) {			// D0 -> D7 PortD
 }
 
 
-/* System Support Components */
-Ram ramApp;
 
 //Menu *menu = NULL;
 MenuItem mainMenuItems[] = {

@@ -19,3 +19,5 @@ DisplayText displayElement = DisplayText(NULL,&systemDisplay, 1 , 1, 2 );
 TemperatureMonitoring tempMonitor;
 HeaterController heaterController;
 ProfileController profileController;
+
+Ram ramApp;
