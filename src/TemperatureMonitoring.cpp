@@ -7,7 +7,7 @@
 #include "Ram.h"		// AJPC
 #include "TemperatureProbe.h"
 
-IMPORT Display myDisp;
+IMPORT Display systemDisplay;
 IMPORT DisplayText displayElement;
 IMPORT char dispBuff[];
 
@@ -35,7 +35,7 @@ void TemperatureMonitoring::menuAction(int param) {
 
 	displayElement.setText(dispBuff);
 
-	myDisp.tftScreen.background(0,255,0);
+	systemDisplay.tftScreen.background(0,255,0);
 	displayElement.setText(dispBuff);
 	displayElement.setBg(0, 255, 0);
 	displayElement.setFg(255, 0, 0);

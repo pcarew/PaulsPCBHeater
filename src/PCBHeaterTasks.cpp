@@ -13,8 +13,8 @@
 #include "TemperatureMonitoring.h"
 #include "TemperatureController.h"
 
-IMPORT TemperatureMonitoring temps;
-IMPORT HeaterController *heater;
+IMPORT TemperatureMonitoring tempMonitor;
+IMPORT HeaterController *heaterController;
 
 	//void (*TaskType)(volatile TCB *);
 #define TSKAVGCNT 2						// Averaged over 10 cycles
@@ -31,9 +31,9 @@ void PCBHeaterTasks::taskA(volatile TCB *tcb){
 		taskASwitches++;
 //		Serial.println(F("Task A"));
 //			startTime = millis();
-		temps.update();
+		tempMonitor.update();
 //			endTime = millis();
-		heater->process();
+		heaterController->process();
 
 		TemperatureController::update();
 

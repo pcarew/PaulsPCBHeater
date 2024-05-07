@@ -6,7 +6,8 @@
 IMPORT bool cancelled;
 IMPORT DisplayText displayElement;
 
-Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display, int row, int col ){
+//Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display, int row, int col ){
+Menu::Menu(MenuItem *menu, int menuSize, RotarySelector *rotary, Display *display, int row, int col ){
 	this->menuItems				= menu;
 	this->currentMenuItemPtr	= menu;
 	this->nextMenuItemPtr		= menu;
@@ -16,7 +17,8 @@ Menu::Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selec
 	this->display				= display;
 	this->posRow				= row;
 	this->posCol				= col;
-	this->rotary				= new RotarySelector(portDPinA, portDPinB, selectPin, this, 5 ); // A:D5, B:D6 on PCBHeater 'selectPin' button on the rotary selector (D4 on PCBHeater)
+	this->rotary				= rotary;
+//	this->rotary				= new RotarySelector(portDPinA, portDPinB, selectPin, this, 5 ); // A:D5, B:D6 on PCBHeater 'selectPin' button on the rotary selector (D4 on PCBHeater)
 
 	this->menuLine	= &displayElement;
 
@@ -38,10 +40,21 @@ void Menu::showMenu(){
 		this->menuLine->setRow(i+this->posRow);
 		this->menuLine->show();
 	}
-	this->highlightSelectedMenuLine();
+	this->highlightCurrentMenuLine();
 }
 
 void Menu::menuInvoke(){ // Called from System thread
+
+	/*
+	Serial.print(F("ShowMenu D Addr:"));Serial.print((unsigned int)this);delay(50);
+	Serial.print(F(" MenuItem D I:"));Serial.print(this->currentMenuItemId);delay(50);
+	Serial.print(F(" MenuItem D C:"));Serial.print(this->menuItemCount);delay(50);
+	Serial.print(F(" MenuItem D P:"));Serial.print(this->currentMenuItemPtr->param);delay(50);
+	Serial.print(F(" MenuItem D S:"));Serial.print(this->currentMenuItemPtr->selected);delay(50);
+	Serial.print(F(" MenuItem D H:"));Serial.print((unsigned int)this->currentMenuItemPtr->handler);delay(50);
+	Serial.print(F(" MenuItem D Prmpt:"));Serial.println(this->currentMenuItemPtr->prompt);delay(50);
+	*/
+
 	if(this->currentMenuItemId < 0) this->showMenu();				// 1st Time through, show entire menu
 
 	if(this->currentMenuItemPtr->selected == true){					// Check to see if we have a selected menu line
@@ -50,6 +63,7 @@ void Menu::menuInvoke(){ // Called from System thread
 		MenuAction *handler = this->currentMenuItemPtr->handler;	// Setup handler to use for selected menu line
 
 		this->inMenu = false;
+//		Serial.print(F("MenuItem P:"));Serial.println(this->currentMenuItemPtr->param);delay(50);
 		handler->menuAction(this->currentMenuItemPtr->param);		// Invoke selected menu handler. Note: we are running as part of the UI/System thread
 		this->inMenu = true;
 
@@ -67,11 +81,11 @@ void Menu::menuInvoke(){ // Called from System thread
 		this->currentMenuItemId = this->nextMenuItemId;				// Setup new menu line to highlight
 		this->currentMenuItemPtr = this->nextMenuItemPtr;
 
-		this->highlightSelectedMenuLine();
+		this->highlightCurrentMenuLine();
 	}
 }
 
-void Menu::highlightSelectedMenuLine(){
+void Menu::highlightCurrentMenuLine(){
 	this->menuLine->setBg(this->display->br, this->display->bg, this->display->bb);
 	this->menuLine->setFg(this->display->fr, this->display->fg, this->display->fb);
 

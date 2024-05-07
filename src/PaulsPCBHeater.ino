@@ -9,6 +9,7 @@
 #include "Display.h"
 #include "HeaterController.h"
 #include "TemperatureMonitoring.h"
+#include "ProfileController.h"
 
 bool cancelled = false;
 volatile unsigned long time = 0;
@@ -64,20 +65,24 @@ ISR (PCINT2_vect) {			// D0 -> D7 PortD
 
 
 char dispBuff[27];
-Display myDisp = Display(0,0,255,255,255,255);
-DisplayText displayElement = DisplayText(NULL,&myDisp, 1 , 1, 2 );
+Display systemDisplay = Display(0,0,255,255,255,255);
+DisplayText displayElement = DisplayText(NULL,&systemDisplay, 1 , 1, 2 );
 
+/* System Components */
 Ram ramApp;
-TemperatureMonitoring temps;
-HeaterController heater;
+TemperatureMonitoring tempMonitor;
+HeaterController heaterController;
+ProfileController profileController;
+
 //Menu *menu = NULL;
-MenuItem myMenu[] = {
-		{"Temps",&temps,1,false},
+MenuItem mainMenuItems[] = {
+		{"Temps",&tempMonitor,1,false},
 		{"Unused SRam",&ramApp,2,false},
-		{"Heater",&heater,3,false}
+		{"Heater",&heaterController,3,false},
+		{"ProCont",&profileController,4,false}
 };
-#define	NUMBERITEMS ( sizeof(myMenu)/sizeof(MenuItem))
-Menu menu = Menu( (MenuItem*)myMenu, NUMBERITEMS, 5,6,4,&myDisp,2,1); // PinA:5, PinB:6, PinSel:4, starting at Row 2, col 1
+#define	NUMBERITEMS ( sizeof(mainMenuItems)/sizeof(MenuItem))
+Menu mainMenu = Menu( (MenuItem*)mainMenuItems, NUMBERITEMS, 5,6,4,&systemDisplay,2,1); // PinA:5, PinB:6, PinSel:4, starting at Row 2, col 1
 
 //SDFileManagement *sdManager;
 
@@ -87,7 +92,7 @@ void setup()
 	Serial.begin(115200);
 	Serial.println(F("Setup Started"));
 
-	myDisp.setup();
+	systemDisplay.setup();
 
 	cnclButton = new CancelButton();
 	cnclButton->createButton(3);
@@ -128,7 +133,7 @@ void loop()
 	}
 	*/
 
-	menu.menuInvoke();
+	mainMenu.menuInvoke();
 
 	displayElement.setText((char *)dispBuff);
 	displayElement.setBg(0, 255, 0);

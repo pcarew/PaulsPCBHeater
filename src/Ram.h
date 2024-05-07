@@ -12,7 +12,7 @@
 #include "pos/pos.h"
 
 
-IMPORT Display myDisp;
+IMPORT Display systemDisplay;
 IMPORT bool cancelled;
 IMPORT DisplayText displayElement;
 
@@ -34,7 +34,7 @@ public:
 		displayElement.setText(dispBuff);
 
 //		DisplayText dispElement(dispBuff, &myDisp, 1, 1, 2);
-		myDisp.tftScreen.background(0,0,0);
+		systemDisplay.tftScreen.background(0,0,0);
 		sprintf(dispBuff, fmt,this->freeRam());
 
 		displayElement.setBg(0, 0, 0);

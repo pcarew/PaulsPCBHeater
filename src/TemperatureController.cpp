@@ -48,7 +48,7 @@ void TemperatureController::valueDetermination() {
 		double tempReading = TemperatureMonitoring::brdBot.getTemperature();
 //		double tempErrPercent = (TemperatureController::desiredTemp - tempReading) / TemperatureController::desiredTemp;
 		valueBeingChanged = FuzzyTemp::getValueChangePercent(tempReading,(double)TemperatureController::desiredTemp) ;
-			Serial.print(F("T: "));Serial.print(tempReading);Serial.print(F(", DT:"));Serial.print(TemperatureController::desiredTemp);Serial.print(F(", V:"));Serial.println(valueBeingChanged);
+//			Serial.print(F("T: "));Serial.print(tempReading);Serial.print(F(", DT:"));Serial.print(TemperatureController::desiredTemp);Serial.print(F(", V:"));Serial.println(valueBeingChanged);
 
 		/* AJPC Ignore using slope while in development
 		if(abs(tempErrPercent) < 10.0){	// Use Target Temp

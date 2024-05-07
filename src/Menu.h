@@ -47,10 +47,13 @@ public:
 	RotarySelector *rotary		= NULL;
 	bool inMenu					= true;
 
-	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display):Menu(menu, menuSize, portDPinA, portDPinB, selectPin, display, 0, 0  ){}
-	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display, int row, int col  );
+	Menu(MenuItem *menu, int menuSize, RotarySelector *rotary, Display *display, int row, int col  );
+	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display):
+							Menu(menu, menuSize, portDPinA, portDPinB, selectPin, display, 0, 0  ){}
+	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display, int row, int col  ):
+							Menu(menu,menuSize, new RotarySelector(portDPinA, portDPinB, selectPin, this, 5 ) ,display,row,col){}
 	void showMenu();
-	void highlightSelectedMenuLine();
+	void highlightCurrentMenuLine();
 
 	void rotaryAction(const int type, int counterOrLevel, RSE::Dir direction, int param);		// type is ROTATE or SELECT
 	void menuInvoke();

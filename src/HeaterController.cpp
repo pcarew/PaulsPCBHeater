@@ -140,14 +140,14 @@ void HeaterController::frameDetectionAndFiring(){
 
 // Used for UI
 extern bool cancelled;
-extern Display myDisp;
+extern Display systemDisplay;
 extern DisplayText displayElement;
 
 // User Interface for Heater Control. Runs under System UI Thread
 void HeaterController::menuAction(int param){
 	int i = 200;
 
-	myDisp.tftScreen.background(0,255,0);
+	systemDisplay.tftScreen.background(0,255,0);
 	displayElement.setBg(0, 255, 0);
 	displayElement.setFg(255, 0, 0);
 	while(!cancelled && i > 0){

@@ -14,16 +14,25 @@ struct Point{
 	double temp;
 	double duration;
 	double slope;
-	double startOffset;
+//	double startingOffset;
 
 };
 
 class Profile{
 private:
 public:
+	enum PointState{
+		InSlope = 1,
+		Attained =2,
+		Holding = 3
+	};
+
+
 	int numberPoints;
 
 	Point points[MAXPOINTS];
+	char currentPoint;
+	PointState currantState;
 };
 
 #endif /* PROFILE_H */
