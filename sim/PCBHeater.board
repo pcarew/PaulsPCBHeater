@@ -1,0 +1,116 @@
+<board>
+  <doc-version>0.1</doc-version>
+  <components>
+    <component>
+      <name>ATMega 1</name>
+      <dll>C:\Program Files (x86)\emulare_1_9\components\ATMega.dll</dll>
+      <title>ATMega</title>
+      <version>1.0.0.0</version>
+      <specific>
+        <ATMega>
+          <Program>
+          </Program>
+          <SerialPort>
+          </SerialPort>
+        </ATMega>
+      </specific>
+      <position>
+        <x>314</x>
+        <y>286</y>
+      </position>
+    </component>
+    <component>
+      <name>PushButton 1</name>
+      <dll>C:\Program Files (x86)\emulare_1_9\components\BasicComponents.dll</dll>
+      <title>PushButton</title>
+      <version>1.0.0.0</version>
+      <specific />
+      <position>
+        <x>858</x>
+        <y>304</y>
+      </position>
+    </component>
+    <component>
+      <name>VCC 1</name>
+      <dll>C:\Program Files (x86)\emulare_1_9\components\BasicComponents.dll</dll>
+      <title>VCC</title>
+      <version>1.0.0.0</version>
+      <specific />
+      <position>
+        <x>-118</x>
+        <y>423</y>
+      </position>
+    </component>
+    <component>
+      <name>Ground 1</name>
+      <dll>C:\Program Files (x86)\emulare_1_9\components\BasicComponents.dll</dll>
+      <title>Ground</title>
+      <version>1.0.0.0</version>
+      <specific />
+      <position>
+        <x>898</x>
+        <y>432</y>
+      </position>
+    </component>
+  </components>
+  <wires>
+    <wire>
+      <object1>0</object1>
+      <object2>1</object2>
+      <pinName1>PD4</pinName1>
+      <pinName2>c1</pinName2>
+      <linePath>
+        <segment>
+          <x1>314</x1>
+          <y1>345</y1>
+          <x2>288</x2>
+          <y2>345</y2>
+        </segment>
+        <segment>
+          <x1>288</x1>
+          <y1>345</y1>
+          <x2>288</x2>
+          <y2>218</y2>
+        </segment>
+        <segment>
+          <x1>288</x1>
+          <y1>218</y1>
+          <x2>882</x2>
+          <y2>218</y2>
+        </segment>
+        <segment>
+          <x1>882</x1>
+          <y1>218</y1>
+          <x2>882</x2>
+          <y2>304</y2>
+        </segment>
+      </linePath>
+    </wire>
+    <wire>
+      <object1>1</object1>
+      <object2>3</object2>
+      <pinName1>c2</pinName1>
+      <pinName2>GND</pinName2>
+      <linePath>
+        <segment>
+          <x1>915</x1>
+          <y1>432</y1>
+          <x2>915</x2>
+          <y2>364</y2>
+        </segment>
+        <segment>
+          <x1>915</x1>
+          <y1>364</y1>
+          <x2>882</x2>
+          <y2>364</y2>
+        </segment>
+        <segment>
+          <x1>882</x1>
+          <y1>364</y1>
+          <x2>882</x2>
+          <y2>353</y2>
+        </segment>
+      </linePath>
+    </wire>
+  </wires>
+</board>
