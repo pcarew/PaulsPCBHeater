@@ -17,3 +17,5 @@ makefile
 Release/*
 /.project
 /.cproject
+/dissassm.asm
+/symboltable.sym
