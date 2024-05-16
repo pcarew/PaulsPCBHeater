@@ -20,6 +20,8 @@
 *       1       AJPC    feb/13/93       Initial software                *
 *                                                                       *
 ************************************************************************/
+
+
 					/* POS Timer definitions.	*/
 #define	ONESECOND	(unsigned long)1000L		// Number of ticks in 1 second
 #define FIVESECOND	(5*ONESECOND)

@@ -32,10 +32,11 @@ void TemperatureMonitoring::update(){
 void TemperatureMonitoring::menuAction(int param) {
 	// Running on System UI thread
 	static const char *fmt = "%s: %d.%dC  ";
+	double tempReading ;
 
 	displayElement.setText(dispBuff);
 
-	systemDisplay.tftScreen.background(0,255,0);
+	systemDisplay.clear(0,255,0);
 	displayElement.setText(dispBuff);
 	displayElement.setBg(0, 255, 0);
 	displayElement.setFg(255, 0, 0);
@@ -43,24 +44,27 @@ void TemperatureMonitoring::menuAction(int param) {
 	while(!cancelled){
 		time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
 		if(time > nextDisplayTime){
+			nextDisplayTime = time+2050l;
 
-			double tempReading = TemperatureMonitoring::ambient.getTemperature();
+			displayElement.setText(dispBuff);
+			displayElement.setCol(0);
+
+			tempReading = TemperatureMonitoring::ambient.getTemperature();
 			sprintf(dispBuff, fmt,"Amb",(int)tempReading,(unsigned int)((unsigned long)(tempReading*100.0))%100);
-			displayElement.setCol(0); displayElement.setRow(2); displayElement.setText(dispBuff); displayElement.show();
-			Serial.println(dispBuff);
+			displayElement.setRow(2);  displayElement.show();
+//			Serial.println(dispBuff);
 
 			tempReading = TemperatureMonitoring::brdBot.getTemperature();
 			sprintf(dispBuff, fmt,"Bot",(int)tempReading,(unsigned int)((unsigned long)(tempReading*100.0))%100);
-			displayElement.setCol(0); displayElement.setRow(3); displayElement.setText(dispBuff); displayElement.show();
-			Serial.println(dispBuff);
+			displayElement.setRow(3);  displayElement.show();
+//			Serial.println(dispBuff);
 
 			tempReading = TemperatureMonitoring::brdTop.getTemperature();
 			sprintf(dispBuff, fmt,"Top",(int)tempReading,(unsigned int)((unsigned long)(tempReading*100.0))%100);
-			displayElement.setCol(0); displayElement.setRow(4); displayElement.setText(dispBuff); displayElement.show();
-			Serial.println(dispBuff);
+			displayElement.setRow(4);  displayElement.show();
+//			Serial.println(dispBuff);
 
-			nextDisplayTime = time+2050l;
-			Serial.print(F("Ram free"));Serial.println(ramApp.freeRam());//delay(10);
+//			Serial.print(F("Ram free"));Serial.println(ramApp.freeRam());//delay(10);
 		}
 		pause();
 	}

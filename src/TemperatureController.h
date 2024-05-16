@@ -25,16 +25,13 @@ public:
 //	TemperatureController();
 //	virtual ~TemperatureController();
 
-	// UI
-//	void menuAction(int param) ;
-//	void rotaryAction(const int type, int level, RSE::Dir direction, int param);		// type is ROTATE or SELECT
-
 	static void update();				// Called from Tasking
-	static void TemperatureController::valueDetermination();
-	static void TemperatureController::updateHeater();
+	static void valueDetermination();
+	static void updateHeater();
 
 								// Profile control
-	static void setTempeature(int targetTemp, int slope);						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
+	static int getTemperature();
+	static void setTemperature(int targetTemp, int slope);						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
 };
 
 #endif /* TEMPERATURECONTROLLER_H_ */

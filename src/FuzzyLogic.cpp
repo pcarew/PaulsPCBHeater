@@ -17,18 +17,18 @@ double predicate(double input, InputFuzzySet *inSet){
 }
 double runRuleSingular(double input, InputFuzzySet *inSet,OutputFuzzySet *outSet,double *station){											// if 'A' then 'Consequent'
 		double fuzzyValue					= predicate(input, inSet);
-//		Serial.print("Fv:");Serial.print(fuzzyValue);
+//		Serial.print(F("Fv:"));Serial.print(fuzzyValue);
 		double consequent					= getConsequentValue(fuzzyValue,outSet, station);
-//		Serial.print(" Fc:");Serial.println(consequent);
+//		Serial.print(F(" Fc:"));Serial.println(consequent);
 		return consequent;
 }
 double runRuleTwin(double inputA, InputFuzzySet *inSetA, double inputB, InputFuzzySet *inSetB ,OutputFuzzySet *outSet,double *station){		// if 'A' and 'B' the 'Consequent'
 		double fuzzyValueA					= predicate(inputA, inSetA);
-//		Serial.print("FA:");Serial.print(fuzzyValueA);
+//		Serial.print(F("FA:"));Serial.print(fuzzyValueA);
 		double fuzzyValueB					= predicate(inputB, inSetB);
-//		Serial.print("FB:");Serial.print(fuzzyValueB);
+//		Serial.print(F("FB:"));Serial.print(fuzzyValueB);
 		double fuzzyValue					= min(fuzzyValueA, fuzzyValueB);					// fvA & fvB
-//		Serial.print("Fz:");Serial.println(fuzzyValue);
+//		Serial.print(F("Fz:"));Serial.println(fuzzyValue);
 		double consequent					= getConsequentValue(fuzzyValue,outSet, station);
 		return consequent;
 }
@@ -67,7 +67,7 @@ double rightShoulder(double crispValue, FuzzySetData *setData){
 	}else{
 		fuzzyValue = 0.0;
 	}
-	//Serial.print("\nRShFV:");Serial.print("CV:"); Serial.print(crispValue);Serial.print("FV:"); Serial.print(fuzzyValue);Serial.print("\n");
+	//Serial.print(F("\nRShFV: CV:")); Serial.print(crispValue);Serial.print(F("FV:")); Serial.println(fuzzyValue);
 	return fuzzyValue;
 }
 
@@ -84,7 +84,7 @@ double leftShoulder(double crispValue, FuzzySetData *setData){
 			// Outside Fuzzy Subset
 		fuzzyValue = 0.0;
 	}
-	//Serial.print("\nLShFV:");Serial.print("CV:"); Serial.print(crispValue);Serial.print("FV:"); Serial.print(fuzzyValue);Serial.print("\n");
+	//Serial.print(F("\nLShFV:CV:")); Serial.print(crispValue);Serial.print(F("FV:")); Serial.println(fuzzyValue);
 	return fuzzyValue;
 }
 
@@ -97,8 +97,8 @@ double leftShoulder(double crispValue, FuzzySetData *setData){
  */
 double triangleWeight(double fuzzyValue, FuzzySetData *setData, double *fuzzyStation){
 	*fuzzyStation = setData->topCorner;
-	//Serial.print("\nTriangleWt:");Serial.print("RC:"); Serial.print(setData->rightCorner);Serial.print("TC:"); Serial.print(setData->topCorner);Serial.print("FV:");Serial.print(fuzzyValue);
-	//Serial.print("Wt:");Serial.print((setData->rightCorner - setData->topCorner) * fuzzyValue);Serial.print("\n");
+	//Serial.print(F("\nTriangleWt: RC:")); Serial.print(setData->rightCorner);Serial.print(F("TC:")); Serial.print(setData->topCorner);Serial.print(F("FV:"));Serial.print(fuzzyValue);
+	//Serial.print(F("Wt:"));Serial.println((setData->rightCorner - setData->topCorner) * fuzzyValue);
 	double base = (setData->rightCorner - setData->leftCorner) ;
 	double trapizoidArea	=  (base*(2-fuzzyValue)*fuzzyValue )/ 2;		// area = (b+a)h/2    b is base, 'a' is calculated as base*(1-fuzzyValue)
 //	double triangleArea	= base * fuzzyValue/2;								// Small triangle height based upon fuzzyValue.

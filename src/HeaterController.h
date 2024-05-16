@@ -42,7 +42,7 @@ public:
 
 	//Used for UI
 	void menuAction(int param);
-	void rotaryAction(const int type, int level, RSE::Dir direction, int param);		// type is ROTATE or SELECT
+//	void rotaryAction(const int type, int level, RSE::Dir direction, int param);		// type is ROTATE or SELECT
 
 	static void checkACZeroCrossing();
 	static void zeroCrossing();

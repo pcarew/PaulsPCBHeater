@@ -20,6 +20,9 @@
 *       1       AJPC    feb/13/93       Initial software                *
 *                                                                       *
 ************************************************************************/
+#ifndef posMsg_h
+#define posMsg_h
+
 typedef void *MSG;			/* POS message type.		*/
 
 typedef	struct {			/* POS mail box type		*/
@@ -33,3 +36,5 @@ IMPORT	void	init_mbox(MBOX *mbox);
 
 #define CHK_MBOX(mbox)	(mbox->msg?TRUE:FALSE)
 #define GET_MSG(mbox)	(CHK_MBOX(mbox)?pend(mbox):FALSE)
+
+#endif

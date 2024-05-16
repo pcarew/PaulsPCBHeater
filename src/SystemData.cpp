@@ -11,7 +11,7 @@ bool cancelled = false;
 volatile unsigned long time = 0;
 unsigned long nextDisplayTime = 0;
 
-char dispBuff[27];
+char dispBuff[DISPBUFFLEN];
 Display systemDisplay = Display(0,0,255,255,255,255);
 DisplayText displayElement = DisplayText(NULL,&systemDisplay, 1 , 1, 2 );
 

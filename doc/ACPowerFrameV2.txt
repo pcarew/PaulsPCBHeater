@@ -152,3 +152,32 @@ TFT\1.0.6\src\utility\Adafruit_ST7735.cpp
 #define MADCTL_RGB 0x00		//AJPC Addresses reversed Red and Blue issue
 //#define MADCTL_RGB 0x08
 #define MADCTL_MH  0x04
+
+
+Pin Change Interrupts:
+----------------------------------------------
+PinChangeInterruptControlRegister (PCICR)
+Bit 0 -> PCIE0 -> PortB D8 - D13 PCINT 0 - 7
+Bit 1 -> PCIE1 -> PortC A0 - A5  PCINT 8 - 14
+Bit 2 -> PCIE2 -> PortD D0 - D7  PCINT 16 - 23
+
+PinChangeMask (PCMSK)
+PCMSK0 Pins PCINT 0 - 7   (PortB)
+PCMSK1 Pins PCINT 8 - 14  (PortC)
+PCMSK2 Pins PCINT 16 - 23 (PortD)
+
+Setup:
+Turn on Bits in PCMSK
+Turn on Port in PCICR
+
+ISR
+Each port has separate ISR
+Vector PCINT0_vect -> PortB (D8 - D13 + ext 1+2)
+Vector PCINT1_vect -> PortC (A0 - A5 + Reset)
+Vector PCINT2_vect -> PortD (D0 -D7)
+
+PINx is Portx pin read values.
+IE:
+PINC is portC pin values
+PINB is portB pin values
+PIND is portD pin values

@@ -1,6 +1,6 @@
 #ifndef PaulsPCBHeater_INO
 #define PaulsPCBHeater_INO
-//#include "SDFileManagement.h"
+
 #include "pos/pos.h"
 #include "Button.h"
 #include "Menu.h"
@@ -13,32 +13,35 @@
 #include "SystemData.h"
 
 
+
 class CancelButton : Implements ButtonAction{
 private:
 public:
 	ButtonAction::Level btLevel = ButtonAction::Level::BUTTONLOW;
 	int btParam = 0;
-	CancelButton(){}
-	void createButton(int id){
-		if(id>= 0 && id < 8){
-			new PortDButton(id , this, id, 5);
-			/*
-		}else if(id >7 && id < 14){
-			Serial.println(F("Creating PortB Button"));
-			new PortBButton(id , this, id);
-		}else if(id >= A0 && id <= A5){
-			Serial.println(F("Creating PortC Button"));
-			new PortCButton(id , this, id);
-			*/
+	PortDButton *btn;
+	int btParamEnd = 0;
+//	CancelButton(){}
+	void createButton(int pin, int id){
+//		Serial.println(F("Creating cancel button"));delay(20);
+		if(pin>= 0 && pin < 8){
+			this->btn = new PortDButton(pin , this, id, 5);
 		}
+		this->btParam = id;
+		this->btParamEnd = id;
 	}
 	void buttonAction(ButtonAction::Level level, int param){
-		cancelled = true;
 		this->btLevel = level;
 		this->btParam = param;
+		if(level == BUTTONLOW){
+			cancelled = true;
+//			Serial.println(F("CL"));delay(20);
+		}else{
+//			Serial.println(F("CH"));delay(20);
+		}
+//			Serial.print(F("TID:"));Serial.print(currt->tid);Serial.print(F(" ItrRam free"));Serial.println(ramApp.freeRam());
 	}
 };
-
 CancelButton *cnclButton;
 
 ISR (PCINT0_vect) {			// D8 -> D13 PortB
@@ -75,7 +78,7 @@ void setup()
 	systemDisplay.setup();
 
 	cnclButton = new CancelButton();
-	cnclButton->createButton(3);
+	cnclButton->createButton(3,90);
 
 	HeaterController::setup();
 
@@ -84,57 +87,38 @@ void setup()
 	Serial.println(F("Setup Done"));
 }
 
-//IMPORT int pos_stats();
-//IMPORT long taskAvgTime;
-//IMPORT long taskASwitches;
-//IMPORT long switches;
-//#define TSKAVGCNT 2						// Averaged over 10 cycles
-//long threadAvgTime = 1;
-long threadSwitches = 0;
+void topLevelStatus();
 void loop()
 {
-//	static  long startTime;
-//	static  long endTime;
-//	static unsigned long periodEnd1 =0;
-//		threadSwitches++;
-//			startTime = millis();
-//  	Serial.println(F("Loop"));
+	static unsigned long periodEnd1 =0;
 	time = millis();
-	/*
 	if(time>periodEnd1){
-		periodEnd1 = time+1000;	// Every 1 second
-		Serial.print(F(" POS Switches Hz:"));Serial.print(pos_stats()); Serial.print(F(" TaskA Avg: "));Serial.print(taskAvgTime);Serial.print(F(" TaskA Switches:"));Serial.println(taskASwitches);
-		Serial.print(F(" POS Switches Hz:"));Serial.print(pos_stats()); Serial.print(F(" Loop  lst: "));Serial.print(threadAvgTime);Serial.print(F(" Loop  Switches:"));Serial.println(threadSwitches);
-		taskASwitches = 0;
-		threadSwitches = 0;
+		periodEnd1 = time+350l;	// Every 1 second
+
+		mainMenu.menuInvoke();
+		topLevelStatus();
 	}
-	*/
-
-	mainMenu.menuInvoke();
-
+		pause();
+}
+void topLevelStatus(){
 	displayElement.setText((char *)dispBuff);
 	displayElement.setBg(0, 255, 0);
 	displayElement.setFg(255, 0, 0);
 	displayElement.setCol(1);
 	displayElement.setRow(0);
 	sprintf(dispBuff, "H:%s A:%3d",
-			HeaterController::heaterEnabled?" On":"Off",
-			(int) TemperatureMonitoring::ambient.getTemperature()
-			);
+		HeaterController::heaterEnabled?" On":"Off",
+		(int) TemperatureMonitoring::ambient.getTemperature()
+		);
 	displayElement.show();
 
 	displayElement.setRow(1);
 	sprintf(dispBuff, "B:%3d T:%3d",
-			(int) TemperatureMonitoring::brdBot.getTemperature(),
-			(int) TemperatureMonitoring::brdTop.getTemperature()
-			);
+		(int) TemperatureMonitoring::brdBot.getTemperature(),
+		(int) TemperatureMonitoring::brdTop.getTemperature()
+		);
 	displayElement.show();
 
-//	chack_all_tcb();
-//			endTime = millis();
-//			threadAvgTime = (threadAvgTime * (TSKAVGCNT-1) + (endTime - startTime)) / TSKAVGCNT;
-//			threadAvgTime = (endTime - startTime);
-	pause();
 }
 
 #endif

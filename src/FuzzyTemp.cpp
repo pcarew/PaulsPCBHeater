@@ -159,11 +159,11 @@ double FuzzyTemp::getValueChangePercent(double actualValue, double desiredValue)
 			//weight = runRuleSingular(errPercent, &inSets[ruleList[rule]],&outSets[ruleList[rule]],&station);
 		for(unsigned int ruleNo=0;ruleNo < sizeof(minOutSets)/sizeof(OutputFuzzySet);ruleNo++){
 			weight = runRuleSingular(errPercent, &minInSets[ruleNo],&minOutSets[ruleNo],&station);
-//			Serial.print("Rule#");Serial.print(ruleNo);Serial.print(" Weight:");Serial.print(weight);Serial.print(" Stn:");Serial.println(station);
+//			Serial.print(F("Rule#"));Serial.print(ruleNo);Serial.print(F(" Weight:"));Serial.print(weight);Serial.print(F(" Stn:"));Serial.println(station);
 
 			totalWeight			+= weight;
 			totalMoment			+= weight * station;
-//			Serial.print("MM TotW");Serial.print(totalWeight);Serial.print(" TotM:");Serial.println(totalMoment); delay(50);	//AJPC
+//			Serial.print(F("MM TotW"));Serial.print(totalWeight);Serial.print(F(" TotM:"));Serial.println(totalMoment); delay(50);	//AJPC
 		}
 		break;
 	}
@@ -179,7 +179,7 @@ double FuzzyTemp::getValueChangePercent(double actualValue, double desiredValue)
 			weight = runRuleSingular(errPercent, &inSets[ruleNo],&outSets[ruleNo],&station);
 			totalWeight			+= weight;
 			totalMoment			+= weight * station;
-//			Serial.print("JE TotW");Serial.print(totalWeight);Serial.print(" TotM:");Serial.println(totalMoment);
+//			Serial.print(F("JE TotW"));Serial.print(totalWeight);Serial.print(F(" TotM:"));Serial.println(totalMoment);
 		}
 		break;
 	case FULLMODEL: // Includes rate of change of error (with respect to time)  dErr/dt
@@ -192,17 +192,17 @@ double FuzzyTemp::getValueChangePercent(double actualValue, double desiredValue)
 				weight = runRuleTwin(errPercent, errorFzSet, dErrordt, DerrorDtFzSet ,outFzSet, &station);
 				totalWeight			+= weight;
 				totalMoment			+= weight * station;
-//			Serial.print("FM TotW");Serial.print(totalWeight);Serial.print(" TotM:");Serial.println(totalMoment); delay(50);	//AJPC
+//			Serial.print(F("FM TotW"));Serial.print(totalWeight);Serial.print(F(" TotM:"));Serial.println(totalMoment); delay(50);	//AJPC
 			}
 		}
 		break;
 	}
-//	Serial.print("Resulting TW:"),Serial.println(totalWeight);
+//	Serial.print(F("Resulting TW:")),Serial.println(totalWeight);
 	if(totalWeight!=0)
 		change					= totalMoment/totalWeight;					// COG of change consequents
 	else
 		change = 0;
-//	Serial.print("##Change:");Serial.print(change);Serial.print("TW:"),Serial.println(totalWeight);
+//	Serial.print(F("##Change:"));Serial.print(change);Serial.print(F("TW:")),Serial.println(totalWeight);
 
 	return change;
 }

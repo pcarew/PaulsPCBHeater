@@ -13,7 +13,7 @@
 
 class ProfileController: Implements MenuAction {
 public:
-	static unsigned char targetTemp;
+	static int targetTemp;
 	static Profile activeProfile;
 	static MenuItem *localMenuItems;
 	static Menu *localMenu;
@@ -26,6 +26,7 @@ public:
 	static const char *fmt;
 	void menuAction(int param);
 	void rotaryAction(const int type, int level, RSE::Dir direction, int param);		// type is ROTATE or SELECT
+	bool handleRotary(const int type, int level, RSE::Dir direction, int *counter);	// Used for processing rotary action for local pages
 };
 
 #endif /* PROFILECONTROLLER_H_ */

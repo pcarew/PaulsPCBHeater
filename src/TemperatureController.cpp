@@ -27,7 +27,10 @@ TemperatureController::~TemperatureController() {
 }
 */
 
-void TemperatureController::setTempeature(int targetTemp, int slope){						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
+int TemperatureController::getTemperature(){
+	return TemperatureController::desiredTemp;
+}
+void TemperatureController::setTemperature(int targetTemp, int slope){						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
 	TemperatureController::desiredTemp = targetTemp;
 	TemperatureController::desiredSlope = slope;
 }
@@ -39,7 +42,6 @@ void TemperatureController::update(){				// Called from Tasking
 		periodEnd = timeNow + TC_MEASUREMENT_PERIOD;
 		valueDetermination();					// Will either use slope or target temperature
 		updateHeater();
-//		Serial.println(F("--------"));
 	}
 
 }
@@ -47,8 +49,9 @@ void TemperatureController::update(){				// Called from Tasking
 void TemperatureController::valueDetermination() {
 		double tempReading = TemperatureMonitoring::brdBot.getTemperature();
 //		double tempErrPercent = (TemperatureController::desiredTemp - tempReading) / TemperatureController::desiredTemp;
-		valueBeingChanged = FuzzyTemp::getValueChangePercent(tempReading,(double)TemperatureController::desiredTemp) ;
-//			Serial.print(F("T: "));Serial.print(tempReading);Serial.print(F(", DT:"));Serial.print(TemperatureController::desiredTemp);Serial.print(F(", V:"));Serial.println(valueBeingChanged);
+
+
+		TemperatureController::valueBeingChanged = FuzzyTemp::getValueChangePercent(tempReading,(double)TemperatureController::desiredTemp) ;
 
 		/* AJPC Ignore using slope while in development
 		if(abs(tempErrPercent) < 10.0){	// Use Target Temp
@@ -62,16 +65,4 @@ void TemperatureController::valueDetermination() {
 }
 void TemperatureController::updateHeater(){
 	HeaterController::setPercentagePwr( (valueBeingChanged<0?(unsigned char)0:(unsigned char) valueBeingChanged) );				// Heater cant accept negative values
-
-
-	/*
-		if(pwm<MINIMUMPWM)pwm = MINIMUMPWM;
-		double change = getRpmChangePercent(rpm, desiredSpeed);
-		change = 1.0 + (change/100.0);
-		pwm = (unsigned int)((double)pwm * change);
-		if(pwm>255)pwm = 255;
-		if(pwm<2)pwm = 2;
-    	analogWrite(pwmPin, pwm);
-    	*/
 }
-

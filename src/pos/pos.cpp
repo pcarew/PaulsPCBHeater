@@ -62,13 +62,13 @@ TCB *create(TaskType task, unsigned int reqStackSize, int param, BOOL showStats)
 
 	tcb = &tasks[no_tasks];
 
-		Serial.print(F("New Task:")); Serial.print((unsigned int)no_tasks,DEC);
-		Serial.print(F(" TCB:")); Serial.println((unsigned int)tcb,HEX);
+//		Serial.print(F("New TaskId:")); Serial.print((unsigned int)no_tasks+1,DEC);
+//		Serial.print(F(" TCB:")); Serial.println((unsigned int)tcb,HEX);
 
 
 	if(reqStackSize > 0){				// A stack was requested for this task (this is the default)
 		if((stack_used + reqStackSize) > (STACKSIZE)){
-				Serial.println(F("Out of stack space for task ")); //Serial.print(no_tasks); Serial.print("\r\n");
+//				Serial.println(F("Out of stack space for task ")); //Serial.println(no_tasks);
 				return FALSE;
 		}
 
@@ -80,14 +80,14 @@ TCB *create(TaskType task, unsigned int reqStackSize, int param, BOOL showStats)
 		stack_used	+= (reqStackSize+1);
 							// stack s ptr always points to next avail location
 		s	= (unsigned char *)( (unsigned char *)stacks+stack_used - 1);
-		Serial.print(F("New SP:"));Serial.println((unsigned int)s,HEX);
+//			Serial.print(F("New SP:"));Serial.println((unsigned int)s,HEX);
 
 #ifdef STACK_CHECKS
 		tcb->st = s;
-		Serial.print(F(" Stack Base:0x")); Serial.print((unsigned int)stacks,HEX);
-		Serial.print(F(", Stack Size ")); Serial.print(reqStackSize);
-		Serial.print(F(", Bottom:0x")); Serial.print((unsigned int)tcb->se,HEX);
-		Serial.print(F(", Top:0x")); Serial.println((unsigned int)s,HEX);
+//			Serial.print(F(" Stack Base:0x")); Serial.print((unsigned int)stacks,HEX);
+//			Serial.print(F(", Stack Size ")); Serial.print(reqStackSize);
+//			Serial.print(F(", Bottom:0x")); Serial.print((unsigned int)tcb->se,HEX);
+//			Serial.print(F(", Top:0x")); Serial.println((unsigned int)s,HEX);
 
 		// First Fill the stack with a recognizable pattern
 		unsigned char *fillPtr = tcb->se+1;		// Skip over the Sentry STACKGUARD
@@ -116,7 +116,7 @@ TCB *create(TaskType task, unsigned int reqStackSize, int param, BOOL showStats)
 	}
 							// which uses the system stack
 
-	Serial.print(F("stackSet 0x"));Serial.println((unsigned int)tcb->sp,HEX);
+//		Serial.print(F("stackSet 0x"));Serial.println((unsigned int)tcb->sp,HEX);
 	if(!no_tasks){				// No existing tasks
 		nextt	= tcb;
 		tcb->next = tcb;		// Point fwd and back to this task
@@ -183,19 +183,19 @@ BOOL start_pos(BOOL system)
 	unsigned char **csp;
 	int result	= 1234;
 
-	Serial.print("Starting Tasking. UnAllocated stack:"); Serial.println((unsigned int) (STACKSIZE - stack_used));
+	Serial.print(F("Starting Tasking. UnAllocated stack:")); Serial.println((unsigned int) (STACKSIZE - stack_used));
 
 	if(system){
 		systemTcb = create((TaskType)NULL,0,0,FALSE);
 		if(systemTcb == (TCB *)NULL){
-			Serial.print("Error no system TCB\r\n");
+			Serial.println(F("Error no system TCB"));
 			return FALSE;
 		}else{
-			Serial.print("System Task created with TID:"); Serial.print(systemTcb->tid); Serial.print("\r\n");
+//			Serial.print("System Task created with TID:"); Serial.print(systemTcb->tid); Serial.print("\r\n");
 		}
 	}
 	if(!no_tasks){
-		Serial.print("No tasks created.\r\n");
+		Serial.print(F("No tasks created."));
 		while(1);//exit(1);
 	}
 	currt	= nextt;
@@ -207,21 +207,20 @@ BOOL start_pos(BOOL system)
 	//Serial.print("Starting First Task "); Serial.print(currt->tid); Serial.print("\r\n");
 	if(system){
 					// This thread becomes the system task. System task created above
-			Serial.print(F("Leaving System Thread &systemTcb-sp: ")); Serial.print((unsigned)&systemTcb->sp,HEX);
-			Serial.print(F(" systemTcb->sp:")); Serial.print((unsigned)systemTcb->sp,HEX);
-			Serial.print(F(" csp:")); Serial.print((unsigned)csp,HEX);
-			Serial.print(F(" *csp:")); Serial.println((unsigned)*csp,HEX);
-			delay(50); //AJPC
+//			Serial.print(F("Leaving System Thread &systemTcb-sp: ")); Serial.print((unsigned)&systemTcb->sp,HEX);
+//			Serial.print(F(" systemTcb->sp:")); Serial.print((unsigned)systemTcb->sp,HEX);
+//			Serial.print(F(" csp:")); Serial.print((unsigned)csp,HEX);
+//			Serial.print(F(" *csp:")); Serial.println((unsigned)*csp,HEX);
+//			delay(50); //AJPC
 		result = swap_s(&(systemTcb->sp),csp);		/* Swap stacks of tasks.	*/
 
-			Serial.print(F("Result for starting POS with system task "));
-			Serial.println((unsigned)result);
+//			Serial.print(F("Result for starting POS with system task ")); Serial.println((unsigned)result);
 	}else{
-			Serial.print("Leaving System Thread &sys_sp: "); Serial.print((unsigned)&sys_sp,HEX);
-			Serial.print(" sys_sp:"); Serial.print((unsigned)sys_sp,HEX);
-			Serial.print(" csp:"); Serial.print((unsigned)csp,HEX);
-			Serial.print(" *csp:"); Serial.print((unsigned)*csp,HEX);
-			Serial.print("\r\n");
+//			Serial.print("Leaving System Thread &sys_sp: "); Serial.print((unsigned)&sys_sp,HEX);
+//			Serial.print(" sys_sp:"); Serial.print((unsigned)sys_sp,HEX);
+//			Serial.print(" csp:"); Serial.print((unsigned)csp,HEX);
+//			Serial.print(" *csp:"); Serial.print((unsigned)*csp,HEX);
+//			Serial.print("\r\n");
 
 		result = swap_s(&sys_sp,csp);		/* Swap stacks of tasks.	*/
 					/* sys_sp is used to hold the	*/
@@ -234,11 +233,11 @@ BOOL start_pos(BOOL system)
 			Serial.print(F(" *csp:")); Serial.print((unsigned)*csp,HEX);
 		while(1) delay(100); //exit(1);
 	}
-			Serial.print(F("System Task continuing"));
-			Serial.print(F(" &sys_sp: ")); Serial.print((unsigned)&sys_sp,HEX);
-			Serial.print(F(" sys_sp:")); Serial.print((unsigned)sys_sp,HEX);
-			Serial.print(F(", csp:")); Serial.print((unsigned)csp,HEX);
-			Serial.print(F(" *csp:")); Serial.println((unsigned)*csp,HEX);
+//			Serial.print(F("System Task continuing"));
+//			Serial.print(F(" &sys_sp: ")); Serial.print((unsigned)&sys_sp,HEX);
+//			Serial.print(F(" sys_sp:")); Serial.print((unsigned)sys_sp,HEX);
+//			Serial.print(F(", csp:")); Serial.print((unsigned)csp,HEX);
+//			Serial.print(F(" *csp:")); Serial.println((unsigned)*csp,HEX);
 	return TRUE;
 }
 
@@ -260,7 +259,7 @@ void pause()
 			// Only Guard check stacks that belong to POS
 	if( !stack_check(currt,currt->showStats)){
 		SET_INTR();
-		Serial.print(F("Stack polluted for pausing task ")); Serial.print(currt->tid); Serial.print("\r\n");
+		Serial.print(F("Stack polluted for pausing task ")); Serial.println(currt->tid);
 		while(1);//exit(1);
 	}else{
 		//Serial.print("Stack OK for pausing task "); Serial.print(currt->tid); Serial.print("\r\n");
@@ -268,7 +267,7 @@ void pause()
 
 	if( !stack_check(nextt,nextt->showStats)){
 		SET_INTR();
-		Serial.print(F("Stack polluted for resuming task ")); Serial.print(nextt->tid); Serial.print("\r\n");
+		Serial.print(F("Stack polluted for resuming task ")); Serial.println(nextt->tid);
 		while(1);//exit(1);
 	}else{
 //		Serial.print("Stack OK for resuming task "); Serial.print(nextt->tid); Serial.print("\r\n");
@@ -308,7 +307,9 @@ void init_pos()
 	stack_used	= (int)NULL;
 	switches	= (unsigned long)NULL;
 
+#ifdef POSTIME
 	pos_inittime();			/* Initialize timer services.	*/
+#endif
 					/* Setup POS environment.	*/
 	//noscheck();			/* Turn off microsoft stack	*/
 					/* checking.			*/
@@ -355,8 +356,7 @@ BOOL stack_check(TCB *tcb,BOOL show)
 			Serial.print(F("Stack for TID:")); Serial.print(tcb->tid);
 			Serial.print(F(" has ")); Serial.print(sc_lowtide);
 			Serial.print(F(" untouched space, which is ")); Serial.print(((sc_lowtide*100)/sc_stackSize));
-			Serial.print(F("% of ")); Serial.print(sc_stackSize);
-			Serial.print(F("\r\n"));
+			Serial.print(F("% of ")); Serial.println(sc_stackSize);
 		}
 	}
 	return TRUE;

@@ -11,7 +11,6 @@ private:
 	static int fuzzyModel;
 
 public:
-
 	FuzzyTemp();
 	~FuzzyTemp();
 	static double getValueChangePercent(double actualRpm, double desiredRpm);

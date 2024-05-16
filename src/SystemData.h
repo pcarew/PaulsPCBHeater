@@ -13,6 +13,7 @@
 #include "ProfileController.h"
 #include "HeaterController.h"
 #include "Display.h"
+#include "Button.h"
 #include "Ram.h"
 
 #define SystemId			0
@@ -20,11 +21,15 @@
 #define HeaterConrolId		20
 #define ProfileControlId	30
 
+#define DISPBUFFLEN			27
+
+IMPORT Ram ramApp;
+
 IMPORT bool cancelled;
 IMPORT volatile unsigned long time;
 IMPORT unsigned long nextDisplayTime;
 
-IMPORT char dispBuff[27];
+IMPORT char dispBuff[DISPBUFFLEN];
 IMPORT Display systemDisplay;
 IMPORT DisplayText displayElement;
 
@@ -33,5 +38,4 @@ IMPORT TemperatureMonitoring tempMonitor;
 IMPORT HeaterController heaterController;
 IMPORT ProfileController profileController;
 
-IMPORT Ram ramApp;
 #endif /* SYSTEMDATA_H_ */

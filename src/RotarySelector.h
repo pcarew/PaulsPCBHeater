@@ -6,7 +6,7 @@
 #include "Extensions.h"
 #include "Button.h"
 
-#define ROTDBAMOUNT 15					// 5ms for rotary debounce
+#define ROTDBAMOUNT 3					// 5ms for rotary debounce
 #define SELDBAMOUNT 36					// 36ms for sector debounce
 
 typedef struct _RSE{

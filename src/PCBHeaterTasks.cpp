@@ -17,18 +17,18 @@ IMPORT TemperatureMonitoring tempMonitor;
 IMPORT HeaterController *heaterController;
 
 	//void (*TaskType)(volatile TCB *);
-#define TSKAVGCNT 2						// Averaged over 10 cycles
-long taskAvgTime = 1;
-long taskASwitches = 0;
+//#define TSKAVGCNT 2						// Averaged over 10 cycles
+//long taskAvgTime = 1;
+//long taskASwitches = 0;
 void PCBHeaterTasks::taskA(volatile TCB *tcb){
-	volatile TCB *localTcb = tcb;
-	char taskLetter = (char)('A'+tcb->tid - 1);
-	char tid = tcb->tid;
-	static  long startTime;
-	static  long endTime;
+//	volatile TCB *localTcb = tcb;
+//	char taskLetter = (char)('A'+tcb->tid - 1);
+//	char tid = tcb->tid;
+//	static  long startTime;
+//	static  long endTime;
 
 	FOREVER{
-		taskASwitches++;
+//		taskASwitches++;
 //		Serial.println(F("Task A"));
 //			startTime = millis();
 		tempMonitor.update();
@@ -44,23 +44,24 @@ void PCBHeaterTasks::taskA(volatile TCB *tcb){
 }
 
 void PCBHeaterTasks::taskB(volatile TCB *tcb){
-	volatile TCB *localTcb = tcb;
-	char taskLetter = (char)('A'+tcb->tid - 1);
-	char tid = tcb->tid;
+//	volatile TCB *localTcb = tcb;
+//	char taskLetter = (char)('A'+tcb->tid - 1);
+//	char tid = tcb->tid;
 
 	FOREVER{
-		Serial.println(F("Task B"));
+//		Serial.println(F("Task B"));
+
 		pause();
 	}
 }
 
 void PCBHeaterTasks::taskC(volatile TCB *tcb){
-	volatile TCB *localTcb = tcb;
-	char taskLetter = (char)('A'+tcb->tid - 1);
-	char tid = tcb->tid;
+//	volatile TCB *localTcb = tcb;
+//	char taskLetter = (char)('A'+tcb->tid - 1);
+//	char tid = tcb->tid;
 
 	FOREVER{
-		Serial.println(F("Task C"));
+//		Serial.println(F("Task C"));
 		pause();
 	}
 }

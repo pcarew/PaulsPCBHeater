@@ -21,10 +21,9 @@
 
 #define abstract
 
-#define DBTIME ((unsigned long)80)				// In MicroSeconds
-//#define DBTIME ((long)350000)
+#define DBTIME ((unsigned long)80)				// In MilliSeconds (default if button created without specifying debounce)
 
-#define MAXBUTTONS 8
+#define MAXBUTTONS 5
 
 Interface ButtonAction{
 private:
@@ -45,6 +44,7 @@ public:
 		this->buttonAction = action;
 		this->param = param;
 		this->debounceAmount = dbAmount;
+		this->debounceTimeout = 0;
 	}
 	virtual ~Button(){}
 
@@ -81,17 +81,6 @@ class IntPinButton : Button{
 
 // https://dronebotworkshop.com/interrupts/
 // Pin Change Ports
-
-/*
-Interface PCINTHandler{
-private:
-public:
-	virtual ~PCINTHandler(){}
-	virtual void intCheck(unsigned portState, unsigned long timestamp) =0;
-};
-*/
-
-//abstract class PCINTButton : public Button , Implements PCINTHandler{
 abstract class PCINTButton : public Button{
 	private:
 	public:

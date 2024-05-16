@@ -67,9 +67,11 @@ void HeaterController::setPercentagePwr(unsigned char percentage){
 
 	HeaterController::updatePowerCounter();
 }
+
 void HeaterController::updatePowerCounter(){
 	HeaterController::powerCounter = (unsigned char)(((unsigned)HeaterController::powerPercentage*FRAMESIZE)/100);	// Turn % into actual power on count
 }
+
 void HeaterController::setRawPwr(unsigned char count){					// Called to set required raw power
 	if (count > FRAMESIZE){
 		HeaterController::powerCounter = FRAMESIZE;
@@ -147,7 +149,7 @@ extern DisplayText displayElement;
 void HeaterController::menuAction(int param){
 	int i = 200;
 
-	systemDisplay.tftScreen.background(0,255,0);
+	systemDisplay.clear(0,255,0);
 	displayElement.setBg(0, 255, 0);
 	displayElement.setFg(255, 0, 0);
 	while(!cancelled && i > 0){
@@ -171,6 +173,7 @@ void HeaterController::menuAction(int param){
 //	HeaterControl::heaterEnabled = false;
 }
 
+/*
 void HeaterController::rotaryAction(const int type, int level, RSE::Dir direction, int param){		// type is ROTATE or SELECT Called from PortD ISR
 
 //			Serial.print(F("HC Dir:"));Serial.println(direction);
@@ -204,3 +207,4 @@ void HeaterController::rotaryAction(const int type, int level, RSE::Dir directio
 		break;
 	}
 }
+*/

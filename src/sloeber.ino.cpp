@@ -7,16 +7,6 @@
 #include "Arduino.h"
 #include "Arduino.h"
 
-
-/*
-int freeRam() {
-  extern int __heap_start,*__brkval;
-  int stackPositionPtr;
-  return (int)&stackPositionPtr - (__brkval == 0 ?
-		  	  (int)&__heap_start : (int) __brkval);
-}
-*/
-
 extern void setup() ;
 extern void loop() ;
 

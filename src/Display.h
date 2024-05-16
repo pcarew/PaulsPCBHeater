@@ -33,6 +33,7 @@ public:
 
 	int bb=BB, bg=BG, br=BR, fb=FB, fg=FG, fr=FR;
 	TFT tftScreen = TFT(TFT_CS_PIN, SPI_DC_PIN, SPI_RST_PIN); // @suppress("Abstract class cannot be instantiated")
+//	TFT tftScreen;
 
 
 	Display();
@@ -42,6 +43,8 @@ public:
 
 	void setFg(int r, int g, int b);
 	void setBg(int r, int g, int b);
+	void clear(int r, int g, int b);
+	void clear();
 };
 
 // indexes into chrSize

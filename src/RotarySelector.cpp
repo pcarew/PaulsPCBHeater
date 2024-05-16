@@ -3,6 +3,9 @@
 #include "Button.h"
 #include "RotarySelector.h"
 
+#include "Ram.h"
+#include "systemData.h"
+
 
 RotarySelector::RotarySelector(int portDpinA, int portDpinB, int portDselectorPin, RotaryAction *action, int param ){
 		this->rotaryAction = action;
@@ -16,10 +19,8 @@ RotarySelector::RotarySelector(int portDpinA, int portDpinB, int portDselectorPi
 }
 
 void RotarySelector::buttonAction(ButtonAction::Level level, int pinSelector) {		// This is called whenever the rotary selector is rotated causing an interrupt
-//	Serial.print("Rot BA:");Serial.print(pinSelector);Serial.print(F(" Level:"));Serial.println(level);
 	switch(pinSelector){
 	case RotarySelector::S:
-//		Serial.println("Selector");
 		this->rotaryAction->rotaryAction(RotaryAction::SELECT,level,RSE::NC,this->rotaryParam);	// Notify client of this Rotary Selector *** Called within ISR ***
 		break; // End of selector handling
 	case RotarySelector::A:
@@ -28,13 +29,14 @@ void RotarySelector::buttonAction(ButtonAction::Level level, int pinSelector) {	
 		if(this->dir != RSE::NC)
 				this->rotaryAction->rotaryAction(RotaryAction::ROTATE,(int)NULL,this->dir,this->rotaryParam);		// Notify client of this Rotary Selector *** Called within ISR ***
 		break; // End of Rotator handling
+		break;
 	}
 }
 
 /*tick*/
 void RotarySelector::tick(){
-	static int aState;
-	static int aLastState;
+			int aState;
+	static	int aLastState;
 	 aState = digitalRead(this->aPin); // Reads the "current" state of the outputA
 	   // If the previous and the current state of the outputA are different, that means a Pulse has occured
 	   if (aState != aLastState){
@@ -49,6 +51,7 @@ void RotarySelector::tick(){
 	   	 this->dir = RSE::Dir::NC;
 	   }
 	   aLastState = aState; // Updates the previous state of the outputA with the current state
+//					Serial.print(F("Ram free"));Serial.println(ramApp.freeRam());delay(500);
 
 }
 
@@ -108,7 +111,7 @@ void RotarySelector::rotaryFSM(ButtonAction::Level level, int pinSelector){
 		if(event != RSE::Event::ER){
 			newDir = RotarySelector::rotaryFSM[(int)event][(int)this->state].dir;
 			nextState = RotarySelector::rotaryFSM[(int)event][(int)this->state].nextState;
-//				Serial.print("SE:");Serial.print(this->state);Serial.print(event);Serial.println(nextState);
+//				Serial.print(F("SE:"));Serial.print(this->state);Serial.print(event);Serial.println(nextState);
 
 			if(nextState != RSE::State::NOCH)
 				this->state = nextState;
@@ -119,7 +122,7 @@ void RotarySelector::rotaryFSM(ButtonAction::Level level, int pinSelector){
 					case RSE::Dir::FW: counter++; break;
 					case RSE::Dir::RV: counter--; break;
 					case RSE::Dir::NC:
-//						Serial.println("EV NC");
+//						Serial.println(F("EV NC"));
 						break;
 				}
 			}
