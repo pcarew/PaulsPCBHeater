@@ -1,0 +1,43 @@
+
+/************************************************************************
+*                                                                       *
+*       FILE NAME       : posQueue.h									*
+*       REVISION        : 1                                             *
+*       DESCRIPTION     : Type definitions for Queues in Paul's Operating		*
+*						: System. Derived from original OS by PC.		*
+*       AUTHOR          : A.J.Paul Carew                                *
+*       FILE ORIGIN     : Original work									*
+*       DEPENDENCIES    : None.
+*       NOTE            :                                               *
+*                                                                       *
+*                                                                       *
+*-----------------------------------------------------------------------*
+*                                                                       *
+*               Change History.                                         *
+*                                                                       *
+*       Rev.    Name    Date            Reason                          *
+*                      (MON/DD/YY)                                      *
+*                                                                       *
+*       1       AJPC    may/14/24       Initial software                *
+*                                                                       *
+************************************************************************/
+
+#ifndef posQueue_h
+#define posQueue_h
+
+#include "pos.h"
+#include "posMsg.h"
+
+typedef struct {
+	unsigned char size;
+	unsigned char qPtr;
+	MSG *queue;					// Ptr to array of MSGs
+	TCB	*pended;
+}QUE;
+
+IMPORT void init_queue(QUE *qCntl, MSG *qStack, unsigned char size);
+IMPORT bool qPush(QUE *q, MSG msg);
+IMPORT MSG qPop(QUE *q, bool pendRequested);
+IMPORT int qCheck(QUE *q);
+
+#endif
