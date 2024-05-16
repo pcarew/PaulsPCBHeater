@@ -10,4 +10,24 @@ avrdude  -c stk500v1 -p m328p -PCOM3 -U hfuse:r:-:h
 
 After resetting the fuses, the Arduino Bootloader must be re-installed in the target.
 Follow this guide: https://support.arduino.cc/hc/en-us/articles/4841602539164-Burn-the-bootloader-on-UNO-Mega-and-classic-Nano-using-another-Arduino
-Use the Boatloader programmer cable to cable between Programmer abd target boards
+Use the Bootloader programmer cable to cable between Programmer abd target boards
+
+A) 1st setup programmer board
+Connect the programmer board to the computer.
+Select your programmer board in Tools > Board, for example Tools > Board > Arduino AVR Boards > Arduino Uno.
+Select the port the board is connecting to in Tools > Port.
+Open File > Examples > 11.ArduinoISP > ArduinoISP
+Upload 'ArduinoISP Programmer' sketch
+
+B) Connect Boatloader cable
+
+C) Burn bootloader via programmer
+Select the target board in Tools > Board (target is UNO).
+Select Tools > Programmer > Arduino as ISP.
+Select Tools > Burn Bootloader
+
+D) Test
+Return Arduino programmer setting to 'AVR ISP'
+Connect USB to target
+upload 'Blink' or some other Arduino sketch as verification
+Note: If target still has reset track cut - a manual reset button activation will be needed
