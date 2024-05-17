@@ -24,7 +24,7 @@ ProfileController::~ProfileController() {
 
 // Used for UI
 const char *ProfileController::fmt = "Profile Control";
-int ProfileController::targetTemp = 44;
+int ProfileController::targetTemp = 0;
 
 #define MainPg 	  (ProfileControlId	+0)
 #define ManTempPg (ProfileControlId	+1)
@@ -100,7 +100,7 @@ void ProfileController::menuAction(int param){
 
 				time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
 				if(time>nextDisplayTime){
-					nextDisplayTime = time+100l;	// Check once per second, but only update if needed
+					nextDisplayTime = time+100l;	// Check once per period, but only update if needed
 					if( ProfileController::targetTemp != lastTt || TemperatureMonitoring::brdBot.getTemperature() != lastAt){
 						ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
 							sprintf(dispBuff, "TT:%d AT:%d ", ProfileController::targetTemp,(int)TemperatureMonitoring::brdBot.getTemperature());

@@ -70,7 +70,7 @@ void PCBHeaterTasks::taskC(volatile TCB *tcb){
 
 /* Ensure that enough thread stack space (pos.h STACKSIZE) is allocated for the number of tasks created and that there are enough TCBs (MAXNOTASKS)*/
 void PCBHeaterTasks::startup(){
-	const bool showStats = true;
+	const bool showStats = false;
 
 	init_pos();
 
