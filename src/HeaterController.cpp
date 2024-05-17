@@ -31,7 +31,7 @@ void HeaterController::setup(){
 
 	pinMode(LED_PIN, OUTPUT);
 	pinMode(HTR_PIN, OUTPUT);
-	HeaterController::heaterEnable(true);					// Enable/disable heater output
+	HeaterController::heaterEnable(false);					//  initially disable heater output
 }
 
 // Background Process, called from Task

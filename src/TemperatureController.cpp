@@ -11,7 +11,7 @@
 #include "HeaterController.h"
 
 unsigned long TemperatureController::periodEnd	= 0;
-int TemperatureController::desiredTemp			= 30;					// Target
+int TemperatureController::desiredTemp			= 0;					// Target
 int TemperatureController::desiredSlope			= 0;					// Speed to target  deg/minute
 double TemperatureController::valueBeingChanged	= 0;
 double TemperatureController::prevTempReading	= 0;
