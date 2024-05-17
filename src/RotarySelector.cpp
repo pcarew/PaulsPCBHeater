@@ -3,7 +3,6 @@
 #include "Button.h"
 #include "RotarySelector.h"
 
-#include "Ram.h"
 #include "systemData.h"
 
 
@@ -51,7 +50,6 @@ void RotarySelector::tick(){
 	   	 this->dir = RSE::Dir::NC;
 	   }
 	   aLastState = aState; // Updates the previous state of the outputA with the current state
-//					Serial.print(F("Ram free"));Serial.println(ramApp.freeRam());delay(500);
 
 }
 
