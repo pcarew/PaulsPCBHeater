@@ -8,31 +8,38 @@
 #ifndef PROFILE_H
 #define PROFILE_H
 
-#define MAXPOINTS 8
+#define DEFGUARD 200
+#define DEFSLOPE 3		// degrees/minute
 
-struct Point{
-	double temp;
-	double duration;
-	double slope;
-//	double startingOffset;
 
-};
-
+/*
+ *         +-----------    Guard Temp (Bottom not exceed temp)
+ *        /
+ *   (A) +---Soak Time---+ TargetTemp (Top temp). Soak time measured from time point A
+ *      /
+ *     /  <= Slope deg/minute (max rate)
+ *    /
+ * --+
+ */
 class Profile{
 private:
 public:
 	enum PointState{
-		InSlope = 1,
-		Attained =2,
-		Holding = 3
+		NotActive	= 0,
+		Adjusting	= 1,				// Warming or cooling towards target
+		Soaking		= 2,					// Target attained, now soaking
+		Complete	= 3				// Soaking complete
 	};
 
+	int topTargetTemp;
+	int soakDuration;
+	int bottomGuardTemp;
+	int slope;
 
-	int numberPoints;
-
-	Point points[MAXPOINTS];
-	char currentPoint;
 	PointState currantState;
+
+	Profile(int target,int soak);
+	Profile(int target,int guard,int soak,int slope);
 };
 
 #endif /* PROFILE_H */
