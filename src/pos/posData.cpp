@@ -48,7 +48,7 @@ unsigned int	stack_used;		/* The amount of stack allocated*/
 					/* so far.			*/
 					/* The stacks.			*/
 unsigned char stacks[STACKSIZE];		// Any task that uses printf library
-					// call needs at least 500 words
+					// Intel call needs at least 500 words
 					// of stack space
 
 unsigned long	switches;		/* Running count of the number of*/

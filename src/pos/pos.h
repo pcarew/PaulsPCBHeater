@@ -35,8 +35,8 @@ typedef	unsigned char	BOOL;
 
 #define STACK_CHECKS TRUE
 
-#define STACKSIZE	(unsigned)221	/* Size of system mem used for task stacks.			*/
-#define	MAXNOTASKS	5
+#define STACKSIZE	(unsigned)112 // enough for 1 thread task and 1 system task that uses it's own stack
+#define	MAXNOTASKS	2
 
 
 typedef struct _tcb{			/* POS task control block.	*/
@@ -57,10 +57,10 @@ typedef void (*TaskType)(volatile TCB *);
 					/* POS Function prototypes.	*/
 IMPORT	void	init_pos();
 IMPORT	BOOL	start_pos(BOOL);
-IMPORT	TCB	*create(TaskType task,unsigned stack,int param,BOOL showStats);
+IMPORT	TCB		*create(TaskType task,unsigned stack,int param,BOOL showStats);
 IMPORT	void	pause();
 IMPORT	void	qtask(TCB *tcb);
-IMPORT	TCB	*dqtask(void);
+IMPORT	TCB		*dqtask(void);
 IMPORT	void	pos_trap();
 					/* POS macros.			*/
 #define CLR_INTR() cli()	//local_irq_save()

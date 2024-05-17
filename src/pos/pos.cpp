@@ -68,7 +68,7 @@ TCB *create(TaskType task, unsigned int reqStackSize, int param, BOOL showStats)
 
 	if(reqStackSize > 0){				// A stack was requested for this task (this is the default)
 		if((stack_used + reqStackSize) > (STACKSIZE)){
-//				Serial.println(F("Out of stack space for task ")); //Serial.println(no_tasks);
+				Serial.println(F("Out of stack space for task ")); Serial.println(no_tasks);
 				return FALSE;
 		}
 
@@ -106,7 +106,7 @@ TCB *create(TaskType task, unsigned int reqStackSize, int param, BOOL showStats)
 //		s -= 6;		//Compiler added function preamble register pushes
 
 		tcb->sp		= s;			// AVR SP always points to next available location
-	}else{ // Determine if TCB has a stack
+	}else{ // Determine if TCB has a stack - This else indicates that a thread stack was not needed
 #ifdef STACK_CHECKS
 		tcb->se		= NULL;
 		tcb->st		= NULL;
@@ -117,18 +117,19 @@ TCB *create(TaskType task, unsigned int reqStackSize, int param, BOOL showStats)
 							// which uses the system stack
 
 //		Serial.print(F("stackSet 0x"));Serial.println((unsigned int)tcb->sp,HEX);
-	if(!no_tasks){				// No existing tasks
+	if(!no_tasks){				// No existing tasks - IE this is the 1st requested task
 		nextt	= tcb;
 		tcb->next = tcb;		// Point fwd and back to this task
 		tcb->prev = tcb;
-		no_rtasks++;
+		no_rtasks++;			// Number of *** Running *** tasks
 	}else{
-		qtask(tcb);			// Add task to the run	
-	}					// queue.		
+		qtask(tcb);				// Add this subsequent task to the run	queue
+	}
+
+	tcb->param = param;				// Set the task param value
+	tcb->tid = no_tasks;			// Set the Task Id for debugging - zero referenced
 
 	no_tasks++;
-	tcb->param = param;				// Set the task param value
-	tcb->tid = no_tasks;			// Set the Task Id for debugging
 
 	return tcb;
 }
