@@ -35,7 +35,8 @@ void HeaterController::setup(){
 }
 
 // Background Process, called from Task
-void HeaterController::process(){
+// Actual Heater Firing is driven from ISR
+void HeaterController::update(){
 		unsigned long timeNow = millis();
 		hzDetermination(timeNow);
 }

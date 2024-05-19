@@ -16,10 +16,13 @@
 class TemperatureController: Implements MenuAction {
 	static unsigned long periodEnd;
 public:
-	static int desiredTemp;						// Target
+	static int targetTemp;						// Target Temp from top sensor
+	static int targetPower;						// Target Temp from top sensor
+	static int guardTemp;						// Guard  Temp from bottom sensor
+	static int guardPower;						// Guard  Temp from bottom sensor
 	static int desiredSlope;					// Speed to target  deg/minute
 
-	static double valueBeingChanged;
+	static double powerSetting;
 	static double prevTempReading;
 
 //	TemperatureController();
@@ -30,8 +33,8 @@ public:
 	static void updateHeater();
 
 								// Profile control
-	static int getTemperature();
-	static void setTemperature(int targetTemp, int slope);						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
+	static int getTargetPower();
+	static void setTemperature(int targetTemp, int guard, int slope);						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
 };
 
 #endif /* TEMPERATURECONTROLLER_H_ */

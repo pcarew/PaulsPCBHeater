@@ -8,9 +8,14 @@
 #ifndef PROFILE_H
 #define PROFILE_H
 
+#include "pos/pos.h"
+#include "Extensions.h"
+#include "Menu.h"
+
 #define DEFGUARD 200
 #define DEFSLOPE 3		// degrees/minute
 
+#define NUMBERPROFILES 3
 
 /*
  *         +-----------    Guard Temp (Bottom not exceed temp)
@@ -21,25 +26,36 @@
  *    /
  * --+
  */
-class Profile{
+class Profile: Implements MenuAction{
 private:
 public:
-	enum PointState{
+	enum ProfileState{
 		NotActive	= 0,
 		Adjusting	= 1,				// Warming or cooling towards target
 		Soaking		= 2,					// Target attained, now soaking
 		Complete	= 3				// Soaking complete
 	};
 
+	static Profile *profiles;
+	static MenuItem *profileMenuItems;
+	static int selectedProfile;
+
+	const char *name;
 	int topTargetTemp;
 	int soakDuration;
 	int bottomGuardTemp;
 	int slope;
 
-	PointState currantState;
+	ProfileState currantState;
 
-	Profile(int target,int soak);
-	Profile(int target,int guard,int soak,int slope);
+	Profile(int target,int soak, const char *name);
+	Profile(int target,int guard,int soak,int slope, const char *name );
+
+	void menuAction(int param);
+//	void rotaryAction(const int type, int level, RSE::Dir direction, int param){};		// type is ROTATE or SELECT. 'level only used for SELECT
+
 };
+
+IMPORT Profile *profiles[NUMBERPROFILES];
 
 #endif /* PROFILE_H */

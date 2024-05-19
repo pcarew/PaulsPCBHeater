@@ -12,6 +12,7 @@
 #include "HeaterController.h"
 #include "TemperatureMonitoring.h"
 #include "TemperatureController.h"
+#include "ProfileController.h"
 
 IMPORT TemperatureMonitoring tempMonitor;
 IMPORT HeaterController *heaterController;
@@ -33,9 +34,11 @@ void PCBHeaterTasks::taskA(volatile TCB *tcb){
 //			startTime = millis();
 		tempMonitor.update();
 //			endTime = millis();
-		heaterController->process();
+		heaterController->update();
 
 		TemperatureController::update();
+
+		ProfileController::update();
 
 //			taskAvgTime = (taskAvgTime * (TSKAVGCNT-1) + (endTime - startTime)) / TSKAVGCNT;
 //			taskAvgTime = endTime - startTime;
@@ -66,7 +69,7 @@ void PCBHeaterTasks::taskC(volatile TCB *tcb){
 	}
 }
 
-#define PCBSTACKSIZE	(unsigned)110 //176 //240
+#define PCBSTACKSIZE	(unsigned)128 //176 //240
 
 /* Ensure that enough thread stack space (pos.h STACKSIZE) is allocated for the number of tasks created and that there are enough TCBs (MAXNOTASKS)*/
 void PCBHeaterTasks::startup(){

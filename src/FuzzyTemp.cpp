@@ -131,7 +131,7 @@ OutputFuzzySet *valueChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
 		},
 };
 
-double FuzzyTemp::getValueChangePercent(double actualValue, double desiredValue){
+double FuzzyTemp::getPowerPercent(double actualValue, double desiredValue){
 
 	double weight					= 0.0;
 	double station					= 0.0;

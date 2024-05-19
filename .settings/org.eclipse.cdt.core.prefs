@@ -469,7 +469,7 @@ environment/project/io.sloeber.core.toolChain.release.1193435688/JANTJE.BOARD_NA
 environment/project/io.sloeber.core.toolChain.release.1193435688/JANTJE.BOARD_NAME/value=Arduino Uno
 environment/project/io.sloeber.core.toolChain.release.1193435688/JANTJE.COM_PORT/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1193435688/JANTJE.COM_PORT/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1193435688/JANTJE.COM_PORT/value=COM4
+environment/project/io.sloeber.core.toolChain.release.1193435688/JANTJE.COM_PORT/value=COM5
 environment/project/io.sloeber.core.toolChain.release.1193435688/JANTJE.ECLIPSE_LOCATION/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1193435688/JANTJE.ECLIPSE_LOCATION/operation=replace
 environment/project/io.sloeber.core.toolChain.release.1193435688/JANTJE.ECLIPSE_LOCATION/value=C\:\\eclipse\\jee202006_416\\

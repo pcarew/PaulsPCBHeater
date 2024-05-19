@@ -14,13 +14,16 @@
 class ProfileController: Implements MenuAction {
 public:
 	static int targetTemp;
-	static Profile activeProfile;
+	static Profile *activeProfile;
 	static MenuItem *localMenuItems;
 	static Menu *localMenu;
+	static Menu *profileMenu;
 	static char activePage;
 
 	ProfileController();
 	virtual ~ProfileController();
+
+	static void update();			//Called by task to update Profile status
 
 	//Used for UI
 	static const char *fmt;

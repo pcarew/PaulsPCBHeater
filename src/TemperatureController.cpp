@@ -11,10 +11,13 @@
 #include "HeaterController.h"
 
 unsigned long TemperatureController::periodEnd	= 0;
-int TemperatureController::desiredTemp			= 0;					// Target
+int TemperatureController::targetTemp			= 0;					// Target
+int TemperatureController::targetPower			= 0;					// Target
+int TemperatureController::guardTemp			= 0;					// Guard
+int TemperatureController::guardPower			= 0;					// Guard
 int TemperatureController::desiredSlope			= 0;					// Speed to target  deg/minute
-double TemperatureController::valueBeingChanged	= 0;
-double TemperatureController::prevTempReading	= 0;
+double TemperatureController::powerSetting		= 0;
+//double TemperatureController::prevTempReading	= 0;
 
 /*
 TemperatureController::TemperatureController() {
@@ -27,11 +30,12 @@ TemperatureController::~TemperatureController() {
 }
 */
 
-int TemperatureController::getTemperature(){
-	return TemperatureController::desiredTemp;
+int TemperatureController::getTargetPower(){
+	return TemperatureController::targetPower;
 }
-void TemperatureController::setTemperature(int targetTemp, int slope){						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
-	TemperatureController::desiredTemp = targetTemp;
+void TemperatureController::setTemperature(int targetTemp, int guard, int slope){						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
+	TemperatureController::targetTemp = targetTemp;
+	TemperatureController::guardTemp = guardTemp;
 	TemperatureController::desiredSlope = slope;
 }
 
@@ -47,11 +51,14 @@ void TemperatureController::update(){				// Called from Tasking
 }
 
 void TemperatureController::valueDetermination() {
-		double tempReading = TemperatureMonitoring::brdBot.getTemperature();
+		double topReading = TemperatureMonitoring::brdTop.getTemperature();
+		double bottomReading = TemperatureMonitoring::brdBot.getTemperature();
 //		double tempErrPercent = (TemperatureController::desiredTemp - tempReading) / TemperatureController::desiredTemp;
 
 
-		TemperatureController::valueBeingChanged = FuzzyTemp::getValueChangePercent(tempReading,(double)TemperatureController::desiredTemp) ;
+		TemperatureController::targetPower = FuzzyTemp::getPowerPercent(topReading,(double)TemperatureController::targetTemp) ;
+		TemperatureController::guardPower = FuzzyTemp::getPowerPercent(bottomReading,(double)TemperatureController::guardTemp) ;
+		TemperatureController::powerSetting = min(targetPower,guardPower);
 
 		/* AJPC Ignore using slope while in development
 		if(abs(tempErrPercent) < 10.0){	// Use Target Temp
@@ -61,8 +68,8 @@ void TemperatureController::valueDetermination() {
 			valueBeingChanged = (unsigned char) FuzzyTemp::getValueChangePercent(actualSlope,(double)TemperatureController::desiredSlope);
 		}
 		*/
-		prevTempReading = tempReading;
+//		prevTempReading = bottomReading;
 }
 void TemperatureController::updateHeater(){
-	HeaterController::setPercentagePwr( (valueBeingChanged<0?(unsigned char)0:(unsigned char) valueBeingChanged) );				// Heater cant accept negative values
+	HeaterController::setPercentagePwr( (powerSetting<0?(unsigned char)0:(unsigned char) powerSetting) );				// Heater cant accept negative values
 }

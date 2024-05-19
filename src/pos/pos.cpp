@@ -84,15 +84,15 @@ TCB *create(TaskType task, unsigned int reqStackSize, int param, BOOL showStats)
 
 #ifdef STACK_CHECKS
 		tcb->st = s;
-//			Serial.print(F(" Stack Base:0x")); Serial.print((unsigned int)stacks,HEX);
-//			Serial.print(F(", Stack Size ")); Serial.print(reqStackSize);
-//			Serial.print(F(", Bottom:0x")); Serial.print((unsigned int)tcb->se,HEX);
-//			Serial.print(F(", Top:0x")); Serial.println((unsigned int)s,HEX);
+			Serial.print(F(" Stack Base:0x")); Serial.print((unsigned int)stacks,HEX);
+			Serial.print(F(", Stack Size ")); Serial.print(reqStackSize);
+			Serial.print(F(", Bottom:0x")); Serial.print((unsigned int)tcb->se,HEX);
+			Serial.print(F(", Top:0x")); Serial.println((unsigned int)s,HEX);
 
 		// First Fill the stack with a recognizable pattern
 		unsigned char *fillPtr = tcb->se+1;		// Skip over the Sentry STACKGUARD
 		while(fillPtr <= s){
-			*fillPtr++ = (unsigned char) (WATERMARK)+ (no_tasks+1);		// Fill pattern contains Watermark and Task ID
+			*fillPtr++ = (unsigned char) (WATERMARK)+ (no_tasks);		// Fill pattern contains Watermark and Task ID
 		}
 		tcb->lowtide= reqStackSize;
 #endif

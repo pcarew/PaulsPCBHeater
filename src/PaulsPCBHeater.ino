@@ -91,11 +91,16 @@ void topLevelStatus();
 void loop()
 {
 	static unsigned long periodEnd1 =0;
+	static unsigned long periodEnd2 =0;
 	time = millis();
 	if(time>periodEnd1){
-		periodEnd1 = time+350l;	// Every 1 second
+		periodEnd1 = time+250l;	// Every 1/2 second
 
 		mainMenu.menuInvoke();
+	}
+	if(time>periodEnd2){
+		periodEnd2 = time+500l;	// Every 1/2 second
+
 		topLevelStatus();
 	}
 		pause();
@@ -118,7 +123,6 @@ void topLevelStatus(){
 		(int) TemperatureMonitoring::brdTop.getTemperature()
 		);
 	displayElement.show();
-
 }
 
 #endif

@@ -33,7 +33,7 @@ public:
 
 	HeaterController();
 	~HeaterController(){}
-	static void process();
+	static void update();
 	static void setPercentagePwr(unsigned char percentage);		// Called by Temperature control to set required heater power
 	static void updatePowerPercentage();						// Sets power percentage based on existing power count
 	static void setRawPwr(unsigned char count);					// Called to set required raw power
