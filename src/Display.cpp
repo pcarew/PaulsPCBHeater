@@ -75,8 +75,8 @@ void DisplayText::show(){
 		this->disp->tftScreen.setCursor(xpix, ypix);
 		ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
 			this->disp->tftScreen.print(this->text);
-//			Serial.print(F("R:"));Serial.print(this->row);Serial.print(F(" C:"));Serial.print(this->col);Serial.print(F(" "));Serial.println(this->text);
 		}
+//		Serial.print(F("R:"));Serial.print(this->row);Serial.print(F(" C:"));Serial.print(this->col);Serial.print(F(" "));Serial.println(this->text);
 }
 
 bool DisplayText::show(char *newText){

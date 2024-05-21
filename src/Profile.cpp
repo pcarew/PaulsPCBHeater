@@ -16,15 +16,14 @@ Profile::Profile(int target,int guard,int soak,int slope, const char *name){
 	this->bottomGuardTemp	= guard;
 	this->soakDuration		= soak;
 	this->slope				= slope;
-	this->currantState		= NotActive;
 
 	this->name				= name;
 }
 
 Profile *Profile::profiles = new Profile[NUMBERPROFILES]  {
-		Profile(50,5,"T:50 S:5"),
-		Profile(100,5,"T:100 S:5"),
-		Profile(200,5,"T:200 S:5")
+		Profile(50,45,5,DEFSLOPE,	"T50  G45  S5"),
+		Profile(100,5,				"T100 G200 S5"),
+		Profile(200,5,				"T200 G200 S5")
 };
 
 MenuItem *Profile::profileMenuItems = new MenuItem [NUMBERPROFILES] {

@@ -29,12 +29,6 @@
 class Profile: Implements MenuAction{
 private:
 public:
-	enum ProfileState{
-		NotActive	= 0,
-		Adjusting	= 1,				// Warming or cooling towards target
-		Soaking		= 2,					// Target attained, now soaking
-		Complete	= 3				// Soaking complete
-	};
 
 	static Profile *profiles;
 	static MenuItem *profileMenuItems;
@@ -45,8 +39,6 @@ public:
 	int soakDuration;
 	int bottomGuardTemp;
 	int slope;
-
-	ProfileState currantState;
 
 	Profile(int target,int soak, const char *name);
 	Profile(int target,int guard,int soak,int slope, const char *name );

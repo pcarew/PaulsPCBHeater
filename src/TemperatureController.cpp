@@ -33,7 +33,7 @@ TemperatureController::~TemperatureController() {
 int TemperatureController::getTargetPower(){
 	return TemperatureController::targetPower;
 }
-void TemperatureController::setTemperature(int targetTemp, int guard, int slope){						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
+void TemperatureController::setTemperature(int targetTemp, int guardTemp, int slope){						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
 	TemperatureController::targetTemp = targetTemp;
 	TemperatureController::guardTemp = guardTemp;
 	TemperatureController::desiredSlope = slope;
@@ -58,7 +58,8 @@ void TemperatureController::valueDetermination() {
 
 		TemperatureController::targetPower = FuzzyTemp::getPowerPercent(topReading,(double)TemperatureController::targetTemp) ;
 		TemperatureController::guardPower = FuzzyTemp::getPowerPercent(bottomReading,(double)TemperatureController::guardTemp) ;
-		TemperatureController::powerSetting = min(targetPower,guardPower);
+		TemperatureController::powerSetting = min(TemperatureController::targetPower,TemperatureController::guardPower);
+//		Serial.print(F("T%:"));Serial.print(targetPower);Serial.print(F(" G%:"));Serial.print(guardPower);Serial.print(F(" Min:"));Serial.println(min(targetPower,guardPower));
 
 		/* AJPC Ignore using slope while in development
 		if(abs(tempErrPercent) < 10.0){	// Use Target Temp

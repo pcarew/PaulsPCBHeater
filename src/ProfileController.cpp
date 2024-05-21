@@ -25,12 +25,13 @@ ProfileController::~ProfileController() {
 
 // Used for UI
 char ProfileController::activePage = 0;
-const char *ProfileController::fmt = "Profile Control";
+const char *ProfileController::fmt = "P: %s";
 Menu* ProfileController::localMenu		= NULL;
 Menu* ProfileController::profileMenu	= NULL;
 
 // Profile control
 Profile *ProfileController::activeProfile = NULL;
+ProfileController::ProfileState ProfileController::currantState = ProfileController::NotActive;;
 int ProfileController::targetTemp = 0;
 
 #define MainPg 	  (ProfileControlId	+0)
@@ -57,7 +58,7 @@ void ProfileController::menuAction(int param){
 	if(ProfileController::localMenu		== 0)
 		ProfileController::localMenu	= new Menu( (MenuItem*)ProfileController::localMenuItems,	NUMBERITEMS,	(RotarySelector*)NULL,&systemDisplay,2,1); //  starting at Row 2, col 1
 	if(ProfileController::profileMenu	== 0)
-		ProfileController::profileMenu	= new Menu( (MenuItem*)Profile::profileMenuItems,			NUMBERPROFILES,	(RotarySelector*)NULL,&systemDisplay,2,1); //  starting at Row 2, col 1
+		ProfileController::profileMenu	= new Menu( (MenuItem*)Profile::profileMenuItems,			NUMBERPROFILES,	(RotarySelector*)NULL,&systemDisplay,2,0); //  starting at Row 2, col 1
 
 	ProfileController::activePage = param;
 	systemDisplay.clear(0,255,0);
@@ -68,6 +69,7 @@ void ProfileController::menuAction(int param){
 	time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
 	switch(ProfileController::activePage){
 		case MainPg:							// Top level page, display sub menu
+			systemDisplay.clear();
 			ProfileController::activePage = ProfileControlId;
 			displayElement.show();
 			while(!cancelled ){
@@ -76,35 +78,33 @@ void ProfileController::menuAction(int param){
 					nextDisplayTime = time+250l;
 					ProfileController::localMenu->menuInvoke();						// **** This is a recursive call ***
 					ProfileController::activePage = ProfileControlId;				// This may have changed
-					/*
-					ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-						sprintf(dispBuff, "Profile Cntl");
-					}
-					displayElement.setText((char *)dispBuff);						// MenuInvoke may have changed these
-					displayElement.setCol(0);
-					displayElement.setRow(0);
-					displayElement.show();
-					*/
 				}
 
 				if(time>displayTime2){
 					displayTime2 = time+1000l;
-						ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-							sprintf(dispBuff, "TT:%d AT:%d ", ProfileController::targetTemp,(int)TemperatureMonitoring::brdBot.getTemperature());
-						}
-						displayElement.setRow(1);
-						displayElement.show();
+					ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+						sprintf(dispBuff, fmt, (ProfileController::activeProfile == NULL)?"Man":activeProfile->name);
+					}
+					displayElement.setText((char *)dispBuff);
+					displayElement.setCol(0); displayElement.setRow(0); displayElement.show();
+					ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+						sprintf(dispBuff, "AT%3d AG%3d ", (unsigned)TemperatureMonitoring::brdTop.getTemperature(),(unsigned)TemperatureMonitoring::brdBot.getTemperature());
+					}
+					displayElement.setRow(1); displayElement.show();
 				}
 				pause();
 			}
 			cancelled = false;
 			break;
 		case ManTempPg:
+			systemDisplay.clear();
 			sprintf(dispBuff, "ManualTemp");
 			displayElement.setCol(0);
 			displayElement.setRow(0);
 			displayElement.setText((char *)dispBuff);
 			displayElement.show();
+			ProfileController::currantState = ProfileController::NotActive;
+			ProfileController::activeProfile = NULL;
 			while(!cancelled ){
 				if(TemperatureController::getTargetPower() != ProfileController::targetTemp){	// Update Temperature Controller if needed
 					TemperatureController::setTemperature(ProfileController::targetTemp,200,0);
@@ -136,8 +136,8 @@ void ProfileController::menuAction(int param){
 			cancelled = false;
 			break;
 		case ProfSelPg:
+			systemDisplay.clear();
 			Serial.print(F("Profile Selection here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
-			sprintf(dispBuff, "Profile Sel. Pg"); displayElement.setRow(0);  displayElement.show();
 
 			while(!cancelled ){
 				time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
@@ -145,22 +145,40 @@ void ProfileController::menuAction(int param){
 					nextDisplayTime = time+250l;
 					ProfileController::profileMenu->menuInvoke();						// **** This is a recursive call ***
 						ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-					sprintf(dispBuff, "Profile Sel."); displayElement.setRow(0);  displayElement.show();
+							sprintf(dispBuff, "Profile Sel."); displayElement.setRow(0); displayElement.setCol(0);
 						}
+						displayElement.setText((char *)dispBuff);
+						displayElement.show();
 				}
 				pause();
 			}
 			cancelled = false;
 			break;
 		case StrtStpPg:
+			systemDisplay.clear();
 			sprintf(dispBuff, "Start / Stop"); displayElement.setRow(0);  displayElement.show();
-			while(!cancelled ){
 				Serial.print(F("Start Stop here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
-				pause();
-			}
+
+				if(ProfileController::activeProfile != NULL){
+					ProfileController::currantState = ProfileController::Adjusting;
+					ProfileController::targetTemp = ProfileController::activeProfile->topTargetTemp;
+					TemperatureController::setTemperature(
+							ProfileController::activeProfile->topTargetTemp,
+							ProfileController::activeProfile->bottomGuardTemp,
+							ProfileController::activeProfile->soakDuration
+						);
+				}else{
+					Serial.println(F("No profile set"));delay(10);
+					ProfileController::currantState = ProfileController::NotActive;
+					ProfileController::targetTemp = NULL;
+					TemperatureController::setTemperature( NULL,NULL,NULL);
+				}
+
+
 			cancelled = false;
 			break;
 		case RestartPg:
+			systemDisplay.clear();
 			sprintf(dispBuff, "ReStart"); displayElement.setRow(0);  displayElement.show();
 			while(!cancelled ){
 				Serial.print(F("Restart here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
@@ -169,6 +187,7 @@ void ProfileController::menuAction(int param){
 			cancelled = false;
 			break;
 		case HtrCtlPg:
+			systemDisplay.clear();
 			sprintf(dispBuff, "HtrCtlPg"); displayElement.setRow(0);  displayElement.show();
 			HeaterController::heaterEnable(!HeaterController::heaterEnabled);
 			cancelled = false;
@@ -214,10 +233,10 @@ bool ProfileController::handleRotary(const int type, int level, RSE::Dir directi
 			if(counter == NULL) return false;								// Make sure we have something to twiddle
 			switch(direction){
 				case RSE::FW:
-						(*counter)++;
+						if(counter != NULL) (*counter)++;
 					break;
 				case RSE::RV:
-						(*counter)--;
+						if(counter != NULL) (*counter)--;
 					break;
 				case RSE::NC:
 					break;

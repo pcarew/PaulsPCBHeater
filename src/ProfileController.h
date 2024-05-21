@@ -13,12 +13,20 @@
 
 class ProfileController: Implements MenuAction {
 public:
+	enum ProfileState{
+		NotActive	= 0,
+		Adjusting	= 1,				// Warming or cooling towards target
+		Soaking		= 2,					// Target attained, now soaking
+		Complete	= 3				// Soaking complete
+	};
 	static int targetTemp;
 	static Profile *activeProfile;
 	static MenuItem *localMenuItems;
 	static Menu *localMenu;
 	static Menu *profileMenu;
 	static char activePage;
+
+	static ProfileState currantState;
 
 	ProfileController();
 	virtual ~ProfileController();
