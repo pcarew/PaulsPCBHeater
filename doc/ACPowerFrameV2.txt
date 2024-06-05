@@ -181,3 +181,15 @@ IE:
 PINC is portC pin values
 PINB is portB pin values
 PIND is portD pin values
+
+
+
+Eclipse C++ Compiler settings:
+---------------------------------
+Allowing C++11 Syntax checking in Eclipse:
+https://stackoverflow.com/questions/39134872/how-do-you-enable-c11-syntax-in-eclipse-neon
+- Right click on your project and click Properties
+- Navigate to C/C++ General and Preprocessor Include Paths, Macros etc.
+- Select the Providers tab, click on compiler settings row for the compiler you use.
+- Add -std=c++11 to Command to get compiler specs.
+- Apply changes.
