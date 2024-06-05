@@ -33,7 +33,7 @@ public:
 	static void updateHeater();
 
 								// Profile control
-	static int getTargetPower();
+	static int getTargetTemperature();
 	static void setTemperature(int targetTemp, int guard, int slope);						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
 };
 

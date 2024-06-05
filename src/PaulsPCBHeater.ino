@@ -94,7 +94,7 @@ void loop()
 	static unsigned long periodEnd2 =0;
 	time = millis();
 	if(time>periodEnd1){
-		periodEnd1 = time+250l;	// Every 1/2 second
+		periodEnd1 = time+250l;	// Every 1/4 second
 
 		mainMenu.menuInvoke();
 	}
@@ -118,7 +118,7 @@ void topLevelStatus(){
 	displayElement.show();
 
 	displayElement.setRow(1);
-	sprintf(dispBuff, "B:%3d T:%3d",
+	sprintf(dispBuff, "G:%3d T:%3d",
 		(int) TemperatureMonitoring::brdBot.getTemperature(),
 		(int) TemperatureMonitoring::brdTop.getTemperature()
 		);

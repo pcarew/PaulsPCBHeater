@@ -31,8 +31,9 @@ Menu* ProfileController::profileMenu	= NULL;
 
 // Profile control
 Profile *ProfileController::activeProfile = NULL;
-ProfileController::ProfileState ProfileController::currantState = ProfileController::NotActive;;
+ProfileController::ProfileState ProfileController::currantState = ProfileController::NotActive;
 int ProfileController::targetTemp = 0;
+int ProfileController::guardTemp = 200;
 
 #define MainPg 	  (ProfileControlId	+0)
 #define ManTempPg (ProfileControlId	+1)
@@ -51,9 +52,9 @@ MenuItem *ProfileController::localMenuItems = new MenuItem [NUMBERITEMS] {
 };
 
 // User Interface for Profile Controller. Runs under System UI Thread
-void ProfileController::menuAction(int param){
+void ProfileController::menuAction(volatile int param){
 	unsigned long displayTime2 = 0;;
-	int lastTt =0, lastAt=0;
+	int lastTt =0, lastGt=0;
 
 	if(ProfileController::localMenu		== 0)
 		ProfileController::localMenu	= new Menu( (MenuItem*)ProfileController::localMenuItems,	NUMBERITEMS,	(RotarySelector*)NULL,&systemDisplay,2,1); //  starting at Row 2, col 1
@@ -81,15 +82,11 @@ void ProfileController::menuAction(int param){
 				}
 
 				if(time>displayTime2){
-					displayTime2 = time+1000l;
-					ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+					displayTime2 = time+500l;
 						sprintf(dispBuff, fmt, (ProfileController::activeProfile == NULL)?"Man":activeProfile->name);
-					}
 					displayElement.setText((char *)dispBuff);
 					displayElement.setCol(0); displayElement.setRow(0); displayElement.show();
-					ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
 						sprintf(dispBuff, "AT%3d AG%3d ", (unsigned)TemperatureMonitoring::brdTop.getTemperature(),(unsigned)TemperatureMonitoring::brdBot.getTemperature());
-					}
 					displayElement.setRow(1); displayElement.show();
 				}
 				pause();
@@ -106,21 +103,19 @@ void ProfileController::menuAction(int param){
 			ProfileController::currantState = ProfileController::NotActive;
 			ProfileController::activeProfile = NULL;
 			while(!cancelled ){
-				if(TemperatureController::getTargetPower() != ProfileController::targetTemp){	// Update Temperature Controller if needed
-					TemperatureController::setTemperature(ProfileController::targetTemp,200,0);
+				if(TemperatureController::getTargetTemperature() != ProfileController::targetTemp){	// Update Temperature Controller if needed
+					TemperatureController::setTemperature(ProfileController::targetTemp,ProfileController::guardTemp,0);
 				}
 
-				time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
+				time = millis();					// As we've taken over control of the processor, we need to update time for everyone (and ourselves)
 				if(time>nextDisplayTime){
-					nextDisplayTime = time+100l;	// Check once per period, but only update if needed
-					if( ProfileController::targetTemp != lastTt || TemperatureMonitoring::brdBot.getTemperature() != lastAt){
-						ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-							sprintf(dispBuff, "TT:%d AT:%d ", ProfileController::targetTemp,(int)TemperatureMonitoring::brdBot.getTemperature());
-							lastTt = ProfileController::targetTemp;
-							lastAt = TemperatureMonitoring::brdBot.getTemperature();
-							displayElement.setRow(1); displayElement.show();
-//								Serial.println(dispBuff);
-						}
+					nextDisplayTime = time+500l;	// Check once per period, but only update if needed
+					if( TemperatureMonitoring::brdTop.getTemperature() != lastTt || TemperatureMonitoring::brdBot.getTemperature() != lastGt){
+						lastTt = (int) TemperatureMonitoring::brdTop.getTemperature();
+						lastGt = (int) TemperatureMonitoring::brdBot.getTemperature();
+						sprintf(dispBuff, "TT:%d GT:%d ", ProfileController::targetTemp,ProfileController::guardTemp);
+						displayElement.setRow(1); displayElement.show();
+								Serial.println(dispBuff);delay(10);
 					}
 				}
 
@@ -135,18 +130,26 @@ void ProfileController::menuAction(int param){
 			}
 			cancelled = false;
 			break;
+
 		case ProfSelPg:
 			systemDisplay.clear();
-			Serial.print(F("Profile Selection here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
+			Serial.print(F("Profile Selection here. Pg:"));Serial.println((int)ProfileController::activePage);delay(20);
 
 			while(!cancelled ){
 				time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
 				if(time>nextDisplayTime){
 					nextDisplayTime = time+250l;
 					ProfileController::profileMenu->menuInvoke();						// **** This is a recursive call ***
-						ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-							sprintf(dispBuff, "Profile Sel."); displayElement.setRow(0); displayElement.setCol(0);
-						}
+					if(Profile::selectedProfile != -1){
+						ProfileController::activeProfile = &Profile::profiles[Profile::selectedProfile];
+							// ProfileController task thread will make use of the active Profile
+					}else{
+						ProfileController::activeProfile = NULL;
+					}
+				}
+				if(time>displayTime2){
+					displayTime2 = time+500l;
+						sprintf(dispBuff, "Profile Sel. %d",(ProfileController::activeProfile!=NULL?ProfileController::activeProfile->topTargetTemp:0)); displayElement.setRow(0); displayElement.setCol(0);
 						displayElement.setText((char *)dispBuff);
 						displayElement.show();
 				}
@@ -154,6 +157,7 @@ void ProfileController::menuAction(int param){
 			}
 			cancelled = false;
 			break;
+
 		case StrtStpPg:
 			systemDisplay.clear();
 			sprintf(dispBuff, "Start / Stop"); displayElement.setRow(0);  displayElement.show();
@@ -211,12 +215,6 @@ void ProfileController::rotaryAction(const int type, int level, RSE::Dir directi
 			break;
 		case ProfSelPg:
 			ProfileController::profileMenu->rotaryAction(type, level, direction, param);					// Let the local menu handle the Rotary
-			if(Profile::selectedProfile != -1){
-				ProfileController::activeProfile = &Profile::profiles[Profile::selectedProfile];
-				// ProfileController task thread will make use of the active Profile
-			}else{
-				ProfileController::activeProfile = NULL;
-			}
 			break;
 		case StrtStpPg:
 			break;

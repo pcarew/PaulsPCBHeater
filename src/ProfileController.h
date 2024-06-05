@@ -20,6 +20,7 @@ public:
 		Complete	= 3				// Soaking complete
 	};
 	static int targetTemp;
+	static int guardTemp;
 	static Profile *activeProfile;
 	static MenuItem *localMenuItems;
 	static Menu *localMenu;

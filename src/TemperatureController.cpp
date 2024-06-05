@@ -30,8 +30,8 @@ TemperatureController::~TemperatureController() {
 }
 */
 
-int TemperatureController::getTargetPower(){
-	return TemperatureController::targetPower;
+int TemperatureController::getTargetTemperature(){
+	return TemperatureController::targetTemp;
 }
 void TemperatureController::setTemperature(int targetTemp, int guardTemp, int slope){						// Slope is in deg per min (pos. or neg. slope). zero = no slope, move as fast as possible
 	TemperatureController::targetTemp = targetTemp;
