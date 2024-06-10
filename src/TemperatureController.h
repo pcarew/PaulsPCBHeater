@@ -25,6 +25,9 @@ public:
 	static double powerSetting;
 	static double prevTempReading;
 
+	static double prevTargetError;
+	static double prevGuardError;
+
 //	TemperatureController();
 //	virtual ~TemperatureController();
 

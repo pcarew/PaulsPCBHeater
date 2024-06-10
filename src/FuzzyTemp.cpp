@@ -22,10 +22,8 @@
 //double errorPercentage(double actual,double desired) ;
 //double getRateOfChange(double currentValue, double *prevValue);
 
-//double prevErrPercent	 = 0.0;
 //int fuzzyModel;
 
-double FuzzyTemp::prevErrPercent	= 0.0;
 int FuzzyTemp::fuzzyModel			= FULLMODEL;		// MINIMALMODEL JUSTERRORMODEL  FULLMODEL
 
 InputFuzzySet minInSets[] = {
@@ -131,13 +129,14 @@ OutputFuzzySet *valueChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
 		},
 };
 
-double FuzzyTemp::getPowerPercent(double actualValue, double desiredValue){
+// This is the 'Entry' method
+double FuzzyTemp::getPowerPercent(double actualValue, double desiredValue, double *prevErrPercent){
 
 	double weight					= 0.0;
 	double station					= 0.0;
 
 	double errPercent				= errorPercentage(actualValue, desiredValue);
-	double dErrordt 				= getRateOfChange(errPercent, &prevErrPercent);
+	double dErrordt 				= getRateOfChange(errPercent, prevErrPercent);
 //	double dErrordt 				= getRateOfChange(actualValue, &prevErrPercent);
 
 

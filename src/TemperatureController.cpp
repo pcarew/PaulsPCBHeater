@@ -17,6 +17,8 @@ int TemperatureController::guardTemp			= 0;					// Guard
 int TemperatureController::guardPower			= 0;					// Guard
 int TemperatureController::desiredSlope			= 0;					// Speed to target  deg/minute
 double TemperatureController::powerSetting		= 0;
+double TemperatureController::prevTargetError	= 0;
+double TemperatureController::prevGuardError	= 0;
 //double TemperatureController::prevTempReading	= 0;
 
 /*
@@ -39,7 +41,7 @@ void TemperatureController::setTemperature(int targetTemp, int guardTemp, int sl
 	TemperatureController::desiredSlope = slope;
 }
 
-void TemperatureController::update(){				// Called from Tasking
+void TemperatureController::update(){				// This is the background *Thread* Called from Tasking
 
 	volatile unsigned long timeNow = millis();
 	if(timeNow > periodEnd){
@@ -47,7 +49,6 @@ void TemperatureController::update(){				// Called from Tasking
 		valueDetermination();					// Will either use slope or target temperature
 		updateHeater();
 	}
-
 }
 
 void TemperatureController::valueDetermination() {
@@ -56,8 +57,9 @@ void TemperatureController::valueDetermination() {
 //		double tempErrPercent = (TemperatureController::desiredTemp - tempReading) / TemperatureController::desiredTemp;
 
 
-		TemperatureController::targetPower = FuzzyTemp::getPowerPercent(topReading,(double)TemperatureController::targetTemp) ;
-		TemperatureController::guardPower = FuzzyTemp::getPowerPercent(bottomReading,(double)TemperatureController::guardTemp) ;
+		TemperatureController::targetPower = FuzzyTemp::getPowerPercent(topReading,(double)TemperatureController::targetTemp, &TemperatureController::prevTargetError) ;
+		TemperatureController::guardPower = FuzzyTemp::getPowerPercent(bottomReading,(double)TemperatureController::guardTemp,&TemperatureController::prevGuardError) ;
+
 		TemperatureController::powerSetting = min(TemperatureController::targetPower,TemperatureController::guardPower);
 //		Serial.print(F("T%:"));Serial.print(targetPower);Serial.print(F(" G%:"));Serial.print(guardPower);Serial.print(F(" Min:"));Serial.println(min(targetPower,guardPower));
 
@@ -68,8 +70,8 @@ void TemperatureController::valueDetermination() {
 			double actualSlope = (tempReading - prevTempReading)/TC_MEASUREMENT_PERIOD;
 			valueBeingChanged = (unsigned char) FuzzyTemp::getValueChangePercent(actualSlope,(double)TemperatureController::desiredSlope);
 		}
-		*/
 //		prevTempReading = bottomReading;
+		*/
 }
 void TemperatureController::updateHeater(){
 	HeaterController::setPercentagePwr( (powerSetting<0?(unsigned char)0:(unsigned char) powerSetting) );				// Heater cant accept negative values

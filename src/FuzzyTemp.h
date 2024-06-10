@@ -7,13 +7,14 @@
 
 class FuzzyTemp {
 private:
-	static double prevErrPercent;
 	static int fuzzyModel;
 
 public:
 	FuzzyTemp();
 	~FuzzyTemp();
-	static double getPowerPercent(double actualRpm, double desiredRpm);
+
+	static double getPowerPercent(double actualValue, double desiredValue, double *prevErrPercent);
+
 	static double errorPercentage(double actual,double desired);
 	static double getRateOfChange(double currentValue, double *prevValue);			// per period
 
