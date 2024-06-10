@@ -51,7 +51,7 @@ public:
 	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display):
 							Menu(menu, menuSize, portDPinA, portDPinB, selectPin, display, 0, 0  ){}
 	Menu(MenuItem *menu, int menuSize, int portDPinA, int portDPinB, int selectPin, Display *display, int row, int col  ):
-							Menu(menu,menuSize, new RotarySelector(portDPinA, portDPinB, selectPin, this, 5 ) ,display,row,col){}
+							Menu(menu,menuSize, new RotarySelector(portDPinA, portDPinB, selectPin, this, 5 ) ,display,row,col){}			// Create a 'RotarySelector'
 	void showMenu();
 	void highlightCurrentMenuLine();
 

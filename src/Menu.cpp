@@ -52,7 +52,10 @@ void Menu::menuInvoke(){ // Called from System thread
 		MenuAction *handler = this->currentMenuItemPtr->handler;	// Setup handler to use for selected menu line
 
 		this->inMenu = false;
+//		Serial.print(F("MenuAction: "));Serial.println(this->currentMenuItemPtr->prompt);delay(10);
 		handler->menuAction(this->currentMenuItemPtr->param);		// Invoke selected menu handler. Note: we are running as part of the UI/System thread
+//		Serial.println(F("MenuAction Term "));delay(10);
+		this->display->clear();
 		this->inMenu = true;
 
 		this->showMenu();											// Action finished, so re display menu
