@@ -78,8 +78,8 @@ public:
 	RSE::State state = RSE::State::FADBD;						// Initial assumed state
 	RSE::Dir dir = RSE::Dir::FW;								// Initial assumed direction
 	*/
-	int8_t state = (int8_t)RSE::State::FADBD;					// Initial assumed state
-	int8_t dir = (int8_t)RSE::Dir::FW;							// Initial assumed direction
+	int8_t state; // = (int8_t)RSE::State::AUBU;					// Initial assumed state
+	int8_t dir;   // = (int8_t)RSE::Dir::FW;							// Initial assumed direction
 
 	static const RSE rotaryFSM[4][7];
 

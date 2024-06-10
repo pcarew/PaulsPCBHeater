@@ -12,6 +12,8 @@ RotarySelector::RotarySelector(int portDpinA, int portDpinB, int portDselectorPi
 		this->a = new PortDButton(portDpinA,this,RotarySelector::A,ROTDBAMOUNT);
 		this->b = new PortDButton(portDpinB,this,RotarySelector::B,ROTDBAMOUNT);
 		this->selector = new PortDButton(portDselectorPin,this,RotarySelector::S,SELDBAMOUNT);
+		this->state = (int8_t)RSE::State::AUBU;
+		this->dir = (int8_t)RSE::Dir::FW;							// Initial assumed direction
 }
 
 void RotarySelector::buttonAction(ButtonAction::Level level, int pinSelector) {		// This is called whenever the rotary selector is rotated causing an interrupt
@@ -82,13 +84,6 @@ const char *event_name[] = {
 */
 
 const RSE RotarySelector::rotaryFSM[4][7] PROGMEM = {
-		//ADBD								ADBU								AUBD								AUBU
-		/*
-		{{RSE::Dir::FW,RSE::State::AUBD},	{RSE::Dir::RV,RSE::State::AUBU},	{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::NC,RSE::State::NOCH}}, //Event AU
-		{{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::RV,RSE::State::ADBD},	{RSE::Dir::FW,RSE::State::ADBU}}, //Event AD
-		{{RSE::Dir::RV,RSE::State::ADBU},	{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::FW,RSE::State::AUBU},	{RSE::Dir::NC,RSE::State::NOCH}}, //Event BU
-		{{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::FW,RSE::State::ADBD},	{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::RV,RSE::State::AUBD}}  //Event BD
-		*/
 		// Separate states for forward vs Reverse
 		//FADBD								FADBU								FAUBD								AUBU								RRAUBD							RADBD							RADBU
 //		{{RSE::Dir::NC,RSE::State::FAUBD},	{RSE::Dir::NC,RSE::State::AUBU},	{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::NC,RSE::State::NOCH}, {RSE::Dir::NC,RSE::State::NOCH}, {RSE::Dir::NC,RSE::State::RAUBD}, {RSE::Dir::RV,RSE::State::AUBU} },  //Event AU

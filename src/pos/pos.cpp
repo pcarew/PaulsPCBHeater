@@ -84,10 +84,10 @@ TCB *create(TaskType task, unsigned int reqStackSize, int param, BOOL showStats)
 
 #ifdef STACK_CHECKS
 		tcb->st = s;
-			Serial.print(F(" Stack Base:0x")); Serial.print((unsigned int)stacks,HEX);
-			Serial.print(F(", Stack Size ")); Serial.print(reqStackSize);
-			Serial.print(F(", Bottom:0x")); Serial.print((unsigned int)tcb->se,HEX);
-			Serial.print(F(", Top:0x")); Serial.println((unsigned int)s,HEX);
+//			Serial.print(F(" Stack Base:0x")); Serial.print((unsigned int)stacks,HEX);
+//			Serial.print(F(", Stack Size ")); Serial.print(reqStackSize);
+//			Serial.print(F(", Bottom:0x")); Serial.print((unsigned int)tcb->se,HEX);
+//			Serial.print(F(", Top:0x")); Serial.println((unsigned int)s,HEX);
 
 		// First Fill the stack with a recognizable pattern
 		unsigned char *fillPtr = tcb->se+1;		// Skip over the Sentry STACKGUARD
@@ -184,7 +184,7 @@ BOOL start_pos(BOOL system)
 	unsigned char **csp;
 	int result	= 1234;
 
-	Serial.print(F("Starting Tasking. UnAllocated stack:")); Serial.println((unsigned int) (STACKSIZE - stack_used));
+//	Serial.print(F("Starting Tasking. UnAllocated stack:")); Serial.println((unsigned int) (STACKSIZE - stack_used));
 
 	if(system){
 		systemTcb = create((TaskType)NULL,0,0,FALSE);
@@ -314,7 +314,7 @@ void init_pos()
 					/* Setup POS environment.	*/
 	//noscheck();			/* Turn off microsoft stack	*/
 					/* checking.			*/
-	Serial.println(F("Finished initializing POS"));
+//	Serial.println(F("Finished initializing POS"));
 }
 
 /************************************************************************

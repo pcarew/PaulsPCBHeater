@@ -73,7 +73,7 @@ void setup()
 {
 
 	Serial.begin(115200);
-	Serial.println(F("Setup Started"));
+//	Serial.println(F("Setup Started"));
 
 	systemDisplay.setup();
 
@@ -84,7 +84,7 @@ void setup()
 
 	PCBHeaterTasks::startup();
 
-	Serial.println(F("Setup Done"));
+//	Serial.println(F("Setup Done"));
 }
 
 void topLevelStatus();

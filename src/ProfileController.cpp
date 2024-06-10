@@ -115,7 +115,7 @@ void ProfileController::menuAction(volatile int param){
 						lastGt = (int) TemperatureMonitoring::brdBot.getTemperature();
 						sprintf(dispBuff, "TT:%d GT:%d ", ProfileController::targetTemp,ProfileController::guardTemp);
 						displayElement.setRow(1); displayElement.show();
-								Serial.println(dispBuff);delay(10);
+//								Serial.println(dispBuff);delay(10);
 					}
 				}
 
@@ -133,7 +133,7 @@ void ProfileController::menuAction(volatile int param){
 
 		case ProfSelPg:
 			systemDisplay.clear();
-			Serial.print(F("Profile Selection here. Pg:"));Serial.println((int)ProfileController::activePage);delay(20);
+//			Serial.print(F("Profile Selection here. Pg:"));Serial.println((int)ProfileController::activePage);delay(20);
 
 			while(!cancelled ){
 				time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
@@ -161,7 +161,7 @@ void ProfileController::menuAction(volatile int param){
 		case StrtStpPg:
 			systemDisplay.clear();
 			sprintf(dispBuff, "Start / Stop"); displayElement.setRow(0);  displayElement.show();
-				Serial.print(F("Start Stop here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
+//				Serial.print(F("Start Stop here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
 
 				if(ProfileController::activeProfile != NULL){
 					ProfileController::currantState = ProfileController::Adjusting;
@@ -172,7 +172,7 @@ void ProfileController::menuAction(volatile int param){
 							ProfileController::activeProfile->soakDuration
 						);
 				}else{
-					Serial.println(F("No profile set"));delay(10);
+//					Serial.println(F("No profile set"));delay(10);
 					ProfileController::currantState = ProfileController::NotActive;
 					ProfileController::targetTemp = NULL;
 					TemperatureController::setTemperature( NULL,NULL,NULL);
@@ -185,7 +185,7 @@ void ProfileController::menuAction(volatile int param){
 			systemDisplay.clear();
 			sprintf(dispBuff, "ReStart"); displayElement.setRow(0);  displayElement.show();
 			while(!cancelled ){
-				Serial.print(F("Restart here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
+//				Serial.print(F("Restart here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
 				pause();
 			}
 			cancelled = false;
