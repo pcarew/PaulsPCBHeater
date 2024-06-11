@@ -73,9 +73,9 @@ void DisplayText::show(){
 		disp->tftScreen.Color565(this->br, this->bg, this->bb));
 
 		this->disp->tftScreen.setCursor(xpix, ypix);
-		ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+//		ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
 			this->disp->tftScreen.print(this->text);
-		}
+//		}
 //		Serial.print(F("R:"));Serial.print(this->row);Serial.print(F(" C:"));Serial.print(this->col);Serial.print(F(" "));Serial.println(this->text);
 }
 
@@ -86,7 +86,7 @@ bool DisplayText::show(char *newText){
 		int xpix = this->col*this->chrSize[this->textSize][CHRW];
 		int ypix = this->row*this->chrSize[this->textSize][CHRH];
 
-	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+//	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
 				// Wipe out previous
 		this->disp->tftScreen.setTextSize(this->textSize);
 		this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
@@ -96,7 +96,7 @@ bool DisplayText::show(char *newText){
 		this->disp->tftScreen.stroke(this->fr, this->fg, this->fb);
 		this->disp->tftScreen.text(newText, xpix,ypix);
 		this->text = newText;
-	  }
+//	  }
 	}
 
 	return true;
@@ -117,7 +117,7 @@ void DisplayText::invert(){
 void DisplayText::move(int col, int row){
 	if(this->textSize > MAXCHRSIZE) return;
 
-	int pixsz=strlen(this->text)*this->chrSize[this->textSize][CHRW];
+//	int pixsz=strlen(this->text)*this->chrSize[this->textSize][CHRW];
 
 	int origXpix = this->col*this->chrSize[this->textSize][CHRW];
 	int origYpix = this->row*this->chrSize[this->textSize][CHRH];
@@ -125,7 +125,7 @@ void DisplayText::move(int col, int row){
 	int newYpix = row*this->chrSize[this->textSize][CHRH];
 
 			// Wipe out previous
-	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+//	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
 	this->disp->tftScreen.setTextSize(this->textSize);
 	this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
 	this->disp->tftScreen.text(this->text, origXpix, origYpix);
@@ -133,26 +133,26 @@ void DisplayText::move(int col, int row){
 			// Write new
 	this->disp->tftScreen.stroke(this->fr, this->fg, this->fb);
 	this->disp->tftScreen.text(this->text, newXpix,newYpix);
-	  }
+//	  }
 	this->col = col;
 	this->row = row;
 }
 void DisplayText::remove(){
 	if(this->textSize > MAXCHRSIZE) return;
 
-	int pixsz=strlen(this->text)*this->chrSize[this->textSize][CHRW];
+//	int pixsz=strlen(this->text)*this->chrSize[this->textSize][CHRW];
 
 	int origXpix = this->col*this->chrSize[this->textSize][CHRW];
 	int origYpix = this->row*this->chrSize[this->textSize][CHRH];
-	int newXpix = col*this->chrSize[this->textSize][CHRW];
-	int newYpix = row*this->chrSize[this->textSize][CHRH];
+//	int newXpix = col*this->chrSize[this->textSize][CHRW];
+//	int newYpix = row*this->chrSize[this->textSize][CHRH];
 
 			// Wipe out previous
-	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+//	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
 	this->disp->tftScreen.setTextSize(this->textSize);
 	this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
 	this->disp->tftScreen.text(this->text, origXpix, origYpix);
-	  }
+//	  }
 }
 
 bool DisplayText::setText(char *newText){

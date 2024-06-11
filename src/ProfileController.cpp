@@ -109,10 +109,10 @@ void ProfileController::menuAction(volatile int param){
 
 				time = millis();					// As we've taken over control of the processor, we need to update time for everyone (and ourselves)
 				if(time>nextDisplayTime){
-					nextDisplayTime = time+500l;	// Check once per period, but only update if needed
-					if( TemperatureMonitoring::brdTop.getTemperature() != lastTt || TemperatureMonitoring::brdBot.getTemperature() != lastGt){
-						lastTt = (int) TemperatureMonitoring::brdTop.getTemperature();
-						lastGt = (int) TemperatureMonitoring::brdBot.getTemperature();
+					nextDisplayTime = time+250l;	// Check once per period, but only update if needed
+					if( ProfileController::targetTemp != lastTt || ProfileController::guardTemp != lastGt){
+						lastTt = ProfileController::targetTemp;
+						lastGt = ProfileController::guardTemp;
 						sprintf(dispBuff, "TT:%d GT:%d ", ProfileController::targetTemp,ProfileController::guardTemp);
 						displayElement.setRow(1); displayElement.show();
 //								Serial.println(dispBuff);delay(10);
@@ -203,15 +203,22 @@ void ProfileController::menuAction(volatile int param){
 }
 
 void ProfileController::rotaryAction(const int type, int level, RSE::Dir direction, int param){		// type is ROTATE or SELECT Called from PortD ISR
+	static ManualUpdate manUpdate = ManualUpdate::Target;
 
 	switch(ProfileController::activePage){
 		case ProfileControlId:							// Top level page, display sub menu
 			ProfileController::localMenu->rotaryAction(type, level, direction, param);					// Let the local menu handle the Rotary
 			break;
 		case ManTempPg:
-			ProfileController::handleRotary(type, level, direction, &ProfileController::targetTemp);
-			if(ProfileController::targetTemp < 0 )
-				ProfileController::targetTemp = 0 ;
+			if(manUpdate == ManualUpdate::Target){
+				if(ProfileController::handleRotary(type, level, direction, &ProfileController::targetTemp) == true) manUpdate = ManualUpdate::Guard;
+				if(ProfileController::targetTemp < 0 )
+					ProfileController::targetTemp = 0 ;
+			}else{
+				if(ProfileController::handleRotary(type, level, direction, &ProfileController::guardTemp) == true) manUpdate = ManualUpdate::Target;
+				if(ProfileController::guardTemp < 0 )
+					ProfileController::guardTemp = 0 ;
+			}
 			break;
 		case ProfSelPg:
 			ProfileController::profileMenu->rotaryAction(type, level, direction, param);					// Let the local menu handle the Rotary

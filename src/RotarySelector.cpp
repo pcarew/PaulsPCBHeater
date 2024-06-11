@@ -58,15 +58,11 @@ void RotarySelector::tick(){
 // FSM version
 
 /*
-typedef struct {
-   char description [6];
-} descriptionType;
-
-const descriptionType state_name[] PROGMEM =
+const char *state_name[] =
 {
-		"ADBD",
-		"ADBU",
-		"AUBD",
+		"FADBD",
+		"FADBU",
+		"FAUBD",
 		"AUBU",
 		"RAUBD",
 		"RADBD",
@@ -83,23 +79,19 @@ const char *event_name[] = {
 };
 */
 
-const RSE RotarySelector::rotaryFSM[4][7] PROGMEM = {
+//const RSE RotarySelector::rotaryFSM[4][7] PROGMEM = {
+const RSE RotarySelector::rotaryFSM[4][7] = {
 		// Separate states for forward vs Reverse
 		//FADBD								FADBU								FAUBD								AUBU								RRAUBD							RADBD							RADBU
-//		{{RSE::Dir::NC,RSE::State::FAUBD},	{RSE::Dir::NC,RSE::State::AUBU},	{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::NC,RSE::State::NOCH}, {RSE::Dir::NC,RSE::State::NOCH}, {RSE::Dir::NC,RSE::State::RAUBD}, {RSE::Dir::RV,RSE::State::AUBU} },  //Event AU
-//		{{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::NC,RSE::State::FADBD},	{RSE::Dir::NC,RSE::State::FADBU},{RSE::Dir::NC,RSE::State::RADBD}, {RSE::Dir::NC,RSE::State::NOCH}, {RSE::Dir::NC,RSE::State::NOCH} },  //Event AD
-//		{{RSE::Dir::NC,RSE::State::FADBU},	{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::FW,RSE::State::AUBU},	{RSE::Dir::NC,RSE::State::NOCH}, {RSE::Dir::NC,RSE::State::AUBU}, {RSE::Dir::NC,RSE::State::RADBU}, {RSE::Dir::NC,RSE::State::NOCH} },  //Event BU
-//		{{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::NC,RSE::State::FADBD},	{RSE::Dir::NC,RSE::State::NOCH},	{RSE::Dir::NC,RSE::State::RAUBD},{RSE::Dir::NC,RSE::State::NOCH}, {RSE::Dir::NC,RSE::State::NOCH}, {RSE::Dir::NC,RSE::State::RADBD} }   //Event BD
-
-		{{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::FAUBD},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::AUBU},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH}, {(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH}, {(int8_t)RSE::Dir::NC,(int8_t)RSE::State::RAUBD}, {(int8_t)RSE::Dir::RV,(int8_t)RSE::State::AUBU} },  //Event AU
-		{{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::FADBD},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::FADBU},{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::RADBD}, {(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH}, {(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH} },  //Event AD
-		{{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::FADBU},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH},	{(int8_t)RSE::Dir::FW,(int8_t)RSE::State::AUBU},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH}, {(int8_t)RSE::Dir::NC,(int8_t)RSE::State::AUBU}, {(int8_t)RSE::Dir::NC,(int8_t)RSE::State::RADBU}, {(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH} },  //Event BU
-		{{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::FADBD},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH},	{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::RAUBD},{(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH}, {(int8_t)RSE::Dir::NC,(int8_t)RSE::State::NOCH}, {(int8_t)RSE::Dir::NC,(int8_t)RSE::State::RADBD} }   //Event BD
+		{{ANS(RSE::Dir::NC,RSE::State::FAUBD)},	{ANS(RSE::Dir::NC,RSE::State::AUBU)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::RAUBD)}, {ANS(RSE::Dir::RV,RSE::State::AUBU)} },  //Event AU
+		{{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::NC,RSE::State::FADBD)},	{ANS(RSE::Dir::NC,RSE::State::FADBU)},{ANS(RSE::Dir::NC,RSE::State::RADBD)}, {ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::NOCH)} },  //Event AD
+		{{ANS(RSE::Dir::NC,RSE::State::FADBU)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::FW,RSE::State::AUBU)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::AUBU)}, {ANS(RSE::Dir::NC,RSE::State::RADBU)}, {ANS(RSE::Dir::NC,RSE::State::NOCH)} },  //Event BU
+		{{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::NC,RSE::State::FADBD)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::NC,RSE::State::RAUBD)},{ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::RADBD)} }   //Event BD
 };
 void RotarySelector::handleEvent(ButtonAction::Level level, int pinSelector){
 		RSE::Event event = RSE::Event::ER;
-		int8_t newDir = RSE::Dir::NC;				// RSE::Dir
-		int8_t nextState = RSE::State::NOCH;		// RSE::State
+		uint8_t newDir = RSE::Dir::NC;				// RSE::Dir
+		uint8_t nextState = RSE::State::NOCH;		// RSE::State
 		RSE oneItem ;
 
 //		Serial.print(F("Sizeof RSE:"));Serial.println(sizeof(RSE));
@@ -124,20 +116,23 @@ void RotarySelector::handleEvent(ButtonAction::Level level, int pinSelector){
 
 
 		if(event != RSE::Event::ER){
-			    memcpy_P(&oneItem,
+			oneItem = RotarySelector::rotaryFSM[(int)event][(int)this->state];
+			/*
+		    memcpy_P(&oneItem,
 			    		&RotarySelector::rotaryFSM[(int)event][(int)this->state],
 						sizeof(RSE));
-			newDir = oneItem.dir;
-			nextState = oneItem.nextState;
+			*/
+			newDir = GetAction(oneItem.actionNextState);
+			nextState = GetNextState(oneItem.actionNextState);
+//			newDir = oneItem.dir;
+//			nextState = oneItem.nextState;
 //			newDir = pgm_read_word(&RotarySelector::rotaryFSM[(int)event][(int)this->state].dir);
 //			nextState = pgm_read_word(&RotarySelector::rotaryFSM[(int)event][(int)this->state].nextState);
-//				Serial.print(F("SE:"));Serial.print(this->state);Serial.print(event);Serial.println(nextState);
+//			Serial.print(event_name[event]);//Serial.print(F(","));
+//			Serial.print(F(" CurrSt:"));Serial.print(this->state);Serial.print(F(" Ev:"));Serial.print(event_name[event]); Serial.print(F(" Act:"));Serial.print(newDir); Serial.print(F(" NxtSt:"));Serial.println(nextState);
 
-			if(nextState != RSE::State::NOCH)
-				this->state = nextState;
-//			if(newDir != RSE::Dir::NC)
-				this->dir = newDir;
-//				Serial.print(event_name[event]);//Serial.print(F(","));
+			if(nextState != RSE::State::NOCH) this->state = nextState;
+			this->dir = newDir;
 			/*
 			if(event == RSE::Event::AU || event == RSE::Event::AD){
 				switch(this->dir){

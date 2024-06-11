@@ -19,6 +19,10 @@ public:
 		Soaking		= 2,					// Target attained, now soaking
 		Complete	= 3				// Soaking complete
 	};
+	enum ManualUpdate{
+		Target = 1,
+		Guard = 2
+	};
 	static int targetTemp;
 	static int guardTemp;
 	static Profile *activeProfile;

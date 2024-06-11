@@ -9,11 +9,16 @@
 #define ROTDBAMOUNT 3					// 5ms for rotary debounce
 #define SELDBAMOUNT 36					// 36ms for sector debounce
 
+#define GetNextState(value) ((uint8_t)((uint8_t)value & (uint8_t)0x0F))	//((uint8_t)(value & 0x0F))
+
+#define GetAction(value)((uint8_t)((uint8_t)value & (uint8_t)0xF0)>>4)
+#define ANS(action,nextState)((uint8_t)((uint8_t)action<<(uint8_t)4|(uint8_t)nextState))		// Pack action and nextstate into single byte
+
 typedef struct _RSE{
 	enum Dir{
 	FW = 1,
 	RV = 2,
-	NC = -1				// No Change
+	NC = 15				// No Change
 	};
 
 	enum State{
@@ -26,7 +31,7 @@ typedef struct _RSE{
 		RADBD = 5,
 		RADBU = 6,
 
-		NOCH = -1
+		NOCH = 7
 	};
 
 	enum Event{
@@ -34,15 +39,17 @@ typedef struct _RSE{
 		AD = 1,
 		BU = 2,
 		BD = 3,
-		ER = -1			// Unrecognized event
+		ER = 15			// Unrecognized event
 	};
 	/*
 	Dir dir;
 	State nextState;
 	*/
-	int8_t dir;				// byte version of 'DIR'
-	int8_t nextState;		// byte version of 'State'
-}RSE;		//RotaryStateEvent
+//	int8_t dir;					// byte version of 'DIR'
+//	int8_t nextState;			// byte version of 'State'
+	uint8_t actionNextState;		// DirAction is in upper Nibble, NextState is in lower nibble
+
+}RSE;		//RotaryStateEvent Action
 
 Interface RotaryAction{
 private:
@@ -78,8 +85,8 @@ public:
 	RSE::State state = RSE::State::FADBD;						// Initial assumed state
 	RSE::Dir dir = RSE::Dir::FW;								// Initial assumed direction
 	*/
-	int8_t state; // = (int8_t)RSE::State::AUBU;					// Initial assumed state
-	int8_t dir;   // = (int8_t)RSE::Dir::FW;							// Initial assumed direction
+	uint8_t state; // = (int8_t)RSE::State::AUBU;					// Initial assumed state
+	uint8_t dir;   // = (int8_t)RSE::Dir::FW;							// Initial assumed direction
 
 	static const RSE rotaryFSM[4][7];
 

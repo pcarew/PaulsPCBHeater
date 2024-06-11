@@ -174,11 +174,11 @@ void HeaterController::menuAction(int param){
 //	HeaterControl::heaterEnabled = false;
 }
 
-/*
 void HeaterController::rotaryAction(const int type, int level, RSE::Dir direction, int param){		// type is ROTATE or SELECT Called from PortD ISR
 
 //			Serial.print(F("HC Dir:"));Serial.println(direction);
 	switch(type){
+	/*
 		case RotaryAction::ROTATE:
 //						Serial.print(F("Heater Rotate"));
 			switch(direction){
@@ -198,6 +198,7 @@ void HeaterController::rotaryAction(const int type, int level, RSE::Dir directio
 			}
 			HeaterController::updatePowerCounter();
 			break;
+			*/
 		case RotaryAction::SELECT:
 			if(level == ButtonAction::BUTTONLOW){
 //						Serial.println(F("Heater ButtonAction Low"));
@@ -208,4 +209,3 @@ void HeaterController::rotaryAction(const int type, int level, RSE::Dir directio
 		break;
 	}
 }
-*/
