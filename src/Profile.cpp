@@ -21,7 +21,7 @@ Profile::Profile(int target,int guard,int soak,int slope, const char *name){
 }
 
 Profile *Profile::profiles = new Profile[NUMBERPROFILES]  {
-		Profile(50,60,DEFSOAK,DEFSLOPE,	"G60 T50"),
+		Profile(50,60,DEFSOAK,DEFSLOPE,	"G 60 T 50"),
 		Profile(100,150, 				"G150 T100"),
 		Profile(200,200,				"G200 T200")
 };

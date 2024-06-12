@@ -25,7 +25,7 @@ ProfileController::~ProfileController() {
 
 // Used for UI
 char ProfileController::activePage = 0;
-const char *ProfileController::fmt = "P: %s";
+const char *ProfileController::profileNameFmt = "P:%s";
 Menu* ProfileController::localMenu		= NULL;
 Menu* ProfileController::profileMenu	= NULL;
 bool ProfileController::profileRunning = false;
@@ -56,7 +56,7 @@ MenuItem ProfileController::localMenuItems[NUMBERITEMS] {
 void ProfileController::menuAction(volatile int param){
 	unsigned long displayTime2 = 0;;
 	int lastTt =0, lastGt=0;
-	char fmt[] = "G%3d T%3d ";
+	char fmt[] = "  G%3d T%3d ";
 
 	if(ProfileController::localMenu		== 0)
 		ProfileController::localMenu	= new Menu( (MenuItem*)ProfileController::localMenuItems,	NUMBERITEMS,	(RotarySelector*)NULL,&systemDisplay,2,1); //  starting at Row 2, col 1
@@ -93,7 +93,7 @@ void ProfileController::menuAction(volatile int param){
 						displayElement.setFg(255, 255, 255);
 
 					}
-					sprintf(dispBuff,"P: %s" , (ProfileController::activeProfile == NULL)?"Man":activeProfile->name);
+					sprintf(dispBuff,ProfileController::profileNameFmt, (ProfileController::activeProfile == NULL)?"Man":activeProfile->name);
 					displayElement.setText((char *)dispBuff);
 					displayElement.setCol(0); displayElement.setRow(0); displayElement.show();
 

@@ -40,7 +40,7 @@ public:
 	static void update();			//Called by task to update Profile status
 
 	//Used for UI
-	static const char *fmt;
+	static const char *profileNameFmt;
 	void menuAction(int param);
 	void rotaryAction(const int type, int level, RSE::Dir direction, int param);		// type is ROTATE or SELECT
 	bool handleRotary(const int type, int level, RSE::Dir direction, int *counter);	// Used for processing rotary action for local pages
