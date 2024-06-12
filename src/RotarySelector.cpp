@@ -79,22 +79,21 @@ const char *event_name[] = {
 };
 */
 
-//const RSE RotarySelector::rotaryFSM[4][7] PROGMEM = {
 const RSE RotarySelector::rotaryFSM[4][7] = {
 		// Separate states for forward vs Reverse
-		//FADBD								FADBU								FAUBD								AUBU								RRAUBD							RADBD							RADBU
+		//FADBD									FADBU									FAUBD									AUBU									RRAUBD								RADBD									RADBU
 		{{ANS(RSE::Dir::NC,RSE::State::FAUBD)},	{ANS(RSE::Dir::NC,RSE::State::AUBU)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::RAUBD)}, {ANS(RSE::Dir::RV,RSE::State::AUBU)} },  //Event AU
 		{{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::NC,RSE::State::FADBD)},	{ANS(RSE::Dir::NC,RSE::State::FADBU)},{ANS(RSE::Dir::NC,RSE::State::RADBD)}, {ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::NOCH)} },  //Event AD
 		{{ANS(RSE::Dir::NC,RSE::State::FADBU)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::FW,RSE::State::AUBU)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::AUBU)}, {ANS(RSE::Dir::NC,RSE::State::RADBU)}, {ANS(RSE::Dir::NC,RSE::State::NOCH)} },  //Event BU
 		{{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::NC,RSE::State::FADBD)},	{ANS(RSE::Dir::NC,RSE::State::NOCH)},	{ANS(RSE::Dir::NC,RSE::State::RAUBD)},{ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::NOCH)}, {ANS(RSE::Dir::NC,RSE::State::RADBD)} }   //Event BD
 };
+
 void RotarySelector::handleEvent(ButtonAction::Level level, int pinSelector){
 		RSE::Event event = RSE::Event::ER;
 		uint8_t newDir = RSE::Dir::NC;				// RSE::Dir
 		uint8_t nextState = RSE::State::NOCH;		// RSE::State
 		RSE oneItem ;
 
-//		Serial.print(F("Sizeof RSE:"));Serial.println(sizeof(RSE));
 		switch(pinSelector){
 			case A:
 				switch(level){
@@ -117,39 +116,14 @@ void RotarySelector::handleEvent(ButtonAction::Level level, int pinSelector){
 
 		if(event != RSE::Event::ER){
 			oneItem = RotarySelector::rotaryFSM[(int)event][(int)this->state];
-			/*
-		    memcpy_P(&oneItem,
-			    		&RotarySelector::rotaryFSM[(int)event][(int)this->state],
-						sizeof(RSE));
-			*/
 			newDir = GetAction(oneItem.actionNextState);
 			nextState = GetNextState(oneItem.actionNextState);
-//			newDir = oneItem.dir;
-//			nextState = oneItem.nextState;
-//			newDir = pgm_read_word(&RotarySelector::rotaryFSM[(int)event][(int)this->state].dir);
-//			nextState = pgm_read_word(&RotarySelector::rotaryFSM[(int)event][(int)this->state].nextState);
+
 //			Serial.print(event_name[event]);//Serial.print(F(","));
 //			Serial.print(F(" CurrSt:"));Serial.print(this->state);Serial.print(F(" Ev:"));Serial.print(event_name[event]); Serial.print(F(" Act:"));Serial.print(newDir); Serial.print(F(" NxtSt:"));Serial.println(nextState);
 
 			if(nextState != RSE::State::NOCH) this->state = nextState;
 			this->dir = newDir;
-			/*
-			if(event == RSE::Event::AU || event == RSE::Event::AD){
-				switch(this->dir){
-					case RSE::Dir::FW: counter++; break;
-					case RSE::Dir::RV: counter--; break;
-					case RSE::Dir::NC:
-//						Serial.println(F("EV NC"));
-						break;
-				}
-			}
-
-			if(counter > counterMax) counter = counterMax;
-			if(counter < 0) counter = 0;
-			*/
-
-//			this->rotaryAction->rotaryAction(this->counter,this->dir, (((int)event)<<8) | (((int)this->state)));
-//			this->rotaryAction->rotaryAction(RotaryAction::ROTATE,NULL,this->dir,this->rotaryParam);		// Notify client of this Rotary Selector *** Called within ISR ***
 		}
 }
 
