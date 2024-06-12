@@ -92,7 +92,7 @@ OutputFuzzySet outSets[] = {
 
 		*/
 		// 100% Max
-			{triangleWeight, {50,100,150}},		// FullHeat
+			{triangleWeight, {75,100,150}},		// FullHeat
 			{triangleWeight, {50,75,100}},		// More Heat
 			{triangleWeight, {0, 50, 100}},		// SomeHeat
 			{triangleWeight, { -25, 0, 25}},	// No Change
@@ -110,11 +110,11 @@ OutputFuzzySet *valueChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
 //				TOOLOW 			SOMEWHATLOW 		ABOUTRIGHT 				SOMEWHATHIGH		TOOHIGH
 		{ // Quickly Converging
 //				&outSets[NOCHANGE], &outSets[NOHEAT], &outSets[LESSHEAT], &outSets[FULLHEAT], &outSets[NOCHANGE],
-				&outSets[SOMEHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE],
+				&outSets[MOREHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE],
 		},
 		{ // Slowly Converging
 //				&outSets[FULLHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
-				&outSets[FULLHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
+				&outSets[FULLHEAT], &outSets[MOREHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
 		},
 		{ // Zero Convergence
 //				&outSets[FULLHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[LESSHEAT], &outSets[NOHEAT],
