@@ -13,6 +13,17 @@
 #include "RotarySelector.h"
 
 class Menu;		// foward declaration
+Interface MenuAction;
+
+class MenuItem {
+private:
+public:
+	const char *prompt;
+	MenuAction *handler;
+	int param;
+	bool selected;
+};
+
 Interface MenuAction: Implements RotaryAction{
 private:
 public:
@@ -21,14 +32,6 @@ public:
 	void rotaryAction(const int type, int level, RSE::Dir direction, int param){};		// type is ROTATE or SELECT. 'level only used for SELECT
 };
 
-class MenuItem{
-private:
-public:
-	const char *prompt;
-	MenuAction *handler;
-	int param;
-	bool selected;
-};
 
 class Menu : Implements RotaryAction{
 

@@ -110,11 +110,11 @@ OutputFuzzySet *valueChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
 //				TOOLOW 			SOMEWHATLOW 		ABOUTRIGHT 				SOMEWHATHIGH		TOOHIGH
 		{ // Quickly Converging
 //				&outSets[NOCHANGE], &outSets[NOHEAT], &outSets[LESSHEAT], &outSets[FULLHEAT], &outSets[NOCHANGE],
-				&outSets[MOREHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE],
+				&outSets[SOMEHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE],
 		},
 		{ // Slowly Converging
 //				&outSets[FULLHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
-				&outSets[FULLHEAT], &outSets[MOREHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
+				&outSets[MOREHEAT], &outSets[MOREHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
 		},
 		{ // Zero Convergence
 //				&outSets[FULLHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[LESSHEAT], &outSets[NOHEAT],
@@ -122,7 +122,7 @@ OutputFuzzySet *valueChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
 		},
 		{ // Slowly Diverging
 //				&outSets[FULLHEAT], &outSets[SOMEHEAT], &outSets[LESSHEAT], &outSets[LESSHEAT], &outSets[NOHEAT],
-				&outSets[FULLHEAT], &outSets[MOREHEAT], &outSets[SOMEHEAT], &outSets[LESSHEAT], &outSets[NOHEAT],
+				&outSets[FULLHEAT], &outSets[FULLHEAT], &outSets[SOMEHEAT], &outSets[LESSHEAT], &outSets[NOHEAT],
 		},
 		{ // Quickly Diverging
 				&outSets[FULLHEAT], &outSets[FULLHEAT], &outSets[MOREHEAT], &outSets[NOHEAT], &outSets[NOHEAT],

@@ -14,6 +14,7 @@
 
 #define DEFGUARD 200
 #define DEFSLOPE 3		// degrees/minute
+#define DEFSOAK 5		// minutes
 
 #define NUMBERPROFILES 3
 
@@ -40,7 +41,7 @@ public:
 	int bottomGuardTemp;
 	int slope;
 
-	Profile(int target,int soak, const char *name);
+	Profile(int target,int guard, const char *name );
 	Profile(int target,int guard,int soak,int slope, const char *name );
 
 	void menuAction(int param);

@@ -9,7 +9,7 @@
 
 int Profile::selectedProfile = -1;
 
-Profile::Profile(int target,int soak, const char *name): Profile(target,DEFGUARD,soak,DEFSLOPE, name){}
+Profile::Profile(int target,int guard,const char *name): Profile(target,guard,DEFSOAK,DEFSLOPE, name){}
 Profile::Profile(int target,int guard,int soak,int slope, const char *name){
 
 	this->topTargetTemp		= target;
@@ -21,9 +21,9 @@ Profile::Profile(int target,int guard,int soak,int slope, const char *name){
 }
 
 Profile *Profile::profiles = new Profile[NUMBERPROFILES]  {
-		Profile(50,45,5,DEFSLOPE,	"T50  G45  S5"),
-		Profile(100,5,				"T100 G200 S5"),
-		Profile(200,5,				"T200 G200 S5")
+		Profile(50,60,DEFSOAK,DEFSLOPE,	"T50  G60"),
+		Profile(100,150, 				"T100 G150"),
+		Profile(200,200,				"T200 G200")
 };
 
 MenuItem *Profile::profileMenuItems = new MenuItem [NUMBERPROFILES] {

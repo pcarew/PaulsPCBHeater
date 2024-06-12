@@ -28,12 +28,13 @@ char ProfileController::activePage = 0;
 const char *ProfileController::fmt = "P: %s";
 Menu* ProfileController::localMenu		= NULL;
 Menu* ProfileController::profileMenu	= NULL;
+bool ProfileController::profileRunning = false;
 
 // Profile control
 Profile *ProfileController::activeProfile = NULL;
 ProfileController::ProfileState ProfileController::currantState = ProfileController::NotActive;
-int ProfileController::targetTemp = 0;
-int ProfileController::guardTemp = 200;
+int ProfileController::targetTemp = 50;
+int ProfileController::guardTemp = 100;
 
 #define MainPg 	  (ProfileControlId	+0)
 #define ManTempPg (ProfileControlId	+1)
@@ -43,7 +44,7 @@ int ProfileController::guardTemp = 200;
 #define HtrCtlPg (ProfileControlId	+5)
 
 #define	NUMBERITEMS 5
-MenuItem *ProfileController::localMenuItems = new MenuItem [NUMBERITEMS] {
+MenuItem ProfileController::localMenuItems[NUMBERITEMS] {
 		{"ManTemp",		&profileController, ManTempPg, false},
 		{"ProfileSel",	&profileController, ProfSelPg, false},
 		{"Start/Stop",	&profileController, StrtStpPg, false},
@@ -84,10 +85,21 @@ void ProfileController::menuAction(volatile int param){
 
 				if(time>displayTime2){
 					displayTime2 = time+500l;
-						sprintf(dispBuff,"P: %s" , (ProfileController::activeProfile == NULL)?"Man":activeProfile->name);
+					if(ProfileController::profileRunning == true){
+						displayElement.setBg(0, 255, 0);
+						displayElement.setFg(255, 0, 0);
+					}else{
+						displayElement.setBg(0, 0, 255);
+						displayElement.setFg(255, 255, 255);
+
+					}
+					sprintf(dispBuff,"P: %s" , (ProfileController::activeProfile == NULL)?"Man":activeProfile->name);
 					displayElement.setText((char *)dispBuff);
 					displayElement.setCol(0); displayElement.setRow(0); displayElement.show();
-						sprintf(dispBuff, fmt, (unsigned)TemperatureMonitoring::brdBot.getTemperature(),(unsigned)TemperatureMonitoring::brdTop.getTemperature());
+
+					displayElement.setBg(0, 0, 255);
+					displayElement.setFg(255, 255, 255);
+					sprintf(dispBuff, fmt, (unsigned)TemperatureMonitoring::brdBot.getTemperature(),(unsigned)TemperatureMonitoring::brdTop.getTemperature());
 //						sprintf(dispBuff, "G%3d T%3d ", (unsigned)TemperatureMonitoring::brdBot.getTemperature(),(unsigned)TemperatureMonitoring::brdTop.getTemperature());
 					displayElement.setRow(1); displayElement.show();
 				}
@@ -166,10 +178,11 @@ void ProfileController::menuAction(volatile int param){
 
 		case StrtStpPg:
 			systemDisplay.clear();
-			sprintf(dispBuff, "Start / Stop"); displayElement.setRow(0);  displayElement.show();
+//			sprintf(dispBuff, "Start / Stop"); displayElement.setRow(0);  displayElement.show();
 //				Serial.print(F("Start Stop here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
 
-				if(ProfileController::activeProfile != NULL){
+				if(ProfileController::profileRunning == false && ProfileController::activeProfile != NULL){
+					ProfileController::profileRunning = true;
 					ProfileController::currantState = ProfileController::Adjusting;
 					ProfileController::targetTemp = ProfileController::activeProfile->topTargetTemp;
 					TemperatureController::setTemperature(
@@ -178,6 +191,7 @@ void ProfileController::menuAction(volatile int param){
 							ProfileController::activeProfile->soakDuration
 						);
 				}else{
+					ProfileController::profileRunning = false;
 //					Serial.println(F("No profile set"));delay(10);
 					ProfileController::currantState = ProfileController::NotActive;
 					ProfileController::targetTemp = NULL;

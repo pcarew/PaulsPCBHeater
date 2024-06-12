@@ -25,8 +25,9 @@ public:
 	};
 	static int targetTemp;
 	static int guardTemp;
+	static bool profileRunning;
 	static Profile *activeProfile;
-	static MenuItem *localMenuItems;
+	static MenuItem localMenuItems[];
 	static Menu *localMenu;
 	static Menu *profileMenu;
 	static char activePage;
