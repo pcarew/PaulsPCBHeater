@@ -55,6 +55,7 @@ MenuItem *ProfileController::localMenuItems = new MenuItem [NUMBERITEMS] {
 void ProfileController::menuAction(volatile int param){
 	unsigned long displayTime2 = 0;;
 	int lastTt =0, lastGt=0;
+	char fmt[] = "G%3d T%3d ";
 
 	if(ProfileController::localMenu		== 0)
 		ProfileController::localMenu	= new Menu( (MenuItem*)ProfileController::localMenuItems,	NUMBERITEMS,	(RotarySelector*)NULL,&systemDisplay,2,1); //  starting at Row 2, col 1
@@ -76,17 +77,18 @@ void ProfileController::menuAction(volatile int param){
 			while(!cancelled ){
 				time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
 				if(time>nextDisplayTime){
-					nextDisplayTime = time+250l;
+					nextDisplayTime = time+120l;
 					ProfileController::localMenu->menuInvoke();						// **** This is a recursive call ***
 					ProfileController::activePage = ProfileControlId;				// This may have changed
 				}
 
 				if(time>displayTime2){
 					displayTime2 = time+500l;
-						sprintf(dispBuff, fmt, (ProfileController::activeProfile == NULL)?"Man":activeProfile->name);
+						sprintf(dispBuff,"P: %s" , (ProfileController::activeProfile == NULL)?"Man":activeProfile->name);
 					displayElement.setText((char *)dispBuff);
 					displayElement.setCol(0); displayElement.setRow(0); displayElement.show();
-						sprintf(dispBuff, "AT%3d AG%3d ", (unsigned)TemperatureMonitoring::brdTop.getTemperature(),(unsigned)TemperatureMonitoring::brdBot.getTemperature());
+						sprintf(dispBuff, fmt, (unsigned)TemperatureMonitoring::brdBot.getTemperature(),(unsigned)TemperatureMonitoring::brdTop.getTemperature());
+//						sprintf(dispBuff, "G%3d T%3d ", (unsigned)TemperatureMonitoring::brdBot.getTemperature(),(unsigned)TemperatureMonitoring::brdTop.getTemperature());
 					displayElement.setRow(1); displayElement.show();
 				}
 				pause();
@@ -102,18 +104,19 @@ void ProfileController::menuAction(volatile int param){
 			displayElement.show();
 			ProfileController::currantState = ProfileController::NotActive;
 			ProfileController::activeProfile = NULL;
-			while(!cancelled ){
-				if(TemperatureController::getTargetTemperature() != ProfileController::targetTemp){	// Update Temperature Controller if needed
-					TemperatureController::setTemperature(ProfileController::targetTemp,ProfileController::guardTemp,0);
-				}
 
+			nextDisplayTime = 0;					// Force first display to be immediate
+			lastTt =-1; lastGt=-1;
+
+			while(!cancelled ){
 				time = millis();					// As we've taken over control of the processor, we need to update time for everyone (and ourselves)
 				if(time>nextDisplayTime){
-					nextDisplayTime = time+250l;	// Check once per period, but only update if needed
+					nextDisplayTime = time+120l;	// Check once per period, but only update if needed
 					if( ProfileController::targetTemp != lastTt || ProfileController::guardTemp != lastGt){
 						lastTt = ProfileController::targetTemp;
 						lastGt = ProfileController::guardTemp;
-						sprintf(dispBuff, "TT:%d GT:%d ", ProfileController::targetTemp,ProfileController::guardTemp);
+						sprintf(dispBuff, fmt, ProfileController::guardTemp, ProfileController::targetTemp);
+//						sprintf(dispBuff, "G:%d T:%d ", ProfileController::guardTemp, ProfileController::targetTemp);
 						displayElement.setRow(1); displayElement.show();
 //								Serial.println(dispBuff);delay(10);
 					}
@@ -127,6 +130,9 @@ void ProfileController::menuAction(volatile int param){
 				}
 				*/
 				pause();
+			}
+			if(TemperatureController::getTargetTemperature() != ProfileController::targetTemp){	// Update Temperature Controller if needed
+				TemperatureController::setTemperature(ProfileController::targetTemp,ProfileController::guardTemp,0);
 			}
 			cancelled = false;
 			break;
