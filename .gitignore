@@ -20,3 +20,4 @@ Release/*
 /dissassm.asm
 /symboltable.sym
 /Release/.*
+Release/.gitignore
