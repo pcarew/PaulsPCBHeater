@@ -19,3 +19,4 @@ Release/*
 /.cproject
 /dissassm.asm
 /symboltable.sym
+/Release/
