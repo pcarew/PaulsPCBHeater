@@ -127,4 +127,3 @@ void RotarySelector::handleEvent(ButtonAction::Level level, int pinSelector){
 		}
 }
 
-// more Testing Git
