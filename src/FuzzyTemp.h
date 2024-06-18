@@ -16,7 +16,7 @@ public:
 	static double getPowerPercent(double actualValue, double desiredValue, double *prevErrPercent);
 
 	static double errorPercentage(double actual,double desired);
-	static double getRateOfChange(double currentValue, double *prevValue);			// per period
+	static double getRateOfChangePercentage(double currentValue, double *prevValue);			// per period
 
 };
 

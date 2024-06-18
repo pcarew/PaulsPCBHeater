@@ -19,10 +19,6 @@
 #define LESSHEAT 4
 #define NOHEAT	 5
 
-//double errorPercentage(double actual,double desired) ;
-//double getRateOfChange(double currentValue, double *prevValue);
-
-//int fuzzyModel;
 
 int FuzzyTemp::fuzzyModel			= FULLMODEL;		// MINIMALMODEL JUSTERRORMODEL  FULLMODEL
 
@@ -132,8 +128,7 @@ double FuzzyTemp::getPowerPercent(double actualValue, double desiredValue, doubl
 	double station					= 0.0;
 
 	double errPercent				= errorPercentage(actualValue, desiredValue);
-	double dErrordt 				= getRateOfChange(errPercent, prevErrPercent);
-//	double dErrordt 				= getRateOfChange(actualValue, &prevErrPercent);
+	double dErrordt 				= getRateOfChangePercentage(errPercent, prevErrPercent);
 
 
 	double totalWeight				= 0.0;
@@ -208,13 +203,10 @@ double FuzzyTemp::errorPercentage(double actual,double desired) {
 	else return (actual/desired)*100.0 - 100.0;		// Turn measured speed into a +/- %
 }
 
-double FuzzyTemp::getRateOfChange(double currentValue, double *prevValue){			// per period
-	double rateOfChange = currentValue - *prevValue;
-	/*
+double FuzzyTemp::getRateOfChangePercentage(double currentValue, double *prevValue){			// per period
 	double rateOfChange = 0.0;
 	if(*prevValue !=0)
-		rateOfChange = (currentValue - *prevValue)/(*prevValue);
-		*/
+		rateOfChange = ((currentValue - *prevValue)/(*prevValue))*100.0;
 	*prevValue = currentValue;
 	return rateOfChange;
 }
