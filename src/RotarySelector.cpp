@@ -119,7 +119,7 @@ void RotarySelector::handleEvent(ButtonAction::Level level, int pinSelector){
 			newDir = GetAction(oneItem.actionNextState);
 			nextState = GetNextState(oneItem.actionNextState);
 
-			//			Yaba
+			//			Yaba-Do
 //			Serial.print(event_name[event]);//Serial.print(F(","));
 //			Serial.print(F(" CurrSt:"));Serial.print(this->state);Serial.print(F(" Ev:"));Serial.print(event_name[event]); Serial.print(F(" Act:"));Serial.print(newDir); Serial.print(F(" NxtSt:"));Serial.println(nextState);
 
