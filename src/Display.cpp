@@ -3,6 +3,7 @@
 #include "SystemData.h"
 #include <util/atomic.h>
 
+#define TESTTFT
 
 Display:: Display():Display(0,0,0,255,255,255){}
 Display:: Display(int br,int bg, int bb):Display(br,bg,bb,255,255,255){}
@@ -13,7 +14,11 @@ Display:: Display(int br,int bg, int bb, int fr, int fg, int fb){
 void Display::setup(){
 	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
 		  this->tftScreen.begin();
-		  this->tftScreen.setRotation(TFTROTATE180);
+#ifdef TESTTFT
+		  this->tftScreen.invertDisplay(1);				// AJPC Used for newer TFT
+#else
+		  this->tftScreen.setRotation(TFTROTATE180);	// AJPC Deployed TFT
+#endif
 		  this->clear(br, bg, bb);
 	  }
 }
