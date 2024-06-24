@@ -56,7 +56,7 @@ MenuItem ProfileController::localMenuItems[NUMBERITEMS] {
 void ProfileController::menuAction(volatile int param){
 	unsigned long displayTime2 = 0;;
 	int lastTt =0, lastGt=0;
-	char fmt[] = "  G%3d T%3d ";
+	char fmt[] = "  T%3d G%3d ";
 
 	if(ProfileController::localMenu		== 0)
 		ProfileController::localMenu	= new Menu( (MenuItem*)ProfileController::localMenuItems,	NUMBERITEMS,	(RotarySelector*)NULL,&systemDisplay,2,1); //  starting at Row 2, col 1
@@ -99,8 +99,7 @@ void ProfileController::menuAction(volatile int param){
 
 					displayElement.setBg(0, 0, 255);
 					displayElement.setFg(255, 255, 255);
-					sprintf(dispBuff, fmt, (unsigned)TemperatureMonitoring::brdBot.getTemperature(),(unsigned)TemperatureMonitoring::brdTop.getTemperature());
-//						sprintf(dispBuff, "G%3d T%3d ", (unsigned)TemperatureMonitoring::brdBot.getTemperature(),(unsigned)TemperatureMonitoring::brdTop.getTemperature());
+					sprintf(dispBuff, fmt, (unsigned)TemperatureMonitoring::brdTop.getTemperature(), (unsigned)TemperatureMonitoring::brdBot.getTemperature() );
 					displayElement.setRow(1); displayElement.show();
 				}
 				pause();
@@ -109,7 +108,8 @@ void ProfileController::menuAction(volatile int param){
 			break;
 		case ManTempPg:
 			systemDisplay.clear();
-			sprintf(dispBuff, "ManualTemp");
+//			sprintf(dispBuff, "ManualTemp");
+			sprintf_P(dispBuff, PSTR("ManualTemp"));
 			displayElement.setCol(0);
 			displayElement.setRow(0);
 			displayElement.setText((char *)dispBuff);
@@ -127,8 +127,7 @@ void ProfileController::menuAction(volatile int param){
 					if( ProfileController::targetTemp != lastTt || ProfileController::guardTemp != lastGt){
 						lastTt = ProfileController::targetTemp;
 						lastGt = ProfileController::guardTemp;
-						sprintf(dispBuff, fmt, ProfileController::guardTemp, ProfileController::targetTemp);
-//						sprintf(dispBuff, "G:%d T:%d ", ProfileController::guardTemp, ProfileController::targetTemp);
+						sprintf(dispBuff, fmt,  ProfileController::targetTemp, ProfileController::guardTemp);
 						displayElement.setRow(1); displayElement.show();
 //								Serial.println(dispBuff);delay(10);
 					}

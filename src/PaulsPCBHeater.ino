@@ -123,9 +123,9 @@ void topLevelStatus(){
 	displayElement.show();
 
 	displayElement.setRow(1);
-	sprintf(dispBuff, "G:%3d T:%3d",
-		(int) TemperatureMonitoring::brdBot.getTemperature(),
-		(int) TemperatureMonitoring::brdTop.getTemperature()
+	sprintf(dispBuff, "T:%3d G:%3d",
+		(int) TemperatureMonitoring::brdTop.getTemperature(),
+		(int) TemperatureMonitoring::brdBot.getTemperature()
 		);
 	displayElement.show();
 }

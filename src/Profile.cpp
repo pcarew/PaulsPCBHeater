@@ -21,9 +21,11 @@ Profile::Profile(int target,int guard,int soak,int slope, const char *name){
 }
 
 Profile *Profile::profiles = new Profile[NUMBERPROFILES]  {
-		Profile(50,60,DEFSOAK,DEFSLOPE,	"G 60 T 50"),
-		Profile(100,150, 				"G150 T100"),
-		Profile(200,200,				"G200 T200")
+				//Target, Guard, Soak, Slope, Name
+		Profile(40,60, 					"T 40 G 60"),
+		Profile(50,60,DEFSOAK,DEFSLOPE,	"T 50 G 60"),
+		Profile(100,150, 				"T100 G150"),
+		Profile(150,200,				"T150 G200")
 };
 
 MenuItem *Profile::profileMenuItems = new MenuItem [NUMBERPROFILES] {

@@ -16,7 +16,7 @@
 #define DEFSLOPE 3		// degrees/minute
 #define DEFSOAK 5		// minutes
 
-#define NUMBERPROFILES 3
+#define NUMBERPROFILES 4
 
 /*
  *         +-----------    Guard Temp (Bottom not exceed temp)
