@@ -11,7 +11,7 @@
 #include "Extensions.h"
 #include "menu.h"
 
-#define TC_MEASUREMENT_PERIOD 250
+#define TC_MEASUREMENT_PERIOD 500
 
 class TemperatureController: Implements MenuAction {
 	static unsigned long periodEnd;

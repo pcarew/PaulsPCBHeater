@@ -41,11 +41,11 @@ OutputFuzzySet minOutSets[] = {	// Max 100%
 
 InputFuzzySet inSets[] = {
 			// L   T   R
-			{leftShoulder, {-150,-100,-50}},		// Too Low			/ Quickly Converging (Improving fast)
-			{triangle, {-100, -50, 0}},				// Somewhat Low		/ Slowly Converging	(Slow improvement)
+			{leftShoulder, {-150,-20,-10}},		// Too Low			/ Quickly Converging (Improving fast)
+			{triangle, {-20, -10, 0}},				// Somewhat Low		/ Slowly Converging	(Slow improvement)
 			{triangle, { -2.5, 0, 2.5}},				// About Right		/ Zero Convergence	( Not moving)
-			{triangle, {0, 50, 100}},				// Somewhat High	/ Slowly Diverging	( Getting worse)
-			{rightShoulder, {50, 100, 150}},		// Too High			/ Quickly Diverging	(Quickly getting worse)
+			{triangle, {0, 10, 20}},				// Somewhat High	/ Slowly Diverging	( Getting worse)
+			{rightShoulder, {10, 20, 150}},		// Too High			/ Quickly Diverging	(Quickly getting worse)
 		};
 /*
 InputFuzzySet errorFzSets[] = {
