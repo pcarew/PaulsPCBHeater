@@ -93,12 +93,13 @@ Display outputs
 	1 LED Red Green Heating / at Temp/ Overheating (d15/A4)
 
 	TFT 5 (SPI+Reset)
-		- *SCK SPI CLK (d13)
+		- *SCK SPI CLK / SCL (d13)
 		- *SDA MOSI (d11)
 		- *CS SPI (d10)
 		- A0 D/C (Data/Control) (d9) [AKA DC Data / Command, RS Register Select, A0 Address Select]
 		- Reset (d8)
 	SDCard
+		- *SCK SPI CLK / SCL (d13)
 		- CS (d14/A5)
 		- MISO (d12)
 Digital Outputs
