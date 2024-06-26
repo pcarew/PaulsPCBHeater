@@ -98,9 +98,14 @@ void ProfileController::menuAction(volatile int param){
 					displayElement.setCol(0); displayElement.setRow(0); displayElement.show();
 
 					displayElement.setBg(0, 0, 255);
-					displayElement.setFg(255, 255, 255);
+
+					if(HeaterController::heaterEnabled)
+						displayElement.setFg(255, 0, 0);
+					else
+						displayElement.setFg(255, 255, 255);
 					sprintf(dispBuff, fmt, (unsigned)TemperatureMonitoring::brdTop.getTemperature(), (unsigned)TemperatureMonitoring::brdBot.getTemperature() );
 					displayElement.setRow(1); displayElement.show();
+					displayElement.setFg(255, 255, 255);
 				}
 				pause();
 			}
