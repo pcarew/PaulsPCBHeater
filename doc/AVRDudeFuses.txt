@@ -12,7 +12,9 @@ After resetting the fuses, the Arduino Bootloader must be re-installed in the ta
 Follow this guide: https://support.arduino.cc/hc/en-us/articles/4841602539164-Burn-the-bootloader-on-UNO-Mega-and-classic-Nano-using-another-Arduino
 Use the Bootloader programmer cable to cable between Programmer abd target boards
 
-A) 1st setup programmer board
+**If Using DWLink as programmer, skip 'A' and select 'AVR ISP' as programmer in Section 'C' ***
+
+A) 1st setup programmer board (Can be skipped if using DWLink)
 Connect the programmer board to the computer.
 Select your programmer board in Tools > Board, for example Tools > Board > Arduino AVR Boards > Arduino Uno.
 Select the port the board is connecting to in Tools > Port.
@@ -23,7 +25,7 @@ B) Connect Boatloader cable
 
 C) Burn bootloader via programmer
 Select the target board in Tools > Board (target is UNO).
-Select Tools > Programmer > Arduino as ISP.
+Select Tools > Programmer > Arduino as ISP (*** unless using DWLink as programmer, in which case use AVR ISP ***)
 Select Tools > Burn Bootloader
 
 D) Test
