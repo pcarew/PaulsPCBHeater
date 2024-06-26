@@ -156,7 +156,9 @@ void ProfileController::menuAction(volatile int param){
 				time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
 				if(time>nextDisplayTime){
 					nextDisplayTime = time+250l;
+//					Serial.print(F("Ram free"));Serial.println(ramApp.freeRam());delay(10);
 					ProfileController::profileMenu->menuInvoke();						// **** This is a recursive call ***
+//					Serial.print(F("Ram free"));Serial.println(ramApp.freeRam());delay(10);
 					if(Profile::selectedProfile != -1){
 						ProfileController::activeProfile = &Profile::profiles[Profile::selectedProfile];
 							// ProfileController task thread will make use of the active Profile
