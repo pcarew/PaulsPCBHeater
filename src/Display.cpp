@@ -12,15 +12,19 @@ Display:: Display(int br,int bg, int bb, int fr, int fg, int fb){
 	this->setBg(br,bg,bb);
 }
 void Display::setup(){
-	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-		  this->tftScreen.begin();
+		  tftScreen.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
+//	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+//		  this->tftScreen.begin();
+//		  tftScreen.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
+
 #ifdef TESTTFT
 		  this->tftScreen.invertDisplay(1);				// AJPC Used for newer TFT
+		  this->tftScreen.setRotation(TFTROTATE0);		// AJPC Test TFT
 #else
 		  this->tftScreen.setRotation(TFTROTATE180);	// AJPC Deployed TFT
 #endif
 		  this->clear(br, bg, bb);
-	  }
+//	  }
 }
 void Display::setFg(int r, int g, int b){
 	this->fr = r;
@@ -37,7 +41,8 @@ void Display::setBg(int r, int g, int b){
 
 void Display::clear(int r, int g, int b){
 	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-		  this->tftScreen.background(r, g, b);
+//		  this->tftScreen.background(r, g, b);
+		  this->tftScreen.fillScreen(RGB(r, g, b));
 	  }
 }
 void Display::clear(){
@@ -74,13 +79,15 @@ void DisplayText::show(){
 
 		this->disp->tftScreen.setTextSize(this->textSize);
 		this->disp->tftScreen.setTextColor(
-		disp->tftScreen.Color565(this->fr, this->fg, this->fb),
-		disp->tftScreen.Color565(this->br, this->bg, this->bb));
+		RGB(this->fr, this->fg, this->fb),
+		RGB(this->br, this->bg, this->bb)
+		);
 
 		this->disp->tftScreen.setCursor(xpix, ypix);
-//		ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+		ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+			Serial.print(F("Text "));Serial.print((uint16_t)(this->text),HEX);
 			this->disp->tftScreen.print(this->text);
-//		}
+		}
 //		Serial.print(F("R:"));Serial.print(this->row);Serial.print(F(" C:"));Serial.print(this->col);Serial.print(F(" "));Serial.println(this->text);
 }
 
@@ -91,17 +98,25 @@ bool DisplayText::show(char *newText){
 		int xpix = this->col*this->chrSize[this->textSize][CHRW];
 		int ypix = this->row*this->chrSize[this->textSize][CHRH];
 
-//	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
 				// Wipe out previous
+//		this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
+//		this->disp->tftScreen.text(this->text, xpix, ypix);
 		this->disp->tftScreen.setTextSize(this->textSize);
-		this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
-		this->disp->tftScreen.text(this->text, xpix, ypix);
+		this->disp->tftScreen.setTextColor(RGB(this->br, this->bg, this->bb));
+		this->disp->tftScreen.setCursor(xpix, ypix);
+			Serial.print(F("Text"));Serial.println((uint16_t)(this->text),HEX);
+		this->disp->tftScreen.print(this->text);
 
 				// Write new
-		this->disp->tftScreen.stroke(this->fr, this->fg, this->fb);
-		this->disp->tftScreen.text(newText, xpix,ypix);
+//		this->disp->tftScreen.stroke(this->fr, this->fg, this->fb);
+//		this->disp->tftScreen.text(newText, xpix,ypix);
+		this->disp->tftScreen.setTextColor(RGB(this->fr, this->fg, this->fb));
+		this->disp->tftScreen.setCursor(xpix,ypix);
+		this->disp->tftScreen.print(newText);
 		this->text = newText;
-//	  }
+			Serial.print(F("Text"));Serial.println((uint16_t)(this->text),HEX);
+	  }
 	}
 
 	return true;
@@ -130,15 +145,21 @@ void DisplayText::move(int col, int row){
 	int newYpix = row*this->chrSize[this->textSize][CHRH];
 
 			// Wipe out previous
-//	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
 	this->disp->tftScreen.setTextSize(this->textSize);
-	this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
-	this->disp->tftScreen.text(this->text, origXpix, origYpix);
+//	this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
+//	this->disp->tftScreen.text(this->text, origXpix, origYpix);
+	this->disp->tftScreen.setTextColor(RGB(this->br, this->bg, this->bb));
+	this->disp->tftScreen.setCursor(origXpix, origYpix);
+	this->disp->tftScreen.print(this->text);
 
 			// Write new
-	this->disp->tftScreen.stroke(this->fr, this->fg, this->fb);
-	this->disp->tftScreen.text(this->text, newXpix,newYpix);
-//	  }
+//	this->disp->tftScreen.stroke(this->fr, this->fg, this->fb);
+//	this->disp->tftScreen.text(this->text, newXpix,newYpix);
+	this->disp->tftScreen.setTextColor(RGB(this->fr, this->fg, this->fb));
+	this->disp->tftScreen.setCursor(newXpix,newYpix);
+	this->disp->tftScreen.print(this->text);
+	  }
 	this->col = col;
 	this->row = row;
 }
@@ -153,11 +174,15 @@ void DisplayText::remove(){
 //	int newYpix = row*this->chrSize[this->textSize][CHRH];
 
 			// Wipe out previous
-//	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+	  ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+//	this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
+//	this->disp->tftScreen.text(this->text, origXpix, origYpix);
 	this->disp->tftScreen.setTextSize(this->textSize);
-	this->disp->tftScreen.stroke(this->br, this->bg, this->bb);
-	this->disp->tftScreen.text(this->text, origXpix, origYpix);
-//	  }
+	this->disp->tftScreen.setTextColor(RGB(this->br, this->bg, this->bb));
+	this->disp->tftScreen.setCursor(origXpix, origYpix);
+			Serial.print(F("Text"));Serial.println((uint16_t)(this->text),HEX);
+	this->disp->tftScreen.print(this->text);
+	  }
 }
 
 bool DisplayText::setText(char *newText){
@@ -166,6 +191,7 @@ bool DisplayText::setText(char *newText){
 //		return false;
 //	}
 	this->text = newText;
+			Serial.print(F("Text"));Serial.println((uint16_t)(this->text),HEX);
 	return true;
 }
 void DisplayText::setCol(int col){

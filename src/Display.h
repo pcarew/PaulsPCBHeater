@@ -1,13 +1,17 @@
 #ifndef Display_H
 #define Display_H
 
+//#include <TFT.h>
+
+#include <Adafruit_GFX.h>    // Core graphics library
+#include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
 #include <SPI.h>
-#include <TFT.h>
+
 
 
 #define TFT_CS_PIN 10
-#define SPI_DC_PIN 9
-#define SPI_RST_PIN 8
+#define TFT_DC_PIN 9
+#define TFT_RST_PIN 8
 
 #define TFTROTATE0		1
 #define TFTROTATE90		2
@@ -27,13 +31,15 @@
 #define	DISPW  160
 #define	DISPH  128
 
+#define RGB(r, g, b) (((r&0xF8)<<8)|((g&0xFC)<<3)|(b>>3))
+
 class Display {
 private:
 public:
 
 	int bb=BB, bg=BG, br=BR, fb=FB, fg=FG, fr=FR;
-	TFT tftScreen = TFT(TFT_CS_PIN, SPI_DC_PIN, SPI_RST_PIN); // @suppress("Abstract class cannot be instantiated")
-
+//	TFT tftScreen = TFT(TFT_CS_PIN, SPI_DC_PIN, SPI_RST_PIN); // @suppress("Abstract class cannot be instantiated")
+	Adafruit_ST7735 tftScreen = Adafruit_ST7735(TFT_CS_PIN, TFT_DC_PIN, TFT_RST_PIN); // @suppress("Abstract class cannot be instantiated") @suppress("Ambiguous problem")
 
 	Display();
 	Display(int br,int bg, int bb);
