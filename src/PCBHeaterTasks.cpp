@@ -32,13 +32,14 @@ void PCBHeaterTasks::taskA(volatile TCB *tcb){
 //		taskASwitches++;
 //		Serial.println(F("Task A"));
 //			startTime = millis();
+
+		// Invoke Task threads
 		tempMonitor.update();
-//			endTime = millis();
 		heaterController->update();
-
 		TemperatureController::update();
-
 		ProfileController::update();
+
+//			endTime = millis();
 
 //			taskAvgTime = (taskAvgTime * (TSKAVGCNT-1) + (endTime - startTime)) / TSKAVGCNT;
 //			taskAvgTime = endTime - startTime;
