@@ -1,0 +1,34 @@
+Old TFT:
+TFT.h
+section                      size      addr
+.data                         818   8388864
+.text                       22058         0
+.bss                          691   8389682
+.comment                       17         0
+.note.gnu.avr.deviceinfo       64         0
+.debug_aranges                400         0
+.debug_info                 45689         0
+.debug_abbrev                4475         0
+.debug_line                 12711         0
+.debug_frame                 4372         0
+.debug_str                   7422         0
+.debug_loc                  31263         0
+.debug_ranges                1776         0
+Total                      131756
+
+New Adafruit TFT GFX+7735 versions
+section                      size      addr
+.data                         836   8388864
+.text                       26056         0
+.bss                          711   8389700
+.comment                       17         0
+.note.gnu.avr.deviceinfo       64         0
+.debug_aranges                496         0
+.debug_info                 56416         0
+.debug_abbrev                4825         0
+.debug_line                 15850         0
+.debug_frame                 5476         0
+.debug_str                   8768         0
+.debug_loc                  42569         0
+.debug_ranges                2296         0
+Total                      164380
