@@ -99,12 +99,12 @@ void loop()
 	static unsigned long periodEnd2 =0;
 	time = millis();
 	if(time>periodEnd1){
-		periodEnd1 = time+250l;	// Every 1/4 second
+		periodEnd1 = time+250l;	// Every 1/4 second	- Process Menu
 
 		mainMenu.menuInvoke();
 	}
 	if(time>periodEnd2){
-		periodEnd2 = time+500l;	// Every 1/2 second
+		periodEnd2 = time+500l;	// Every 1/2 second - Show PCB Heater status
 
 		topLevelStatus();
 	}
