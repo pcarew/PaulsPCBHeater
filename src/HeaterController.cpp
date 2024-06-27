@@ -3,6 +3,7 @@
 #include "arduino.h"
 #include "pos/pos.h"
 #include "RotarySelector.h"
+#include "DisplayController.h"
 
 	// Init statics
 unsigned long HeaterController::periodEnd		= 0;
@@ -17,7 +18,6 @@ int HeaterController::prevZeroCrossingState	= LOW;
 extern char dispBuff[];
 const char *HeaterController::fmt = "Heater Control";
 
-#define LED_PIN   A4
 
 // Creation /Setup
 HeaterController::HeaterController(){
@@ -29,7 +29,6 @@ void HeaterController::setup(){
 	// Port C Pins
 	PCMSK1 = PCMSK_Z;
 
-	pinMode(LED_PIN, OUTPUT);
 	pinMode(HTR_PIN, OUTPUT);
 	HeaterController::heaterEnable(false);					//  initially disable heater output
 }
@@ -103,7 +102,7 @@ void HeaterController::zeroCrossing(){
 	zeroCount++;												// Used for Hz Calculation
 	ledCount++;
 	frameDetectionAndFiring();
-	if(!(ledCount%60)) digitalWrite(LED_PIN,!digitalRead(LED_PIN));
+	if(!(ledCount%60)) LEDController::ledEvent(LEDController::LEDMode::ZeroCrossing); //digitalWrite(LED_PIN,!digitalRead(LED_PIN));
 
 	/*
 	++ledCntr %=100;	// divide freq by 100 for led visibility

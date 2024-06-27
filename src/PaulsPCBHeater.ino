@@ -7,6 +7,7 @@
 #include "PCBHeaterTasks.h"
 #include "Ram.h"
 #include "Display.h"
+#include "DisplayController.h"
 #include "HeaterController.h"
 #include "TemperatureMonitoring.h"
 #include "ProfileController.h"
@@ -81,6 +82,7 @@ void setup()
 //	Serial.println(F("Setup Started"));
 
 	systemDisplay.setup();
+	LEDController::setup();
 
 	cnclButton = new CancelButton();
 	cnclButton->createButton(3,90);
