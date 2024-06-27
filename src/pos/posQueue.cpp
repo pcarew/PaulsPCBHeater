@@ -1,12 +1,12 @@
 /************************************************************************
 *                                                                       *
-*       FILE NAME       : posQueue.cpp									*
+*       FILE NAME       : posQueue.cpp					*
 *       REVISION        : 1                                             *
-*       DESCRIPTION     : Type definitions for Queues in Paul's Operating		*
-*						: System. Derived from original OS by PC.		*
+*       DESCRIPTION     : Type definitions for Queues in Paul's Operating*
+*			: System. Derived from original OS by PC.	*
 *       AUTHOR          : A.J.Paul Carew                                *
-*       FILE ORIGIN     : Original work									*
-*       DEPENDENCIES    : None.
+*       FILE ORIGIN     : Original work					*
+*       DEPENDENCIES    : None
 *       NOTE            :                                               *
 *                                                                       *
 *                                                                       *
@@ -75,9 +75,9 @@ MSG qPop(QUE *q, bool pendRequested){
 				CLR_INTR();
 				q->pended = dqtask();	// Remove from RunQueue and place here
 				SET_INTR();
-				pause();	/* Cause reschedule. Will return when something is added to Q */
+				pause();				// Cause reschedule. Will return when something is added to Q
 			}else{
-				return (MSG)NULL;
+				return (MSG)NULL;		// This shouldn't/couldn't happen as it implies that the task is running while pended!
 			}
 		}
 						/* Something here, therefore	*/
