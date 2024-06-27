@@ -10,25 +10,26 @@
 /2 Tasks - System and Background tasks
 
  /Design Application architecture
+ /Design minimal FuzzyLogic controller for heater 
+ x Not enough RAM -> Determine EEPROM and/or SD access
  Design graph drawing Class
- Design minimal FuzzyLogic controller for heater 
- Determine EEPROM and/or SD access
  Move POS Stack check to call-able function
+ Add Ambient monitor
  
 
  Features:
- Select Profile
- make profile
- run profile
+ /Select Profile
+ x Not enough RAM -> make profile
+ /run profile
  record run
- use FL to control specific temps
- draw actual temps on top of profile
+ /use FL to control specific temps
+ /draw actual temps on top of profile
  
- classes
- SD Card / file management
- Profile Management
- Temperature control
+ Classes
+ x Not enough RAM -> SD Card / file management
+/Profile Management
+/Temperature control
  Graphics profile drawing
  
-Move Menu Return button to Menu class
-Allow Rotary pass through to applications
+/Move Menu Return button to Menu class
+/Allow Rotary pass through to applications
