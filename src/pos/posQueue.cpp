@@ -60,30 +60,34 @@ bool qPush(QUE *q, MSG *msg){
 /************************************************************************
 * Function	: qPop
 * Description	: This function obtains a message from the queue. If
-*		  there is not a message waiting in the queue, then
+*		  there is not a message waiting in the queue (and pendRequested was set), then
 *		  the task is removed from the runq until one arrives.
 ************************************************************************/
 MSG qPop(QUE *q, bool pendRequested){
 	MSG	msg;
 
-	if(q->qPtr <= 0 && pendRequested){
+	if(q->qPtr <= 0 ){
+		if(pendRequested){
 						/* Suspend task until something	*/
 						/* is posted to this queue,	*/
 						/* providing no other tasks are	*/
 						/* already pending.		*/
 			if(!q->pended){
 				CLR_INTR();
-				q->pended = dqtask();	// Remove from RunQueue and place here
+				q->pended = dqtask();		// Remove this Task from RunQueue and place here for safe keeping
 				SET_INTR();
-				pause();				// Cause reschedule. Will return when something is added to Q
-			}else{
-				return (MSG)NULL;		// This shouldn't/couldn't happen as it implies that the task is running while pended!
+				pause();					// Cause reschedule. Will return when something is added to Q
+											// Msg was was added while we were pended, causing us to run again
 			}
+		} else{
+			return (MSG)NULL;				// Nothing in Q and no request to pend received, so just return empty handed
 		}
+	}
 						/* Something here, therefore	*/
 						/* return it.			*/
-		msg = q->queue[--q->qPtr];
-		return msg;
+
+	msg = q->queue[--q->qPtr];			// Either something was originally here or it was added while we were pended
+	return msg;
 }
 /************************************************************************
 * Function	: qCheck
