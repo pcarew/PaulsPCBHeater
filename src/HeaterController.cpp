@@ -97,7 +97,6 @@ void HeaterController::checkACZeroCrossing(){								// Called from PortC ISR
 		HeaterController::prevZeroCrossingState = nz;
 }
 
-#define LED_PIN   A4
 void HeaterController::zeroCrossing(){
 	static unsigned ledCount = 0;
 	digitalWrite(HTR_PIN,LOW);
