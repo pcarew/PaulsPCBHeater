@@ -20,7 +20,7 @@ Profile::Profile(int target,int guard,int soak,int slope, const char *name){
 	this->name				= name;
 }
 
-Profile *Profile::profiles = new Profile[NUMBERPROFILES]  { // @suppress("Symbol is not resolved")
+Profile *Profile::profiles = new Profile[NUMBERPROFILES]  {				// @suppress("Symbol is not resolved")
 				//Target, Guard, Soak, Slope, Name
 		Profile(40,60, 					"T 40 G 60"),
 		Profile(50,60,DEFSOAK,DEFSLOPE,	"T 50 G 60"),
@@ -28,7 +28,7 @@ Profile *Profile::profiles = new Profile[NUMBERPROFILES]  { // @suppress("Symbol
 		Profile(150,200,				"T150 G200")
 };
 
-MenuItem *Profile::profileMenuItems = new MenuItem [NUMBERPROFILES] { // @suppress("Symbol is not resolved")
+MenuItem *Profile::profileMenuItems = new MenuItem [NUMBERPROFILES] {	// @suppress("Symbol is not resolved")
 	{profiles[0].name,&profiles[0],0,false},
 	{profiles[1].name,&profiles[1],1,false},
 	{profiles[2].name,&profiles[2],2,false},
@@ -37,10 +37,10 @@ MenuItem *Profile::profileMenuItems = new MenuItem [NUMBERPROFILES] { // @suppre
 
 void Profile::menuAction(int param){
 	Profile::selectedProfile = param;
-	Serial.print(F("Selected profile is:"));Serial.println(param);
+//	Serial.print(F("Selected profile is:"));Serial.println(param);
 }
 
-/*
+/* Using standard menu rotary handling
 void Profile::rotaryAction(const int type, int level, RSE::Dir direction, int param){ // type is ROTATE or SELECT. 'level only used for SELECT
 
 }

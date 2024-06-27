@@ -25,7 +25,7 @@ ProfileController::~ProfileController() {
 
 // Used for UI
 char ProfileController::activePage = 0;
-const char *ProfileController::profileNameFmt = "P:%s";
+const char *ProfileController::profileNameFmt = "%sT%3d G%3d";
 Menu* ProfileController::localMenu		= NULL;
 Menu* ProfileController::profileMenu	= NULL;
 bool ProfileController::profileRunning = false;
@@ -77,15 +77,17 @@ void ProfileController::menuAction(volatile int param){
 			displayElement.show();
 			while(!cancelled ){
 				time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
-				if(time>nextDisplayTime){
-					nextDisplayTime = time+120l;
+
+				if(time>nextDisplayTime){								// Menu subsystem
+					nextDisplayTime = time+250l;
 					ProfileController::localMenu->menuInvoke();						// **** This is a recursive call ***
-					ProfileController::activePage = ProfileControlId;				// This may have changed
+					ProfileController::activePage = ProfileControlId;				// This may have changed via menu handling
 				}
 
-				if(time>displayTime2){
+				if(time>displayTime2){									// Status Display
 					displayTime2 = time+500l;
-					if(ProfileController::profileRunning == true){
+
+					if(ProfileController::profileRunning == true){		// If Profile is *running* indicate by changing FG+BG colours
 						displayElement.setBg(0, 255, 0);
 						displayElement.setFg(255, 0, 0);
 					}else{
@@ -93,11 +95,16 @@ void ProfileController::menuAction(volatile int param){
 						displayElement.setFg(255, 255, 255);
 
 					}
-					sprintf(dispBuff,ProfileController::profileNameFmt, (ProfileController::activeProfile == NULL)?"Man":activeProfile->name);
+
+					if(ProfileController::activeProfile == NULL){		// Display either manual temp or profile temp targets
+						sprintf(dispBuff,ProfileController::profileNameFmt, "M:", (ProfileController::targetTemp), (ProfileController::guardTemp));
+					}else{
+						sprintf(dispBuff,ProfileController::profileNameFmt, "P:", activeProfile->topTargetTemp, activeProfile->bottomGuardTemp);
+					}
 					displayElement.setText((char *)dispBuff);
 					displayElement.setCol(0); displayElement.setRow(0); displayElement.show();
 
-					displayElement.setBg(0, 0, 255);
+					displayElement.setBg(0, 0, 255);					// Reset for rest of status display
 
 					if(HeaterController::heaterEnabled)
 						displayElement.setFg(255, 0, 0);
@@ -107,13 +114,13 @@ void ProfileController::menuAction(volatile int param){
 					displayElement.setRow(1); displayElement.show();
 					displayElement.setFg(255, 255, 255);
 				}
+
 				pause();
 			}
 			cancelled = false;
 			break;
 		case ManTempPg:
 			systemDisplay.clear();
-//			sprintf(dispBuff, "ManualTemp");
 			sprintf_P(dispBuff, PSTR("ManualTemp"));
 			displayElement.setCol(0);
 			displayElement.setRow(0);
