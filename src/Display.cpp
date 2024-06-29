@@ -194,7 +194,7 @@ bool DisplayText::setText(char *newText){
 //		return false;
 //	}
 	this->text = newText;
-			Serial.print(F("Text"));Serial.println((uint16_t)(this->text),HEX);
+//			Serial.print(F("Text"));Serial.println((uint16_t)(this->text),HEX);
 	return true;
 }
 void DisplayText::setCol(int col){
