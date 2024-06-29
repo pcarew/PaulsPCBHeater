@@ -1,9 +1,10 @@
 #include "HeaterController.h"
 
 #include "arduino.h"
+
+#include "LEDController.h"
 #include "pos/pos.h"
 #include "RotarySelector.h"
-#include "DisplayController.h"
 
 	// Init statics
 unsigned long HeaterController::periodEnd		= 0;
