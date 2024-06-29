@@ -13,6 +13,7 @@
 #include "TemperatureMonitoring.h"
 #include "TemperatureController.h"
 #include "ProfileController.h"
+#include "LEDController.h"
 
 IMPORT TemperatureMonitoring tempMonitor;
 IMPORT HeaterController *heaterController;
@@ -38,6 +39,7 @@ void PCBHeaterTasks::taskA(volatile TCB *tcb){
 		heaterController->update();
 		TemperatureController::update();
 		ProfileController::update();
+		LEDController::update();
 
 //			endTime = millis();
 
