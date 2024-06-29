@@ -8,7 +8,7 @@
 #include "LEDController.h"
 
 
-LEDController::LEDMode LEDController::ledStatus = LEDMode::SelfTest;
+LEDController::LEDMode LEDController::ledMode = LEDMode::SelfTest;
 const PROGMEM LEDProfile LEDController::ledProfiles[] = {		// 1 profile per LED mode
 		//T,	D,	Cnt,	CycleTime
 		{250, (unsigned char)50, (unsigned char)3, 750},	// Self Test
@@ -21,7 +21,7 @@ const PROGMEM LEDProfile LEDController::ledProfiles[] = {		// 1 profile per LED 
 
 void LEDController::setup(){
 	pinMode(LED_PIN, OUTPUT);
-	LEDController::ledStatus = LEDMode::SelfTest;
+	LEDController::ledMode = LEDMode::SelfTest;
 	for(int i = 0; i<3; i++){
 		digitalWrite(LED_PIN,HIGH);
 		delay(125);
@@ -29,7 +29,7 @@ void LEDController::setup(){
 		delay(125);
 	}
 }
-void LEDController::ledEvent(LEDMode mode){
+void LEDController::ledSetMode(LEDMode mode){
 	/*
 	switch(mode){
 	case LEDMode::Off:
@@ -41,7 +41,7 @@ void LEDController::ledEvent(LEDMode mode){
 	}
 	*/
 //	if(mode >= LEDController::ledStatus){
-		LEDController::ledStatus = mode;
+		LEDController::ledMode = mode;
 //	}
 }
 
@@ -59,7 +59,7 @@ void LEDController::displayCycle(){
 	static unsigned long displayTime = 0l;
 	unsigned long time = millis();
 
-    memcpy_P (&profile, &LEDController::ledProfiles[LEDController::ledStatus], sizeof(LEDProfile));
+    memcpy_P (&profile, &LEDController::ledProfiles[LEDController::ledMode], sizeof(LEDProfile));
 //    memcpy_P (&profile, &LEDController::ledProfiles[(id++)%6], sizeof(LEDProfile));
 													;
 
@@ -81,4 +81,8 @@ void LEDController::displayCycle(){
 		digitalWrite(LED_PIN, LOW);
 		delay(t-ledOnTime);
 	}
+}
+
+LEDController::LEDEvent LEDController::detectEvent(){
+
 }

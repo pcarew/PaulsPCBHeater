@@ -14,12 +14,49 @@
 class LEDProfile{
 private:
 public:
-	// |+++++_____+++++_____+++++_______________|
-	//  <D%-> 						(% of T)
-	//  <-Wavelnth T--> 			(in ms)
-	//  <----FlashCnt(3)---->		(int cnt)
-	//  <----------------CycleTime--(in ms)----->
+	/*
+	  Profile consists of:
+	    A On+Off wavelength time T
+	    A Percentage duration of ON out of T time
+	    A flash count of the number of T Wavelengths in the cycle
+	    A total size of cyle time. Any remaining time after the LED flashes is quiet time.
 
+	   |+++++           +++++           +++++                     |
+	   |+++++___________+++++___________+++++_____________________|
+	    <D%-> 									(% of T)
+	    <-Wavelength T->  						(in ms)
+	    <----FlashCnt(n=3)------------------>	(int cnt)
+	                                         <--QuietTime-------->
+	    <----------------CycleTime--(in ms)---------------------->
+
+	    	LED Cycle structure
+	    	--------------------
+
+	  	  	  	  	  +---------+
+   |----------------->| Stopped |-----  CycleStartEv / Turn LED on, Start Duration (D) Timer, set flashCount (fc) to n
+   | 	  	  	  	  +---------+    |
+   | 	  	  	  	                 |
+   | 	  	--------->+---------+<----
+   | 	  	|  	 ---->| LEDON   |-----  Duration Complete Ev / Turn LED off, Start (T-D) timer, dec fc
+   | 	  	|  	 |    +---------+     |
+   | 	  	|  	 |                    |
+   | 	  	|  	 |                    |
+   | 	  	|  	 |    +---------+<-----
+   | 	  	|  	 -----| LEDOFF  |------  LedQuietEv (T-D expiration and no more flashes) / Start quiet Timer
+   | 	  	|   MoreEv+---------+     |
+   | 	  	|  	/ LED on              |
+   |        |                         |
+   | 	  	----------+---------+     |
+   |   CycleStEv      |         |<-----
+   |   /LEDOn,fc=n etc| LEDQUIET|
+   -------------------|         |
+      CycleOffEv	  +---------+
+
+
+  	  	   LED cycle finite state machine
+  	  	   ------------------------------
+
+	 */
 	int wavelengthT;		// Wavelength time in millis
 	unsigned char duty;		// Duty cycle %
 	unsigned char flashCnt;	// Number of LED flash cycles
@@ -38,13 +75,31 @@ public:
 		AmbientDanger	= 5
 	};
 
+	enum LEDState {
+		LEDSTOPPED =0,	// No LED activity
+		LEDON	= 1,	// Led is on, waiting for Duration expiration
+		LEDOFF	= 2,	// Led is Off, waiting for T expiration
+		LEDQUIET= 3		// Led is off, waiting for Cycle Reset
+	};
+
+	enum LEDEvent{
+		CycleStartEv	= 0,			// Start of New LED Flash Cycle
+		LEDOnComplete	= 1,			// End of LED on Time
+		MoreEv			= 2,			// End of LED Off Time with more flashes to be performed
+		LedQuietEv		= 4,			// End of LED Off Time with *No* more flashes to be performed
+		CycleOffEv		= 5				// End of  quiet time and Mode is now 'Off'
+	};
+
 	static const LEDProfile ledProfiles[];
-	static LEDMode ledStatus;
+	static LEDMode ledMode;
+	static LEDState ledCycleState;
+
 	static void setup();
 	static void update();
 	static void displayCycle();
 
-	static void ledEvent(LEDMode mode);
+	static void ledSetMode(LEDMode mode);
+	static LEDEvent detectEvent();
 };
 
 #endif /* LEDCONTROLLER_H_ */
