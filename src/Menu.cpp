@@ -80,7 +80,6 @@ void Menu::menuInvoke(){ // Called from System thread
 }
 
 void Menu::highlightCurrentMenuLine(){
-		Serial.println(F("Menu Line Highlight"));delay(20);
 	this->menuLine->setBg(this->display->br, this->display->bg, this->display->bb);
 	this->menuLine->setFg(this->display->fr, this->display->fg, this->display->fb);
 
@@ -88,11 +87,6 @@ void Menu::highlightCurrentMenuLine(){
 	this->menuLine->setRow(this->currentMenuItemId+this->posRow);
 	this->menuLine->setCol(this->posCol);
 
-		Serial.print(F("Menu: "));Serial.println(this->menuLine->text);delay(20);
-		if(this->menuLine->text == NULL){
-			Serial.print(F("Menu: "));Serial.println(F("Null Ptr"));
-			while(1);
-		}
 	this->menuLine->invert();
 	this->menuLine->show();
 	this->menuLine->invert();
