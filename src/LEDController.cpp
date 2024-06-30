@@ -64,8 +64,9 @@ void LEDController::ledSetMode(LEDMode mode){
 }
 
 void LEDController::update(){
-	unsigned long time = millis();
+	unsigned long time;
 	if(ledMode != Off){					// If we're not 'Off', there will always be a timer running
+		time = millis();
 		if(time > LEDController::ledEventTimer){
 			LEDEvent event = detectEvent();
 			fsmHandler(event);
