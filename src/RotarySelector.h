@@ -15,7 +15,7 @@
 #define ANS(action,nextState)((uint8_t)((uint8_t)action<<(uint8_t)4|(uint8_t)nextState))		// Pack action and nextstate into single byte
 
 typedef struct _RSE{
-	enum Dir{
+	enum Dir{			// Actions
 	FW = 1,
 	RV = 2,
 	NC = 15				// No Change
@@ -41,12 +41,6 @@ typedef struct _RSE{
 		BD = 3,
 		ER = 15			// Unrecognized event
 	};
-	/*
-	Dir dir;
-	State nextState;
-	*/
-//	int8_t dir;					// byte version of 'DIR'
-//	int8_t nextState;			// byte version of 'State'
 	uint8_t actionNextState;		// DirAction is in upper Nibble, NextState is in lower nibble
 
 }RSE;		//RotaryStateEvent Action
