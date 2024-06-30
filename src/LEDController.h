@@ -19,7 +19,7 @@ public:
 	    A On+Off wavelength time T
 	    A Percentage duration of ON out of T time
 	    A flash count of the number of T Wavelengths in the cycle
-	    A total size of cyle time. Any remaining time after the LED flashes is quiet time.
+	    A total size of cycle time. Any remaining time after the LED flashes is quiet time.
 
 	   |+++++           +++++           +++++                     |
 	   |+++++___________+++++___________+++++_____________________|
@@ -56,50 +56,77 @@ public:
   	  	   LED cycle finite state machine
   	  	   ------------------------------
 
+		FSM events are primarily driven by timerExpiration.
+		The event type is determined based upon what state the FSM is in when the timer expires.
+
 	 */
-	int wavelengthT;		// Wavelength time in millis
-	unsigned char duty;		// Duty cycle %
-	unsigned char flashCnt;	// Number of LED flash cycles
-	int cycleTime;			// Overall time  in millis before cycle repeats
+
+	unsigned int wavelengthT;	// Wavelength time in millis
+	unsigned char duty;			// Duty cycle %
+	unsigned char flashCnt;		// Number of LED flash cycles
+	unsigned int cycleTime;		// Overall time  in millis before cycle repeats
 };
 
+#define NUMLEDSTATES 4
+#define NUMLEDEVENTS 6
 class LEDController{
 private:
 public:
 	enum  LEDMode{
-		SelfTest		= 0,
-		Off				= 1,
-		ZeroCrossing	= 2,
-		HeaterOn		= 3,
-		AmbientWarning	= 4,
-		AmbientDanger	= 5
+		SelfTest			= 0,
+		Off					= 1,
+		ZeroCrossing		= 2,
+		HeaterOn			= 3,
+		AmbientWarning		= 4,
+		AmbientDanger		= 5,
+		AmbientWarningCancel= 6,
+		AmbientDangerCancel	= 7
 	};
 
 	enum LEDState {
-		LEDSTOPPED =0,	// No LED activity
-		LEDON	= 1,	// Led is on, waiting for Duration expiration
-		LEDOFF	= 2,	// Led is Off, waiting for T expiration
-		LEDQUIET= 3		// Led is off, waiting for Cycle Reset
+		LEDStoppedSt=0,	// No LED activity
+		LEDOnSt		= 1,	// Led is on, waiting for Duration expiration
+		LEDOffSt	= 2,	// Led is Off, waiting for T expiration
+		LEDQuietSt	= 3		// Led is off, waiting for Cycle Reset
 	};
 
 	enum LEDEvent{
 		CycleStartEv	= 0,			// Start of New LED Flash Cycle
-		LEDOnComplete	= 1,			// End of LED on Time
+		LedOnCompleteEv	= 1,			// End of LED on Time
 		MoreEv			= 2,			// End of LED Off Time with more flashes to be performed
-		LedQuietEv		= 4,			// End of LED Off Time with *No* more flashes to be performed
-		CycleOffEv		= 5				// End of  quiet time and Mode is now 'Off'
+		LedQuietEv		= 3,			// End of LED Off Time with *No* more flashes to be performed
+		CycleOffEv		= 4				// End of  quiet time and Mode is now 'Off'
+	};
+
+	struct FSMEntry{
+		void (*action)(LEDEvent);
+		LEDState nextState;
 	};
 
 	static const LEDProfile ledProfiles[];
+	static LEDProfile ledProfile;
 	static LEDMode ledMode;
 	static LEDState ledCycleState;
+	static unsigned long ledEventTimer;
+	static unsigned char flashCnt;
 
 	static void setup();
 	static void update();
-	static void displayCycle();
-
+	static void displayLedProfile();
 	static void ledSetMode(LEDMode mode);
+
+	static const FSMEntry fsm[NUMLEDSTATES][NUMLEDEVENTS];
+
+	// FSM handling methods
 	static LEDEvent detectEvent();
+	static void fsmHandler(LEDController::LEDEvent event);
+
+	// Action routines
+	static void fsmActNoAction(LEDEvent);
+	static void fsmActStartCycle(LEDEvent);
+	static void fsmActTurnLedOn(LEDEvent);
+	static void fsmActTurnLedOff(LEDEvent);
+	static void fsmActStartQuiet(LEDEvent);
 };
 
 #endif /* LEDCONTROLLER_H_ */
