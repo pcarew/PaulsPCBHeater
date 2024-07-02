@@ -9,6 +9,7 @@
 #include "pos/pos.h"
 #include "PCBHeaterTasks.h"
 
+#include "AmbientMonitor.h"
 #include "HeaterController.h"
 #include "TemperatureMonitoring.h"
 #include "TemperatureController.h"
@@ -36,6 +37,7 @@ void PCBHeaterTasks::taskA(volatile TCB *tcb){
 
 		// Invoke Task threads
 		tempMonitor.update();
+		AmbientMonitor::update();
 		heaterController->update();
 		TemperatureController::update();
 		ProfileController::update();
