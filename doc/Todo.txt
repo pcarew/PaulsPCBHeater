@@ -11,10 +11,11 @@
 
  /Design Application architecture
  /Design minimal FuzzyLogic controller for heater 
+ /Add Ambient monitor
+ /Add LEDController for flashing status on led
  x Not enough RAM -> Determine EEPROM and/or SD access
- Design graph drawing Class
+ Design graph drawing Class for graphics profile drawing
  Move POS Stack check to call-able function
- Add Ambient monitor
  
 
  Features:
@@ -25,11 +26,6 @@
  /use FL to control specific temps
  /draw actual temps on top of profile
  
- Classes
- x Not enough RAM -> SD Card / file management
-/Profile Management
-/Temperature control
- Graphics profile drawing
- 
+ Other:
 /Move Menu Return button to Menu class
 /Allow Rotary pass through to applications
