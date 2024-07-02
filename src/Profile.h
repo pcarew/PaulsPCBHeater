@@ -31,8 +31,8 @@ class Profile: Implements MenuAction{
 private:
 public:
 
-	static Profile *profiles;
-	static MenuItem *profileMenuItems;
+	static Profile profiles[];
+	static MenuItem profileMenuItems[];
 	static int selectedProfile;
 
 	const char *name;

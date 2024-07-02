@@ -20,7 +20,7 @@ Profile::Profile(int target,int guard,int soak,int slope, const char *name){
 	this->name				= name;
 }
 
-Profile *Profile::profiles = new Profile[NUMBERPROFILES]  {				// @suppress("Symbol is not resolved")
+Profile Profile::profiles[NUMBERPROFILES]  {				// @suppress("Symbol is not resolved")
 				//Target, Guard, Soak, Slope, Name
 		Profile(40,60, 					"T 40 G 60"),
 		Profile(50,60,DEFSOAK,DEFSLOPE,	"T 50 G 60"),
@@ -28,11 +28,16 @@ Profile *Profile::profiles = new Profile[NUMBERPROFILES]  {				// @suppress("Sym
 		Profile(150,200,				"T150 G200")
 };
 
-MenuItem *Profile::profileMenuItems = new MenuItem [NUMBERPROFILES] {	// @suppress("Symbol is not resolved")
+MenuItem Profile::profileMenuItems [NUMBERPROFILES] {	// @suppress("Symbol is not resolved")
 	{profiles[0].name,&profiles[0],0,false},
 	{profiles[1].name,&profiles[1],1,false},
 	{profiles[2].name,&profiles[2],2,false},
 	{profiles[3].name,&profiles[3],3,false}
+
+//	{profiles[0].name,&profiles[0],0,false},
+//	{profiles[1].name,&profiles[1],1,false},
+//	{profiles[2].name,&profiles[2],2,false},
+//	{profiles[3].name,&profiles[3],3,false}
 };
 
 void Profile::menuAction(int param){

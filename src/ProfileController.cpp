@@ -26,8 +26,8 @@ ProfileController::~ProfileController() {
 // Used for UI
 char ProfileController::activePage = 0;
 const char *ProfileController::profileNameFmt = "%sT%3d G%3d";
-Menu* ProfileController::localMenu		= NULL;
-Menu* ProfileController::profileMenu	= NULL;
+//Menu* ProfileController::localMenu		= NULL;
+//Menu* ProfileController::profileMenu	= NULL;
 bool ProfileController::profileRunning = false;
 
 // Profile control
@@ -52,6 +52,9 @@ MenuItem ProfileController::localMenuItems[NUMBERITEMS] {
 		{"Htr Enb/Dis",	&profileController, HtrCtlPg, false}
 };
 
+Menu ProfileController::localMenu( (MenuItem*)ProfileController::localMenuItems,	NUMBERITEMS,	(RotarySelector*)NULL,&systemDisplay,2,1); //  starting at Row 2, col 1
+Menu ProfileController::profileMenu( (MenuItem*)Profile::profileMenuItems,			NUMBERPROFILES,	(RotarySelector*)NULL,&systemDisplay,2,0); //  starting at Row 2, col 1
+
 // User Interface for Profile Controller. Runs under System UI Thread
 void mainPage();
 void manPage();
@@ -63,16 +66,11 @@ void heaterContolPage();
 void ProfileController::menuAction(volatile int param){
 	unsigned long displayTime2 = 0;;
 
-	if(ProfileController::localMenu		== 0)
-		ProfileController::localMenu	= new Menu( (MenuItem*)ProfileController::localMenuItems,	NUMBERITEMS,	(RotarySelector*)NULL,&systemDisplay,2,1); //  starting at Row 2, col 1
-	if(ProfileController::profileMenu	== 0)
-		ProfileController::profileMenu	= new Menu( (MenuItem*)Profile::profileMenuItems,			NUMBERPROFILES,	(RotarySelector*)NULL,&systemDisplay,2,0); //  starting at Row 2, col 1
-
 	ProfileController::activePage = param;
 	systemDisplay.clear(0,255,0);
 	displayElement.setBg(0, 255, 0);
 	displayElement.setFg(255, 0, 0);
-	ProfileController::localMenu->currentMenuItemId = -1;
+	ProfileController::localMenu.currentMenuItemId = -1;
 	displayElement.setCol(0);  displayElement.setText((char *)dispBuff);
 	time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
 	switch(ProfileController::activePage){
@@ -111,7 +109,7 @@ void ProfileController::rotaryAction(const int type, int level, RSE::Dir directi
 
 	switch(ProfileController::activePage){
 		case ProfileControlId:							// Top level page, display sub menu
-			ProfileController::localMenu->rotaryAction(type, level, direction, param);					// Let the local menu handle the Rotary
+			ProfileController::localMenu.rotaryAction(type, level, direction, param);					// Let the local menu handle the Rotary
 			break;
 		case ManTempPg:
 			if(manUpdate == ManualUpdate::Target){
@@ -125,7 +123,7 @@ void ProfileController::rotaryAction(const int type, int level, RSE::Dir directi
 			}
 			break;
 		case ProfSelPg:
-			ProfileController::profileMenu->rotaryAction(type, level, direction, param);					// Let the local menu handle the Rotary
+			ProfileController::profileMenu.rotaryAction(type, level, direction, param);					// Let the local menu handle the Rotary
 			break;
 		case StrtStpPg:
 			break;
@@ -178,7 +176,7 @@ void mainPage(){
 
 		if(time>nextDisplayTime){								// Menu subsystem
 			nextDisplayTime = time+250l;
-			ProfileController::localMenu->menuInvoke();						// **** This is a recursive call ***
+			ProfileController::localMenu.menuInvoke();						// **** This is a recursive call ***
 			ProfileController::activePage = ProfileControlId;				// This may have changed via menu handling
 		}
 
@@ -263,12 +261,12 @@ void profileSelectionPage(){
 	systemDisplay.clear();
 	Serial.print(F("Profile Selection here. Pg:"));Serial.println((int)ProfileController::activePage);delay(20);
 
-	ProfileController::profileMenu->currentMenuItemId = -1;
+	ProfileController::profileMenu.currentMenuItemId = -1;
 	while(!cancelled ){
 		time = millis();					// As we've taken over control of the processor, we need to update time for everyon (and ourselves)
 		if(time>nextDisplayTime){
 			nextDisplayTime = time+250l;
-			ProfileController::profileMenu->menuInvoke();						// **** This is a recursive call ***
+			ProfileController::profileMenu.menuInvoke();						// **** This is a recursive call ***
 			if(Profile::selectedProfile != -1){
 				ProfileController::activeProfile = &Profile::profiles[Profile::selectedProfile];
 					// ProfileController task thread will make use of the active Profile

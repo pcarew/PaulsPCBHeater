@@ -28,8 +28,8 @@ public:
 	static bool profileRunning;
 	static Profile *activeProfile;
 	static MenuItem localMenuItems[];
-	static Menu *localMenu;
-	static Menu *profileMenu;
+	static Menu localMenu;
+	static Menu profileMenu;
 	static char activePage;
 
 	static ProfileState currantState;
