@@ -35,15 +35,14 @@ const PROGMEM LEDController::FSMEntry LEDController::fsm[NUMLEDSTATES][NUMLEDEVE
 	{fsmActNoAction,LEDOffSt},	{fsmActNoAction,LEDOffSt},		{fsmActTurnLedOn,LEDOnSt},	{fsmActStartQuiet,LEDQuietSt},	{fsmActNoAction,LEDOffSt}
 	},
 	{// LED Quiet State
-	{fsmActStartCycle,LEDOnSt},	{fsmActNoAction,LEDQuietSt},	{fsmActNoAction,LEDQuietSt},{fsmActNoAction,LEDQuietSt},	{fsmActNoAction,LEDStoppedSt}
+	{fsmActStartCycle,LEDOnSt},	{fsmActNoAction,LEDQuietSt},	{fsmActNoAction,LEDQuietSt},{fsmActNoAction,LEDQuietSt},	{fsmActCycleOff,LEDStoppedSt}
 	}
 };
 
 void LEDController::setup(){
 	pinMode(LED_PIN, OUTPUT);
 	digitalWrite(LED_PIN, LOW);
-//	LEDController::ledSetMode(LEDMode::SelfTest);
-	LEDController::ledSetMode(LEDMode::Off);
+	LEDController::ledSetMode(LEDMode::SelfTest);
 }
 
 void LEDController::ledSetMode(LEDMode mode){
@@ -96,7 +95,11 @@ LEDController::LEDEvent LEDController::detectEvent(){
 						if(flashCnt >0) return MoreEv;
 						else return LedQuietEv;
 						break;
-	case LEDQuietSt:	if(ledProfile.wavelengthT == 0) return CycleOffEv;
+//	case LEDQuietSt:	if(ledProfile.wavelengthT == 0) return CycleOffEv;
+	case LEDQuietSt:	if(
+			LEDController::ledMode == LEDMode::Off ||
+			LEDController::ledMode == LEDMode::SelfTest
+			) return CycleOffEv;
 						else return CycleStartEv;
 						break;
 	}
@@ -106,8 +109,8 @@ void LEDController::fsmHandler(LEDController::LEDEvent event){
 	FSMEntry currentStateEvent;
     memcpy_P (&currentStateEvent, &LEDController::fsm[LEDController::ledCycleState][event], sizeof(FSMEntry));
 
-	Serial.print(F("LED FSM S: "));Serial.print(LEDController::ledCycleState);Serial.print(F(" E:"));Serial.print(event);
-	Serial.print(F(" fc: ")); Serial.println(LEDController::flashCnt);
+//	Serial.print(F("LED FSM S: "));Serial.print(LEDController::ledCycleState);Serial.print(F(" E:"));Serial.print(event);
+//	Serial.print(F(" fc: ")); Serial.println(LEDController::flashCnt);
     currentStateEvent.action(event);
    	ledCycleState = currentStateEvent.nextState;
 //	Serial.print(F("  -> new LED FSM S: "));Serial.print(LEDController::ledCycleState); Serial.print(F(" fc: ")); Serial.println(LEDController::flashCnt);
@@ -152,4 +155,8 @@ void LEDController::fsmActStartQuiet(LEDController::LEDEvent event){
 	unsigned int repeat		= ledProfile.cycleTime;
 
 	LEDController::ledEventTimer	= millis() + (repeat - n*t);
+}
+
+void LEDController::fsmActCycleOff(LEDController::LEDEvent event){
+	LEDController::ledSetMode(LEDMode::Off);
 }

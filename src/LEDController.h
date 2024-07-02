@@ -128,6 +128,7 @@ public:
 	static void fsmActTurnLedOn(LEDEvent);
 	static void fsmActTurnLedOff(LEDEvent);
 	static void fsmActStartQuiet(LEDEvent);
+	static void fsmActCycleOff(LEDEvent);
 };
 
 #endif /* LEDCONTROLLER_H_ */
