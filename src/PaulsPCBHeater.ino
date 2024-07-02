@@ -12,6 +12,7 @@
 #include "TemperatureMonitoring.h"
 #include "ProfileController.h"
 #include "SystemData.h"
+#include "Graph.h"
 
 
 
@@ -66,16 +67,19 @@ class ResetScreen: Implements MenuAction{
 };
 */
 
+
 //Menu *menu = NULL;
 MenuItem mainMenuItems[] = {
 //		{"Reset Scrn",new ResetScreen(),SystemId+1,false},
 		{"Unused SRam",&ramApp,SystemId+2,false},
 		{"Temps",&tempMonitor,TempMonId,false},
 		{"Heater",&heaterController,HeaterConrolId,false},
-		{"ProCont",&profileController,ProfileControlId,false}
+		{"ProCont",&profileController,ProfileControlId,false},
+		{"Graph",&profileGrapher,ProfileGrapherId,false}
 };
 #define	NUMBERITEMS ( sizeof(mainMenuItems)/sizeof(MenuItem))
 Menu mainMenu = Menu( (MenuItem*)mainMenuItems, NUMBERITEMS, 5,6,4,&systemDisplay,2,1); // PinA:5, PinB:6, PinSel:4, starting at Row 2, col 1
+
 
 void setup()
 {

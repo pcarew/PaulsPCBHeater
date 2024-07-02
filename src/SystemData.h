@@ -15,11 +15,13 @@
 #include "Display.h"
 #include "Button.h"
 #include "Ram.h"
+#include "Graph.h"
 
 #define SystemId			0
 #define TempMonId			10
 #define HeaterConrolId		20
 #define ProfileControlId	30
+#define ProfileGrapherId	40
 
 #define DISPBUFFLEN			27
 
@@ -37,5 +39,6 @@ IMPORT DisplayText displayElement;
 IMPORT TemperatureMonitoring tempMonitor;
 IMPORT HeaterController heaterController;
 IMPORT ProfileController profileController;
+IMPORT Graph profileGrapher;
 
 #endif /* SYSTEMDATA_H_ */
