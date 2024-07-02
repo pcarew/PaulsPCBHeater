@@ -21,17 +21,6 @@ double TemperatureController::prevTargetError	= 0;
 double TemperatureController::prevGuardError	= 0;
 //double TemperatureController::prevTempReading	= 0;
 
-/*
-TemperatureController::TemperatureController() {
-	// TODO Auto-generated constructor stub
-
-}
-
-TemperatureController::~TemperatureController() {
-	// TODO Auto-generated destructor stub
-}
-*/
-
 int TemperatureController::getTargetTemperature(){
 	return TemperatureController::targetTemp;
 }
