@@ -13,12 +13,13 @@ LEDProfile LEDController::ledProfile					= {0,0,0,0};
 LEDController::LEDState LEDController::ledCycleState = LEDStoppedSt;
 unsigned long LEDController::ledEventTimer					= 0;
 unsigned char LEDController::flashCnt						= 0;
+unsigned long LEDController::cycleStartTime					= 0;
 const PROGMEM LEDProfile LEDController::ledProfiles[] = {		// 1 profile per LED mode
 		//T,	D,	Cnt,	CycleTime
-		{125, (unsigned char)50, (unsigned char)6, 3000},	// Self Test
+		{125, (unsigned char)50, (unsigned char)6, 1000},	// Self Test
 		{0,0,0,0},			// Off
-		{2000,50,1,2000},	// Zero Crossing
-		{1000,50,2,2000},	// Heater On
+		{1000,50,1,1000},	// Zero Crossing
+		{500,50,2,1000},	// Heater On
 		{125,50,3,2000},	// Overheat Warning
 		{125,50,3,375},		// Overheated - Shutdown
 };
@@ -46,20 +47,36 @@ void LEDController::setup(){
 }
 
 void LEDController::ledSetMode(LEDMode mode){
-	/*
+	// Assess the priority hierarchy
 	switch(mode){
+	case LEDMode::SelfTest:
+		if(mode<=LEDController::LEDMode::Off)
+			LEDController::ledMode = mode;
+		break;
 	case LEDMode::Off:
+		LEDController::ledMode = mode;
+		break;
 	case LEDMode::ZeroCrossing:
+		if(mode<HeaterOn)
+			LEDController::ledMode = mode;
+		break;
 	case LEDMode::HeaterOn:
+		if(mode<AmbientWarning)
+			LEDController::ledMode = mode;
+		break;
 	case LEDMode::AmbientWarning:
+		if(mode<AmbientDanger)
+			LEDController::ledMode = mode;
+		break;
 	case LEDMode::AmbientDanger:
+		LEDController::ledMode = mode;
+		break;
+	case LEDMode::AmbientCancel:
+		LEDController::ledMode = LEDMode::Off;
 		break;
 	}
-	*/
-//	if(mode >= LEDController::ledStatus){
-		LEDController::ledMode = mode;
-//	}
-    memcpy_P (&ledProfile, &LEDController::ledProfiles[mode], sizeof(LEDProfile));
+	// Ensure we have the appropriate mode loaded up
+    memcpy_P (&ledProfile, &LEDController::ledProfiles[LEDController::ledMode], sizeof(LEDProfile));
 }
 
 void LEDController::update(){
@@ -96,13 +113,16 @@ LEDController::LEDEvent LEDController::detectEvent(){
 						else return LedQuietEv;
 						break;
 //	case LEDQuietSt:	if(ledProfile.wavelengthT == 0) return CycleOffEv;
-	case LEDQuietSt:	if(
-			LEDController::ledMode == LEDMode::Off ||
-			LEDController::ledMode == LEDMode::SelfTest
-			) return CycleOffEv;
+	case LEDQuietSt:	if(	// Make these modes 'single shot'
+							LEDController::ledMode == LEDMode::Off ||
+							LEDController::ledMode == LEDMode::ZeroCrossing ||
+							LEDController::ledMode == LEDMode::HeaterOn ||
+							LEDController::ledMode == LEDMode::SelfTest
+						) return CycleOffEv;
 						else return CycleStartEv;
 						break;
 	}
+	return CycleOffEv;
 }
 
 void LEDController::fsmHandler(LEDController::LEDEvent event){
@@ -127,8 +147,9 @@ void LEDController::fsmActStartCycle(LEDController::LEDEvent event){
 	unsigned int ledOnTime	= (unsigned int)((long)ledProfile.wavelengthT * (long)ledProfile.duty / 100l);
 
 	LEDController::flashCnt			= ledProfile.flashCnt -1;
+	LEDController::cycleStartTime	= millis();
 
-	LEDController::ledEventTimer	= millis() + ledOnTime;
+	LEDController::ledEventTimer	= cycleStartTime + ledOnTime;
 	digitalWrite(LED_PIN, HIGH);
 }
 
@@ -154,7 +175,7 @@ void LEDController::fsmActStartQuiet(LEDController::LEDEvent event){
 	unsigned char n			= (unsigned int) ledProfile.flashCnt;
 	unsigned int repeat		= ledProfile.cycleTime;
 
-	LEDController::ledEventTimer	= millis() + (repeat - n*t);
+	LEDController::ledEventTimer	= cycleStartTime + (repeat - n*t);	// Remaining time from Cycle start is quiet
 }
 
 void LEDController::fsmActCycleOff(LEDController::LEDEvent event){

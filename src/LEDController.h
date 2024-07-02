@@ -80,8 +80,7 @@ public:
 		HeaterOn			= 3,
 		AmbientWarning		= 4,
 		AmbientDanger		= 5,
-		AmbientWarningCancel= 6,
-		AmbientDangerCancel	= 7
+		AmbientCancel		= 6
 	};
 
 	enum LEDState {
@@ -108,6 +107,7 @@ public:
 	static LEDProfile ledProfile;
 	static LEDMode ledMode;
 	static LEDState ledCycleState;
+	static unsigned long cycleStartTime;
 	static unsigned long ledEventTimer;
 	static unsigned char flashCnt;
 
