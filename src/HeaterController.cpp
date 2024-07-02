@@ -103,7 +103,12 @@ void HeaterController::zeroCrossing(){
 	zeroCount++;												// Used for Hz Calculation
 	ledCount++;
 	frameDetectionAndFiring();
-	if(!(ledCount%60)) LEDController::ledSetMode(LEDController::LEDMode::ZeroCrossing); //digitalWrite(LED_PIN,!digitalRead(LED_PIN));
+	if(!(ledCount%60)){
+		if(heaterEnabled == false)
+			LEDController::ledSetMode(LEDController::LEDMode::ZeroCrossing);
+		else
+			LEDController::ledSetMode(LEDController::LEDMode::HeaterOn);
+	}
 
 	/*
 	++ledCntr %=100;	// divide freq by 100 for led visibility

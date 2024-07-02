@@ -8,6 +8,8 @@
 #include <arduino.h>
 #include "TemperatureMonitoring.h"
 #include "AmbientMonitor.h"
+#include "LEDController.h"
+#include "HeaterController.h"
 
 AmbientMonitor::AmbientMonitor() { }
 AmbientMonitor::~AmbientMonitor() { }
@@ -23,11 +25,15 @@ void AmbientMonitor::update(){				// Called statically from Tasking
 		ambientReading = TemperatureMonitoring::ambient.getTemperature();
 		if(ambientReading > AMBIENTWARNING){
 				// Signal UI of warning
+			LEDController::ledSetMode(LEDController::LEDMode::AmbientWarning);
 		}else if(ambientReading > AMBIENTDANGER){
 				// Signal UI of Danger
+			LEDController::ledSetMode(LEDController::LEDMode::AmbientDanger);
 				// disable the heater
+			HeaterController::heaterEnabled = false;
 		}else{		// All ok.
 				// Remove any UI overheating indication
+			LEDController::ledSetMode(LEDController::LEDMode::AmbientCancel);
 		}
 	}
 }
