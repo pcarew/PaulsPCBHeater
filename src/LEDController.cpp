@@ -48,25 +48,25 @@ void LEDController::setup(){
 
 void LEDController::ledSetMode(LEDMode mode){
 	// Assess the priority hierarchy
-	//	Serial.print(F("RqM:"));Serial.print(mode);Serial.print(F(" CurrM:"));Serial.println(LEDController::ledMode);
+		Serial.print(F("RqM:"));Serial.print(mode);Serial.print(F(" CurrM:"));Serial.println(LEDController::ledMode);
 	switch(mode){
 	case LEDMode::SelfTest:
-		if(mode<=LEDController::LEDMode::Off)
+		if(LEDController::ledMode<=LEDController::LEDMode::Off)
 			LEDController::ledMode = mode;
 		break;
 	case LEDMode::Off:
 		LEDController::ledMode = mode;
 		break;
 	case LEDMode::ZeroCrossing:
-		if(mode<HeaterOn)
+		if(LEDController::ledMode<HeaterOn)
 			LEDController::ledMode = mode;
 		break;
 	case LEDMode::HeaterOn:
-		if(mode<AmbientWarning)
+		if(LEDController::ledMode<AmbientWarning)
 			LEDController::ledMode = mode;
 		break;
 	case LEDMode::AmbientWarning:
-		if(mode<AmbientDanger)
+		if(LEDController::ledMode<AmbientDanger)
 			LEDController::ledMode = mode;
 		break;
 	case LEDMode::AmbientDanger:
@@ -76,7 +76,7 @@ void LEDController::ledSetMode(LEDMode mode){
 		LEDController::ledMode = LEDMode::Off;
 		break;
 	}
-	//	Serial.print(F("NMd:"));Serial.println(LEDController::ledMode);
+		Serial.print(F("NMd:"));Serial.println(LEDController::ledMode);
 	// Ensure we have the appropriate mode loaded up
     memcpy_P (&ledProfile, &LEDController::ledProfiles[LEDController::ledMode], sizeof(LEDProfile));
 }
