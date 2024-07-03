@@ -5,10 +5,10 @@
 #include "LEDController.h"
 #include "RotarySelector.h"
 
-
 	// Init statics
 unsigned long HeaterController::periodEnd		= 0;
 unsigned int HeaterController::zeroCount		= 0;
+unsigned ledCount								= 0;
 unsigned int HeaterController::zHz				= 0;			// Holds the calculated AC frequency based upon AC Zero crossings. It should be 60Hz
 bool HeaterController::heaterEnabled			= false;
 unsigned char HeaterController::powerCounter	= 0;			// The count of firings within Frame that equates with % as set by 'setPercentagePwr'
@@ -48,6 +48,13 @@ void HeaterController::update(){
 			zeroCrossing();
 		}
 #endif
+	if(!(ledCount%60)){
+		ledCount = 0;
+		if(heaterEnabled == false)
+			LEDController::ledSetMode(LEDController::LEDMode::ZeroCrossing);
+		else
+			LEDController::ledSetMode(LEDController::LEDMode::HeaterOn);
+	}
 }
 
 void HeaterController::hzDetermination(unsigned long currentTime)				// Only accurate if called often enough to detect periodEnd time. IE must be called at least 1 / millisecond or better
@@ -107,19 +114,10 @@ void HeaterController::checkACZeroCrossing(){								// Called from PortC ISR
 }
 
 void HeaterController::zeroCrossing(){
-	static unsigned ledCount = 0;
 	digitalWrite(HTR_PIN,LOW);
 	zeroCount++;												// Used for Hz Calculation
 	ledCount++;
 	frameDetectionAndFiring();
-	if(!(ledCount%60)){
-		ledCount = 0;
-		if(heaterEnabled == false)
-			LEDController::ledSetMode(LEDController::LEDMode::ZeroCrossing);
-		else
-			LEDController::ledSetMode(LEDController::LEDMode::HeaterOn);
-	}
-
 }
 
 void HeaterController::fire(){
