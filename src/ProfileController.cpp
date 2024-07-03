@@ -238,7 +238,7 @@ void manPage(){
 				lastGt = ProfileController::guardTemp;
 				sprintf(dispBuff, fmt,  ProfileController::targetTemp, ProfileController::guardTemp);
 				displayElement.setRow(1); displayElement.show();
-								Serial.println(dispBuff);delay(10);
+//								Serial.println(dispBuff);delay(10);
 			}
 		}
 
@@ -259,7 +259,7 @@ void manPage(){
 void profileSelectionPage(){
 	unsigned long displayTime2 = 0;;
 	systemDisplay.clear();
-	Serial.print(F("Profile Selection here. Pg:"));Serial.println((int)ProfileController::activePage);delay(20);
+//	Serial.print(F("Profile Selection here. Pg:"));Serial.println((int)ProfileController::activePage);delay(20);
 
 	ProfileController::profileMenu.currentMenuItemId = -1;
 	while(!cancelled ){
