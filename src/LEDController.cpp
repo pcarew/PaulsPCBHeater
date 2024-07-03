@@ -140,11 +140,11 @@ LEDController::LEDEvent LEDController::detectEvent(){
 void LEDController::fsmHandler(LEDController::LEDEvent event){
 	FSMEntry currentStateEvent;
 
-	memcpy_P (&currentStateEvent, &LEDController::fsm[LEDController::ledCycleState][event], sizeof(FSMEntry));
 
 //	Serial.print(F("LED FSM S: "));Serial.print(LEDController::ledCycleState);Serial.print(F(" E:"));Serial.print(event);
 //	Serial.print(F(" fc: ")); Serial.println(LEDController::flashCnt);
 
+	memcpy_P (&currentStateEvent, &LEDController::fsm[LEDController::ledCycleState][event], sizeof(FSMEntry));
     currentStateEvent.action(event);
    	ledCycleState = currentStateEvent.nextState;
 
