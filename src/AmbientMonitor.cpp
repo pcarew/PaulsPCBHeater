@@ -16,7 +16,7 @@ AmbientMonitor::~AmbientMonitor() { }
 
 
 void AmbientMonitor::update(){				// Called statically from Tasking
-	static unsigned long periodEnd	= millis()+10000l;						// Start monitoring after the 1st 10 seconds
+	static unsigned long periodEnd = 0;
 	double ambientReading;
 
 	volatile unsigned long timeNow = millis();

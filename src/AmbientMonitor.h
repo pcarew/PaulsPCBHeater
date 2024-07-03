@@ -8,7 +8,7 @@
 #ifndef AMBIENTMONITOR_H_
 #define AMBIENTMONITOR_H_
 
-#define AM_MEASUREMENT_PERIOD 500		// Every 1/2 second
+#define AM_MEASUREMENT_PERIOD 5000		// Every 1/2 second
 
 #define AMBIENTWARNING	40
 #define AMBIENTDANGER	60
