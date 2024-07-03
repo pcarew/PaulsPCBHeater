@@ -260,16 +260,18 @@ void pause()
 			// Only Guard check stacks that belong to POS
 	if( !stack_check(currt,currt->showStats)){
 		SET_INTR();
-		Serial.print(F("Stack polluted for pausing task ")); Serial.println(currt->tid);
-		while(1);//exit(1);
+		while(1){
+			Serial.print(F("Stack polluted for pausing task ")); Serial.println(currt->tid);delay(1000);
+		}
 	}else{
 		//Serial.print("Stack OK for pausing task "); Serial.print(currt->tid); Serial.print("\r\n");
 	}
 
 	if( !stack_check(nextt,nextt->showStats)){
 		SET_INTR();
-		Serial.print(F("Stack polluted for resuming task ")); Serial.println(nextt->tid);
-		while(1);//exit(1);
+		while(1){
+			Serial.print(F("Stack polluted for resuming task ")); Serial.println(nextt->tid);delay(1000);
+		}
 	}else{
 //		Serial.print("Stack OK for resuming task "); Serial.print(nextt->tid); Serial.print("\r\n");
 	}
