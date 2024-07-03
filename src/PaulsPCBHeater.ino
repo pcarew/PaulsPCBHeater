@@ -97,7 +97,7 @@ void setup()
 
 	PCBHeaterTasks::startup();
 
-//	Serial.println(F("Setup Done"));
+	Serial.println(F("Setup Done"));
 }
 
 void topLevelStatus();
