@@ -16,10 +16,10 @@ AmbientMonitor::~AmbientMonitor() { }
 
 
 void AmbientMonitor::update(){				// Called statically from Tasking
-	static unsigned long periodEnd = 0;
+	unsigned long timeNow = millis();
+	static unsigned long periodEnd = timeNow + AM_DELAY_START;
 	double ambientReading;
 
-	volatile unsigned long timeNow = millis();
 	if(timeNow > periodEnd){
 		periodEnd = timeNow + AM_MEASUREMENT_PERIOD;
 		ambientReading = TemperatureMonitoring::ambient.getTemperature();

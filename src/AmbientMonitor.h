@@ -8,10 +8,11 @@
 #ifndef AMBIENTMONITOR_H_
 #define AMBIENTMONITOR_H_
 
-#define AM_MEASUREMENT_PERIOD 5000		// Every 1/2 second
+#define AM_MEASUREMENT_PERIOD	5000l		// Every 5 seconds
+#define AM_DELAY_START			5000l		// Delayed start for  Ambient monitoring
 
-#define AMBIENTWARNING	40
-#define AMBIENTDANGER	60
+#define AMBIENTWARNING	40					// Warning starts at 40 degrees C
+#define AMBIENTDANGER	60					// Danger starts at 40 degrees C
 
 class AmbientMonitor {
 public:
