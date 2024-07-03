@@ -6,6 +6,7 @@
  */
 
 #include "LEDController.h"
+#include <util/atomic.h>
 
 
 LEDController::LEDMode LEDController::ledMode		= LEDMode::Off;
@@ -18,8 +19,8 @@ const PROGMEM LEDProfile LEDController::ledProfiles[] = {		// 1 profile per LED 
 		//T,	D,	Cnt,	CycleTime
 		{125, (unsigned char)50, (unsigned char)6, 1000},	// Self Test
 		{0,0,0,0},			// Off
-		{1000,50,1,1000},	// Zero Crossing
-		{500,50,2,1000},	// Heater On
+		{250,50,1,750},	// Zero Crossing
+		{250,50,2,750},	// Heater On
 		{125,50,3,2000},	// Overheat Warning
 		{125,50,3,375},		// Overheated - Shutdown
 };
@@ -48,11 +49,12 @@ void LEDController::setup(){
 
 void LEDController::ledSetMode(LEDMode mode){
 	// Assess the priority hierarchy
-		Serial.print(F("RqM:"));Serial.print(mode);Serial.print(F(" CurrM:"));Serial.println(LEDController::ledMode);
+//		Serial.print(F("RqM:"));Serial.print(mode);Serial.print(F(" CurrM:"));Serial.println(LEDController::ledMode);
 	switch(mode){
 	case LEDMode::SelfTest:
 		if(LEDController::ledMode<=LEDController::LEDMode::Off)
 			LEDController::ledMode = mode;
+		else return;
 		break;
 	case LEDMode::Off:
 		LEDController::ledMode = mode;
@@ -60,23 +62,28 @@ void LEDController::ledSetMode(LEDMode mode){
 	case LEDMode::ZeroCrossing:
 		if(LEDController::ledMode<HeaterOn)
 			LEDController::ledMode = mode;
+		else return;
 		break;
 	case LEDMode::HeaterOn:
 		if(LEDController::ledMode<AmbientWarning)
 			LEDController::ledMode = mode;
+		else return;
 		break;
 	case LEDMode::AmbientWarning:
 		if(LEDController::ledMode<AmbientDanger)
 			LEDController::ledMode = mode;
+		else return;
 		break;
 	case LEDMode::AmbientDanger:
 		LEDController::ledMode = mode;
 		break;
 	case LEDMode::AmbientCancel:
-		LEDController::ledMode = LEDMode::Off;
+		if(LEDController::ledMode>=AmbientWarning)
+			LEDController::ledMode = LEDMode::Off;
+		else return;
 		break;
 	}
-		Serial.print(F("NMd:"));Serial.println(LEDController::ledMode);
+//		Serial.print(F("NMd:"));Serial.println(LEDController::ledMode);
 	// Ensure we have the appropriate mode loaded up
     memcpy_P (&ledProfile, &LEDController::ledProfiles[LEDController::ledMode], sizeof(LEDProfile));
 }
@@ -91,6 +98,8 @@ void LEDController::update(){
 		}
 	}
 }
+
+/*
 void LEDController::displayLedProfile(){
 
 	unsigned int t			= ledProfile.wavelengthT;
@@ -105,6 +114,7 @@ void LEDController::displayLedProfile(){
 	Serial.print(F(" L: "));Serial.print(repeat);
 	Serial.println();
 }
+*/
 
 LEDController::LEDEvent LEDController::detectEvent(){
 	switch(ledCycleState){
@@ -129,13 +139,17 @@ LEDController::LEDEvent LEDController::detectEvent(){
 
 void LEDController::fsmHandler(LEDController::LEDEvent event){
 	FSMEntry currentStateEvent;
-    memcpy_P (&currentStateEvent, &LEDController::fsm[LEDController::ledCycleState][event], sizeof(FSMEntry));
+
+	memcpy_P (&currentStateEvent, &LEDController::fsm[LEDController::ledCycleState][event], sizeof(FSMEntry));
 
 //	Serial.print(F("LED FSM S: "));Serial.print(LEDController::ledCycleState);Serial.print(F(" E:"));Serial.print(event);
 //	Serial.print(F(" fc: ")); Serial.println(LEDController::flashCnt);
+
     currentStateEvent.action(event);
    	ledCycleState = currentStateEvent.nextState;
-//	Serial.print(F("  -> new LED FSM S: "));Serial.print(LEDController::ledCycleState); Serial.print(F(" fc: ")); Serial.println(LEDController::flashCnt);
+
+//	Serial.print(F("  -> new LED FSM S: "));Serial.println(LEDController::ledCycleState);
+	//Serial.print(F(" fc: ")); Serial.println(LEDController::flashCnt);
 
 }
 
@@ -177,9 +191,11 @@ void LEDController::fsmActStartQuiet(LEDController::LEDEvent event){
 	unsigned char n			= (unsigned int) ledProfile.flashCnt;
 	unsigned int repeat		= ledProfile.cycleTime;
 
+	digitalWrite(LED_PIN, LOW);											// Ensure LED is off
 	LEDController::ledEventTimer	= cycleStartTime + (repeat - n*t);	// Remaining time from Cycle start is quiet
 }
 
 void LEDController::fsmActCycleOff(LEDController::LEDEvent event){
 	LEDController::ledSetMode(LEDMode::Off);
+	digitalWrite(LED_PIN, LOW);											// Ensure LED is off
 }
