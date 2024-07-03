@@ -22,22 +22,23 @@
 
 //int FuzzyTemp::fuzzyModel			= FULLMODEL;		// MINIMALMODEL JUSTERRORMODEL  FULLMODEL
 
+/*
 InputFuzzySet minInSets[] = {
 			// L   T   R
 			{leftShoulder, {-150,-100,0}},		// Too Low
 			{rightShoulder, {0, 100, 150}},		// Too High
 		};
-	/* Max 25%
+	// Max 25%
 OutputFuzzySet minOutSets[] = { // Max 25%
 			{triangleWeight, {0,25,50}},		// FullHeat
 			{triangleWeight, {-55, -25, 0}},	// NoHeat
 		};
-		*/
 
 OutputFuzzySet minOutSets[] = {	// Max 100%
 			{triangleWeight, {0,100,150}},		// FullHeat
 			{triangleWeight, {-150, -100, 0}},	// NoHeat
 		};
+		*/
 
 const PROGMEM InputFuzzySet inSets[] = {
 			// L   T   R
