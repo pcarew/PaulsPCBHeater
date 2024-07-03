@@ -7,7 +7,7 @@
 
 class FuzzyTemp {
 private:
-	static int fuzzyModel;
+//	static int fuzzyModel;
 
 public:
 	FuzzyTemp();

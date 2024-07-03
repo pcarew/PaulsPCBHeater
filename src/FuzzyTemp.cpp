@@ -20,7 +20,7 @@
 #define NOHEAT	 5
 
 
-int FuzzyTemp::fuzzyModel			= FULLMODEL;		// MINIMALMODEL JUSTERRORMODEL  FULLMODEL
+//int FuzzyTemp::fuzzyModel			= FULLMODEL;		// MINIMALMODEL JUSTERRORMODEL  FULLMODEL
 
 InputFuzzySet minInSets[] = {
 			// L   T   R
@@ -39,7 +39,7 @@ OutputFuzzySet minOutSets[] = {	// Max 100%
 			{triangleWeight, {-150, -100, 0}},	// NoHeat
 		};
 
-InputFuzzySet inSets[] = {
+const PROGMEM InputFuzzySet inSets[] = {
 			// L   T   R
 			{leftShoulder, {-150,-20,-10}},		// Too Low			/ Quickly Converging (Improving fast)
 			{triangle, {-20, -10, 0}},				// Somewhat Low		/ Slowly Converging	(Slow improvement)
@@ -96,13 +96,13 @@ OutputFuzzySet outSets[] = {
 			{triangleWeight, {-150, -100, -50}},	// NoHeat
 		};
 
-InputFuzzySet *errorFzSets = inSets;				// Defined using same ranges
-InputFuzzySet *DerrorDTFzSets = errorFzSets;		// Defined using same ranges
+//InputFuzzySet *errorFzSets = inSets;				// Defined using same ranges
+//InputFuzzySet *DerrorDTFzSets = errorFzSets;		// Defined using same ranges
 
-#define	NOERRORFUZZYSETS (sizeof(inSets)/sizeof(InputFuzzySet))			// Number of Error sets
-#define	NODERRORDTFUZZYSETS (sizeof(inSets)/sizeof(InputFuzzySet))		// Number of dErrordt sets
+#define	NUMERRORFUZZYSETS (sizeof(inSets)/sizeof(InputFuzzySet))			// Number of Error sets
+#define	NUMDERRORDTFUZZYSETS (sizeof(inSets)/sizeof(InputFuzzySet))		// Number of dErrordt sets
 
-OutputFuzzySet *valueChange[NODERRORDTFUZZYSETS][NOERRORFUZZYSETS] = {
+OutputFuzzySet *valueChange[NUMDERRORDTFUZZYSETS][NUMERRORFUZZYSETS] = {
 //				TOOLOW 			SOMEWHATLOW 		ABOUTRIGHT 				SOMEWHATHIGH		TOOHIGH
 		{ // Quickly Converging
 				&outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
@@ -136,6 +136,7 @@ double FuzzyTemp::getPowerPercent(double actualValue, double desiredValue, doubl
 	double change					= 0.0;
 
 //	Serial.print(F("errP:"));Serial.print(errPercent);Serial.print(F(" dErrdt:"));Serial.println(dErrordt);
+	/*
 	switch(fuzzyModel){
 	case MINIMALMODEL:
 	{
@@ -173,20 +174,27 @@ double FuzzyTemp::getPowerPercent(double actualValue, double desiredValue, doubl
 		}
 		break;
 	case FULLMODEL: // Includes rate of change of error (with respect to time)  dErr/dt
-		for(unsigned int DerrorDtFzId=0;DerrorDtFzId < NODERRORDTFUZZYSETS;DerrorDtFzId++){
-			for(unsigned int errorFzId=0;errorFzId < NOERRORFUZZYSETS;errorFzId++){
-				InputFuzzySet *DerrorDtFzSet	= &DerrorDTFzSets[DerrorDtFzId];
-				InputFuzzySet *errorFzSet		= &errorFzSets[errorFzId];
+		*/
+		for(unsigned int DerrorDtFzId=0;DerrorDtFzId < NUMDERRORDTFUZZYSETS;DerrorDtFzId++){
+			for(unsigned int errorFzId=0;errorFzId < NUMERRORFUZZYSETS;errorFzId++){
+//				InputFuzzySet *DerrorDtFzSet	= &inSets[DerrorDtFzId]; //&DerrorDTFzSets[DerrorDtFzId];
+//				InputFuzzySet *errorFzSet		= &inSets[errorFzId]; //&errorFzSets[errorFzId];
+
+				InputFuzzySet DerrorDtFzSet;
+				memcpy_P( &DerrorDtFzSet, &inSets[DerrorDtFzId], sizeof(InputFuzzySet) ); //&DerrorDTFzSets[DerrorDtFzId];
+				InputFuzzySet errorFzSet; //		= &inSets[errorFzId]; //&errorFzSets[errorFzId];
+				memcpy_P( &errorFzSet, &inSets[errorFzId], sizeof(InputFuzzySet) ); //&DerrorDTFzSets[DerrorDtFzId];
+
 				OutputFuzzySet *outFzSet		= valueChange[DerrorDtFzId][errorFzId];
 
-				weight = runRuleTwin(errPercent, errorFzSet, dErrordt, DerrorDtFzSet ,outFzSet, &station);
+				weight = runRuleTwin(errPercent, &errorFzSet, dErrordt, &DerrorDtFzSet ,outFzSet, &station);
 				totalWeight			+= weight;
 				totalMoment			+= weight * station;
-//			Serial.print(F("FM TotW"));Serial.print(totalWeight);Serial.print(F(" TotM:"));Serial.println(totalMoment); delay(50);	//AJPC
+//			Serial.print(F("FM Wght: "));Serial.print(weight); Serial.print(F(" TotW: "));Serial.print(totalWeight);Serial.print(F(" TotM: "));Serial.println(totalMoment); delay(50);	//AJPC
 			}
 		}
-		break;
-	}
+//		break;
+//	}
 //	Serial.print(F("Resulting TW:")),Serial.println(totalWeight);
 	if(totalWeight!=0)
 		change					= totalMoment/totalWeight;					// COG of change consequents
