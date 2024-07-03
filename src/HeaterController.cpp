@@ -1,10 +1,10 @@
-#include "HeaterController.h"
-
 #include "arduino.h"
-
-#include "LEDController.h"
 #include "pos/pos.h"
+#include "PaulsPCBHeater.h"
+#include "HeaterController.h"
+#include "LEDController.h"
 #include "RotarySelector.h"
+
 
 	// Init statics
 unsigned long HeaterController::periodEnd		= 0;
@@ -37,8 +37,17 @@ void HeaterController::setup(){
 // Background Process, called from Task
 // Actual Heater Firing is driven from ISR
 void HeaterController::update(){
+#ifdef PCBTEST
+	static unsigned long testTiming = 0;				// Testing only
+#endif
 		unsigned long timeNow = millis();
 		hzDetermination(timeNow);
+#ifdef PCBTEST
+		if(timeNow > testTiming){						// Testing only
+			testTiming = timeNow+16l; //(60hz)
+			zeroCrossing();
+		}
+#endif
 }
 
 void HeaterController::hzDetermination(unsigned long currentTime)				// Only accurate if called often enough to detect periodEnd time. IE must be called at least 1 / millisecond or better
@@ -104,19 +113,13 @@ void HeaterController::zeroCrossing(){
 	ledCount++;
 	frameDetectionAndFiring();
 	if(!(ledCount%60)){
+		ledCount = 0;
 		if(heaterEnabled == false)
 			LEDController::ledSetMode(LEDController::LEDMode::ZeroCrossing);
 		else
 			LEDController::ledSetMode(LEDController::LEDMode::HeaterOn);
 	}
 
-	/*
-	++ledCntr %=100;	// divide freq by 100 for led visibility
-	if(!ledCntr){
-		ledV = !ledV;
-		digitalWrite(HTR_PIN,ledV);
-	}
-	*/
 }
 
 void HeaterController::fire(){

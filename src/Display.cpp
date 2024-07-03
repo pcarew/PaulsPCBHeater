@@ -1,9 +1,9 @@
 #include "pos/posQueue.h"
+#include "PaulsPCBHeater.h"
 #include "Display.h"
 #include "SystemData.h"
 #include <util/atomic.h>
 
-#define TESTTFT
 
 Display:: Display():Display(0,0,0,255,255,255){}
 Display:: Display(int br,int bg, int bb):Display(br,bg,bb,255,255,255){}
@@ -17,7 +17,7 @@ void Display::setup(){
 //		  this->tftScreen.begin();
 //		  tftScreen.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
 
-#ifdef TESTTFT
+#ifdef PCBTEST
 		  this->tftScreen.invertDisplay(1);				// AJPC Used for newer TFT
 		  this->tftScreen.setRotation(TFTROTATE0);		// AJPC Test TFT
 #else
