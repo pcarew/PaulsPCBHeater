@@ -13,8 +13,8 @@
 class Graph: Implements MenuAction{
 public:
 
-	const static int height;
-	const static int width;
+//	const static int height;
+//	const static int width;
 
 
 	Graph(){}

@@ -9,14 +9,16 @@
 #include "Graph.h"
 #include "SystemData.h"
 
-const int Graph::height = systemDisplay.tftScreen.width();			// Device values are for portrait mode. We're using landscape
-const int Graph::width = systemDisplay.tftScreen.height();			// Device values are for portrait mode. We're using landscape
+//const int Graph::height = systemDisplay.tftScreen.width();			// Device values are for portrait mode. We're using landscape
+//const int Graph::width = systemDisplay.tftScreen.height();			// Device values are for portrait mode. We're using landscape
 
 #define RGB(r, g, b) (((r&0xF8)<<8)|((g&0xFC)<<3)|(b>>3))
 #define WHITE ST7735_WHITE
 #define BLUE ST7735_BLUE
 
 void Graph::menuAction(int param){
+	int height = systemDisplay.tftScreen.width();			// Device values are for portrait mode. We're using landscape
+	int width = systemDisplay.tftScreen.height();			// Device values are for portrait mode. We're using landscape
 // position of the line on screen
 	int xPos = 0;
 	int yPos = 0;
@@ -38,7 +40,7 @@ void Graph::menuAction(int param){
 		xDeg = (map(xPos,0,159,0,360))+phase;
 		xRad = xDeg*3.141592/180;
 		sinValue = sin(xRad);
-		uint16_t colour = RGB(0,0,255);
+		colour = RGB(0,0,255);
 
 		yPos = map(sinValue*100,-100,100.0,-(height-1)/2,(height-1)/2);
 		yPos = height/2 - yPos-2;
