@@ -28,9 +28,11 @@ void AmbientMonitor::update(){				// Called statically from Tasking
 			LEDController::ledSetMode(LEDController::LEDMode::AmbientDanger);
 				// disable the heater
 			HeaterController::heaterEnabled = false;
+			Serial.print(F("Ambient Danger "));Serial.println(ambientReading);
 		}else if(ambientReading > AMBIENTWARNING){
 				// Signal UI of warning
 			LEDController::ledSetMode(LEDController::LEDMode::AmbientWarning);
+			Serial.print(F("Ambient Warning "));Serial.println(ambientReading);
 		}else{		// All ok.
 				// Remove any UI overheating indication
 			LEDController::ledSetMode(LEDController::LEDMode::AmbientCancel);

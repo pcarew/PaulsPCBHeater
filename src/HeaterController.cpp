@@ -49,7 +49,6 @@ void HeaterController::update(){
 		}
 #endif
 	if(!(ledCount%60) && ledCount != 0 ){
-		Serial.println();
 		ledCount = 0;
 		if(heaterEnabled == false)
 			LEDController::ledSetMode(LEDController::LEDMode::ZeroCrossing);
