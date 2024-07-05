@@ -6,17 +6,17 @@
  */
 
 #include "pos/pos.h"
-#include "Graph.h"
+#include "ProfileGrapher.h"
 #include "SystemData.h"
 
-//const int Graph::height = systemDisplay.tftScreen.width();			// Device values are for portrait mode. We're using landscape
-//const int Graph::width = systemDisplay.tftScreen.height();			// Device values are for portrait mode. We're using landscape
+//const int ProfileGrapher::height = systemDisplay.tftScreen.width();			// Device values are for portrait mode. We're using landscape
+//const int ProfileGrapher::width = systemDisplay.tftScreen.height();			// Device values are for portrait mode. We're using landscape
 
 #define RGB(r, g, b) (((r&0xF8)<<8)|((g&0xFC)<<3)|(b>>3))
 #define WHITE ST7735_WHITE
 #define BLUE ST7735_BLUE
 
-void Graph::menuAction(int param){
+void ProfileGrapher::menuAction(int param){
 	int height = systemDisplay.tftScreen.width();			// Device values are for portrait mode. We're using landscape
 	int width = systemDisplay.tftScreen.height();			// Device values are for portrait mode. We're using landscape
 // position of the line on screen

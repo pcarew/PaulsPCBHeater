@@ -14,8 +14,8 @@
 #include "HeaterController.h"
 #include "Display.h"
 #include "Button.h"
+#include "ProfileGrapher.h"
 #include "Ram.h"
-#include "Graph.h"
 
 #define SystemId			0
 #define TempMonId			10
@@ -39,6 +39,6 @@ IMPORT DisplayText displayElement;
 IMPORT TemperatureMonitoring tempMonitor;
 IMPORT HeaterController heaterController;
 IMPORT ProfileController profileController;
-IMPORT Graph profileGrapher;
+IMPORT ProfileGrapher profileGrapher;
 
 #endif /* SYSTEMDATA_H_ */

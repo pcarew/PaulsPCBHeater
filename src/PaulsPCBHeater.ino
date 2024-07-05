@@ -11,8 +11,8 @@
 #include "LEDController.h"
 #include "TemperatureMonitoring.h"
 #include "ProfileController.h"
+#include "ProfileGrapher.h"
 #include "SystemData.h"
-#include "Graph.h"
 
 
 
