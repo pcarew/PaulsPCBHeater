@@ -12,7 +12,7 @@ class ProfileResults {
 public:
 	ProfileResults();
 	virtual ~ProfileResults();
-	static void ProfileResults(unsigned long time,unsigned guard,unsigned guardCurrent, unsigned target,unsigned targetCurrent);
+	static void tempDataPacket(unsigned long time,unsigned guard,unsigned guardCurrent, unsigned target,unsigned targetCurrent);
 };
 
 #endif /* PROFILERESULTS_H_ */
