@@ -1,7 +1,7 @@
 
-#include "TemperatureProbe.h"
-
 #include "Arduino.h"
+#include "TemperatureProbe.h"
+#include "PaulsPCBHeater.h"
 
 TemperatureProbe::TemperatureProbe (char type, int pin){
 	this->type = type;
@@ -12,7 +12,11 @@ char TemperatureProbe::getType(){
 	return this->type;
 }
 double TemperatureProbe::getTemperature() {
+#ifdef PCBTEST
+			return 55.0;
+#else
 	return temperature;
+#endif
 }
 
 #define TEMPAVGLEN 2
