@@ -26,7 +26,7 @@
 #define posQueue_h
 
 #include "pos.h"
-#include "posMsg.h"
+#include "posMsg.h-notused"
 
 typedef struct {
 	unsigned char size;

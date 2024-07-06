@@ -25,7 +25,7 @@
 //#include <stdio.h>
 #include <stdlib.h>
 #include "pos.h"
-#include "posTime.h"
+#include "posTime.h-notused"
 
 unsigned char u8HWTimer;			// Limited to 255
 extern long long current_timestamp() ;

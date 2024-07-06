@@ -22,7 +22,7 @@
 ************************************************************************/
 #include <Arduino.h>
 #include "pos.h"
-#include "posTime.h"
+#include "posTime.h-notused"
 
 unsigned char	no_tasks = 0;			/* The number of total tasks.	*/
 unsigned char	no_rtasks = 0;			/* The number of running tasks.	*/
@@ -54,7 +54,7 @@ unsigned char stacks[STACKSIZE];		// Any task that uses printf library
 unsigned long	switches;		/* Running count of the number of*/
 					/* task switches.		*/
 
-TMR	timerq;				/* Points to the timer queue.	*/
+//TMR	timerq;				/* Points to the timer queue.	*/
 					/* This is a linked list of	*/
 					/* timers that are running for	*/
 					/* a specified time. This is an	*/
@@ -65,13 +65,13 @@ TMR	timerq;				/* Points to the timer queue.	*/
 					/* used instead of a TMR pointer*/
 					/* because it simplifies the 	*/
 					/* insertion code.		*/
-TMR	*timerend;			/* Points to the last entry on	*/
+//TMR	*timerend;			/* Points to the last entry on	*/
 					/* the timer q. This is needed	*/
 					/* because the TMR to be placed	*/
 					/* in the queue, is initially	*/
 					/* thrown on the end of the 	*/
 					/* linked list as a 'sentinal'.	*/
-POS_TMR pos_timer;			/* This is the POS system	*/
+//POS_TMR pos_timer;			/* This is the POS system	*/
 					/* Timer. It holds a count of	*/
 					/* The number of times the H/W	*/
 					/* timer should run with a whole*/
@@ -79,9 +79,9 @@ POS_TMR pos_timer;			/* This is the POS system	*/
 					/* partial count. i.e. the pos	*/
 					/* timer will run for:		*/
 					/* (wc*256+pc)*1/12osc.		*/
-unsigned long posclock = 0;			/* System clock;		*/
+//unsigned long posclock = 0;			/* System clock;		*/
 volatile TCB tasks[MAXNOTASKS];			// Holds Task Control Blocks
-volatile TMR timers[MAXNOTIMERS];
+//volatile TMR timers[MAXNOTIMERS];
 
 /*
 #include <stdio.h>
