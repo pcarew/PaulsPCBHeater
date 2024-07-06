@@ -35,7 +35,7 @@ typedef	unsigned char	BOOL;
 
 #define STACK_CHECKS TRUE
 
-#define STACKSIZE	(unsigned)155 // enough for 1 thread task and 1 system task that uses it's own stack
+#define STACKSIZE	(unsigned)185 // enough for 1 thread task and 1 system task that uses it's own stack
 #define	MAXNOTASKS	2
 
 
