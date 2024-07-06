@@ -32,7 +32,7 @@ public:
 	static Menu profileMenu;
 	static char activePage;
 
-	static ProfileState currantState;
+	static unsigned long profileTime;		// Time that selected profile has been running
 
 	ProfileController();
 	virtual ~ProfileController();
