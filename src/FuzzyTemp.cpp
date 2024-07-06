@@ -67,7 +67,7 @@ InputFuzzySet DerrorDTFzSets[] = {
 		};
 		*/
 
-OutputFuzzySet outSets[] = {
+const PROGMEM OutputFuzzySet outSets[] = {
 		/*
 		// 20% Max 		+20% -> -20%
 			{triangleWeight, {10,20,30}},		// FullHeat
@@ -103,22 +103,22 @@ OutputFuzzySet outSets[] = {
 #define	NUMERRORFUZZYSETS (sizeof(inSets)/sizeof(InputFuzzySet))			// Number of Error sets
 #define	NUMDERRORDTFUZZYSETS (sizeof(inSets)/sizeof(InputFuzzySet))		// Number of dErrordt sets
 
-OutputFuzzySet *valueChange[NUMDERRORDTFUZZYSETS][NUMERRORFUZZYSETS] = {
+const PROGMEM OutputFuzzySet valueChange[NUMDERRORDTFUZZYSETS][NUMERRORFUZZYSETS] = {
 //				TOOLOW 			SOMEWHATLOW 		ABOUTRIGHT 				SOMEWHATHIGH		TOOHIGH
 		{ // Quickly Converging
-				&outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
+				outSets[SOMEHEAT], outSets[NOCHANGE], outSets[NOCHANGE], outSets[NOCHANGE], outSets[NOHEAT],
 		},
 		{ // Slowly Converging
-				&outSets[MOREHEAT], &outSets[SOMEHEAT], &outSets[NOCHANGE], &outSets[NOCHANGE], &outSets[NOHEAT],
+				outSets[MOREHEAT], outSets[SOMEHEAT], outSets[NOCHANGE], outSets[NOCHANGE], outSets[NOHEAT],
 		},
 		{ // Zero Convergence
-				&outSets[FULLHEAT], &outSets[MOREHEAT], &outSets[NOCHANGE], &outSets[LESSHEAT], &outSets[NOHEAT],
+				outSets[FULLHEAT], outSets[MOREHEAT], outSets[NOCHANGE], outSets[LESSHEAT], outSets[NOHEAT],
 		},
 		{ // Slowly Diverging
-				&outSets[FULLHEAT], &outSets[FULLHEAT], &outSets[SOMEHEAT], &outSets[LESSHEAT], &outSets[NOHEAT],
+				outSets[FULLHEAT], outSets[FULLHEAT], outSets[SOMEHEAT], outSets[LESSHEAT], outSets[NOHEAT],
 		},
 		{ // Quickly Diverging
-				&outSets[FULLHEAT], &outSets[FULLHEAT], &outSets[MOREHEAT], &outSets[NOHEAT], &outSets[NOHEAT],
+				outSets[FULLHEAT], outSets[FULLHEAT], outSets[MOREHEAT], outSets[NOHEAT], outSets[NOHEAT],
 		},
 };
 
@@ -136,7 +136,10 @@ double FuzzyTemp::getPowerPercent(double actualValue, double desiredValue, doubl
 	double totalMoment				= 0.0;
 	double change					= 0.0;
 
-//	Serial.print(F("errP:"));Serial.print(errPercent);Serial.print(F(" dErrdt:"));Serial.println(dErrordt);
+//	Serial.print(F("Act:"));Serial.print(actualValue);
+//	Serial.print(F(" Des:"));Serial.print(desiredValue);
+//	Serial.print(F(" PrevErr:"));Serial.print(*prevErrPercent);
+//	Serial.print(F(" errP:"));Serial.print(errPercent);Serial.print(F(" dErrdt:"));Serial.println(dErrordt);
 	/*
 	switch(fuzzyModel){
 	case MINIMALMODEL:
@@ -186,11 +189,17 @@ double FuzzyTemp::getPowerPercent(double actualValue, double desiredValue, doubl
 				InputFuzzySet errorFzSet; //		= &inSets[errorFzId]; //&errorFzSets[errorFzId];
 				memcpy_P( &errorFzSet, &inSets[errorFzId], sizeof(InputFuzzySet) ); //&DerrorDTFzSets[DerrorDtFzId];
 
-				OutputFuzzySet *outFzSet		= valueChange[DerrorDtFzId][errorFzId];
+//				OutputFuzzySet *outFzSet		= valueChange[DerrorDtFzId][errorFzId];
+				OutputFuzzySet outFzSet;
+				memcpy_P(&outFzSet, &valueChange[DerrorDtFzId][errorFzId], sizeof(OutputFuzzySet));
 
-				weight = runRuleTwin(errPercent, &errorFzSet, dErrordt, &DerrorDtFzSet ,outFzSet, &station);
+				weight = runRuleTwin(errPercent, &errorFzSet, dErrordt, &DerrorDtFzSet ,&outFzSet, &station);
 				totalWeight			+= weight;
 				totalMoment			+= weight * station;
+
+//			Serial.print(F(" DeId: "));Serial.println(DerrorDtFzId);
+//			Serial.print(F(" errId "));Serial.println(errorFzId);
+//			Serial.print(F(" TotW: "));Serial.print(totalWeight);Serial.print(F(" TotM: "));Serial.println(totalMoment); delay(50);	//AJPC
 //			Serial.print(F("FM Wght: "));Serial.print(weight); Serial.print(F(" TotW: "));Serial.print(totalWeight);Serial.print(F(" TotM: "));Serial.println(totalMoment); delay(50);	//AJPC
 			}
 		}
