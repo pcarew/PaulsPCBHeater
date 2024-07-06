@@ -25,7 +25,8 @@
 //#include <stdio.h>
 //#include <stdlib.h>
 #include "pos.h"
-#include "posTime.h"
+
+//#include "posTime.h"
 
 
 IMPORT	unsigned char	no_tasks;		/* Total number of tasks.	*/
