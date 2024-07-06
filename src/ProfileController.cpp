@@ -11,7 +11,8 @@
 #include "Menu.h"
 #include "Button.h"
 #include "SystemData.h"
-#include <util/atomic.h>
+#include "ProfileResults.h"
+
 //#include "Ram.h"
 
 
@@ -32,7 +33,8 @@ bool ProfileController::profileRunning = false;
 
 // Profile control
 Profile *ProfileController::activeProfile = NULL;
-ProfileController::ProfileState ProfileController::currantState = ProfileController::NotActive;
+//ProfileController::ProfileState ProfileController::currantState = ProfileController::NotActive;
+unsigned long ProfileController::profileTime = 0;
 int ProfileController::targetTemp = 50;
 int ProfileController::guardTemp = 100;
 
@@ -64,7 +66,6 @@ void restartProfilePage();
 void heaterContolPage();
 	char fmt[] = "  T%3d G%3d ";
 void ProfileController::menuAction(volatile int param){
-	unsigned long displayTime2 = 0;;
 
 	ProfileController::activePage = param;
 	systemDisplay.clear(0,255,0);
@@ -161,7 +162,19 @@ bool ProfileController::handleRotary(const int type, int level, RSE::Dir directi
 }
 
 // Called by Task thread
+#define REPORTINTERVAL 1000l			// 1 Second
 void ProfileController::update(){
+
+	static unsigned long reportTime = 0;
+	unsigned long time = millis();
+	if(ProfileController::profileRunning == true && time>reportTime){
+		reportTime = time+REPORTINTERVAL;
+		ProfileController::profileTime += REPORTINTERVAL;
+		ProfileResults::tempDataPacket((ProfileController::profileTime/REPORTINTERVAL),				// Convert to seconds
+				ProfileController::activeProfile->bottomGuardTemp, (unsigned)TemperatureMonitoring::brdBot.getTemperature(),
+				ProfileController::activeProfile->topTargetTemp, (unsigned)TemperatureMonitoring::brdTop.getTemperature()
+				);
+	}
 
 }
 
@@ -223,7 +236,7 @@ void manPage(){
 	displayElement.setRow(0);
 	displayElement.setText((char *)dispBuff);
 	displayElement.show();
-	ProfileController::currantState = ProfileController::NotActive;
+//	ProfileController::currantState = ProfileController::NotActive;
 	ProfileController::activeProfile = NULL;
 
 	nextDisplayTime = 0;					// Force first display to be immediate
@@ -242,13 +255,6 @@ void manPage(){
 			}
 		}
 
-		/*
-		if(time>displayTime2){ // Let serial monitor know every so often
-			displayTime2 = time+2000l;
-			Serial.print(F("Man TempPg here. Pg:"));Serial.print((int)ProfileController::activePage);delay(10);
-			Serial.print(F("Ram free"));Serial.println(ramApp.freeRam());delay(10);
-		}
-		*/
 		pause();
 	}
 	if(TemperatureController::getTargetTemperature() != ProfileController::targetTemp){	// Update Temperature Controller if needed
@@ -291,7 +297,8 @@ void startStopProfilePage(){
 
 	if(ProfileController::profileRunning == false && ProfileController::activeProfile != NULL){
 		ProfileController::profileRunning = true;
-		ProfileController::currantState = ProfileController::Adjusting;
+//		ProfileController::currantState = ProfileController::Adjusting;
+		ProfileController::profileTime = 0;
 		ProfileController::targetTemp = ProfileController::activeProfile->topTargetTemp;
 		TemperatureController::setTemperature(
 				ProfileController::activeProfile->topTargetTemp,
@@ -301,7 +308,7 @@ void startStopProfilePage(){
 	}else{
 		ProfileController::profileRunning = false;
 //					Serial.println(F("No profile set"));delay(10);
-		ProfileController::currantState = ProfileController::NotActive;
+//		ProfileController::currantState = ProfileController::NotActive;
 		ProfileController::targetTemp = NULL;
 		TemperatureController::setTemperature( NULL,NULL,NULL);
 	}
@@ -310,10 +317,18 @@ void startStopProfilePage(){
 void restartProfilePage(){
 	systemDisplay.clear();
 	sprintf(dispBuff, "ReStart"); displayElement.setRow(0);  displayElement.show();
-	while(!cancelled ){
+	ProfileController::profileTime = 0;
+	ProfileController::profileRunning = true;
+	ProfileController::targetTemp = ProfileController::activeProfile->topTargetTemp;
+	TemperatureController::setTemperature(
+				ProfileController::activeProfile->topTargetTemp,
+				ProfileController::activeProfile->bottomGuardTemp,
+				ProfileController::activeProfile->soakDuration
+			);
+//	while(!cancelled ){
 //				Serial.print(F("Restart here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
-		pause();
-	}
+//		pause();
+//	}
 }
 
 void heaterContolPage(){
