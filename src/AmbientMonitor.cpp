@@ -32,7 +32,7 @@ void AmbientMonitor::update(){				// Called statically from Tasking
 		}else if(ambientReading > AMBIENTWARNING){
 				// Signal UI of warning
 			LEDController::ledSetMode(LEDController::LEDMode::AmbientWarning);
-			Serial.print(F("Ambient Warning "));Serial.println(ambientReading);
+//			Serial.print(F("Ambient Warning "));Serial.println(ambientReading);
 		}else{		// All ok.
 				// Remove any UI overheating indication
 			LEDController::ledSetMode(LEDController::LEDMode::AmbientCancel);
