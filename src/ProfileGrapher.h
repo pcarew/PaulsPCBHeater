@@ -10,7 +10,7 @@
 #include <Arduino.h>
 #include "Menu.h"
 
-#define NUMRESULTS 8
+#define NUMRESULTS 7
 
 #define LOG10_4		((double)0.60201)					// Log10(4)
 #define LG4			((double)1.3863)					// Ln (4)
@@ -34,18 +34,22 @@ public:
 	 */
 	static unsigned char results[2][NUMRESULTS];		// 1st row is Guard results, 2nd is target results
 	static unsigned char currentBucket;					// The bucket being accumulated
+	static unsigned char guard;
+	static unsigned char target;
 
 	ProfileGrapher(){}
 	virtual ~ProfileGrapher(){}
 
 //	void update();
-	static void tempDataPacket(unsigned long time,unsigned guard,unsigned guardCurrent, unsigned target,unsigned targetCurrent);
-	static void startNewProfile();
+	static void tempDataPacket(unsigned long time,unsigned guardCurrent, unsigned targetCurrent);
+	static void startNewProfile(unsigned guard, unsigned target);
 
 	//Used for UI
 	void menuAction(int param);
 //	void rotaryAction(const int type, int level, RSE::Dir direction, int param);		// type is ROTATE or SELECT
 //	bool handleRotary(const int type, int level, RSE::Dir direction, int *counter);	// Used for processing rotary action for local pages
+
+	static void drawAxis();
 };
 
 #endif /* PROFILEGRAPHER_H_ */
