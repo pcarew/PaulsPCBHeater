@@ -15,11 +15,13 @@
 #define LOG10_4		((double)0.60201)					// Log10(4)
 #define LG4			((double)1.3863)					// Ln (4)
 #define BUCKET(n)	((n<4096)?((int)(log(n)/LG4)):6)	// Which array bucket to accumulate value
+#define BucketAVG(bucketContents,value)	((int)(((double)bucketContents+(double)value)/2.0))
 
 #define PROFILEGUARD  0
 #define PROFILETARGET 1
 
-#define BucketAVG(bucketCapacity,bucketContents,value)	((unsigned char)(((double)bucketContents*(double)(bucketCapacity-1)+(double)value)/((double)bucketCapacity)))
+
+#define GRAPHUPDATETIME 1000l
 
 class ProfileGrapher: Implements MenuAction{
 public:

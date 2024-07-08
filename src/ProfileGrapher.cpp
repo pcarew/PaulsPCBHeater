@@ -43,33 +43,66 @@ unsigned char ProfileGrapher::target = 100;
 
 
 void ProfileGrapher::menuAction(int param){
+	unsigned long time;
+	int xPos = 0;
+	int yPos = 0;
+	int oldGXPos = ORIGINX;
+	int oldGYPos = ORIGINY;
+	int oldTXPos = ORIGINX;
+	int oldTYPos = ORIGINY;
 
-	systemDisplay.clear(255,0,255);
-	ProfileGrapher::drawAxis();
 
 	// Target Temp and upper guard
 //   	int ytarget	=  YPOS ((int) ( (ProfileGrapher::target*yAxisScale) + (double)ORIGINY));
-   	int ytarget	=  ( (ProfileGrapher::target*yAxisScale) + (double)ORIGINY);
    	int yguard	=  ( (ProfileGrapher::guard *yAxisScale) + (double)ORIGINY);
-//   			Serial.print(ProfileGrapher::target);
-//   			Serial.print(",");
-//   			Serial.print(yAxisScale);
-//   			Serial.print(",");
-//   			Serial.print(ytarget);
-//   			Serial.print(",");
-//   			Serial.print(YPOS(ytarget));
-//   			Serial.print(":");
-//   			Serial.print(ProfileGrapher::guard);
-//   			Serial.print(",");
-//   			Serial.print(yAxisScale);
-//   			Serial.print(",");
-//   			Serial.print(yguard);
-//   			Serial.print(",");
-//   			Serial.println(YPOS(yguard));
-	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(ytarget),XPOS(width),YPOS(ytarget),BLUE);	// Target Temp
-	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(yguard),XPOS(width),YPOS(yguard),RED);		// Guard Temp
+   	int ytarget	=  ( (ProfileGrapher::target*yAxisScale) + (double)ORIGINY);
 
+	nextDisplayTime = 0;
 	while(!cancelled){
+		time = millis();
+		if(time>nextDisplayTime){
+			nextDisplayTime = time+GRAPHUPDATETIME;
+				Serial.print( ProfileGrapher::currentBucket);
+	oldGXPos = ORIGINX;
+	oldGYPos = ORIGINY;
+	oldTXPos = ORIGINX;
+	oldTYPos = ORIGINY;
+	systemDisplay.clear(255,0,255);
+	ProfileGrapher::drawAxis();
+	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(yguard),XPOS(width),YPOS(yguard),RED);		// Guard Temp
+	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(ytarget),XPOS(width),YPOS(ytarget),BLUE);	// Target Temp
+			for(int bucket=0;bucket <= ProfileGrapher::currentBucket;bucket++){
+				xPos = ((bucket+1)*xAxisScale)+ORIGINX;
+//				Serial.print(F(",XInc:"));
+//				Serial.print(xAxisLabelInc);
+
+				yPos = ProfileGrapher::results[PROFILEGUARD][bucket] * yAxisScale;
+				Serial.print(F(" G:"));
+				Serial.print(oldGXPos);
+				Serial.print(F(","));
+				Serial.print(oldGYPos);
+				Serial.print(F(","));
+				Serial.print(xPos);
+				Serial.print(F(","));
+				Serial.print(yPos);
+				systemDisplay.tftScreen.drawLine(XPOS(oldGXPos),YPOS(oldGYPos),XPOS(xPos),YPOS(yPos),RED);		// Guard Temp
+				oldGXPos = xPos;
+				oldGYPos = yPos;
+
+				yPos = (ProfileGrapher::results[PROFILETARGET][bucket]+10) * yAxisScale;		// AJPC
+				Serial.print(F(" T:"));
+				Serial.print(oldTXPos);
+				Serial.print(F(","));
+				Serial.print(oldTYPos);
+				Serial.print(F(","));
+				Serial.print(xPos);
+				Serial.print(F(","));
+				Serial.println(yPos);
+				systemDisplay.tftScreen.drawLine(XPOS(oldTXPos),YPOS(oldTYPos),XPOS(xPos),YPOS(yPos),BLUE);		// Guard Temp
+				oldTXPos = xPos;
+				oldTYPos = yPos;
+			}
+		}
 		pause();
 	}
 }
@@ -88,11 +121,6 @@ void ProfileGrapher::drawAxis(){
    	// Ylabels
    	for(double yaxisDeg = yAxisLabelInc;yaxisDeg <yAxisDegMax; yaxisDeg += yAxisLabelInc){
    		int ypos =  YPOSCHR((int)(yaxisDeg*yAxisScale));
-//   			Serial.print(yaxisDeg);
-//   			Serial.print(",");
-//   			Serial.print(yAxisScale);
-//   			Serial.print(",");
-//   			Serial.println(ypos);
    		systemDisplay.tftScreen.setCursor(XPOSCHR(0), ypos);
    		systemDisplay.tftScreen.print((int)yaxisDeg);
    	}
@@ -101,15 +129,6 @@ void ProfileGrapher::drawAxis(){
    	for(double xaxisBkt = xAxisLabelInc;xaxisBkt <xAxisBktMax; xaxisBkt += xAxisLabelInc){
    		int xpos =  XPOSCHR((int)(xaxisBkt*xAxisScale));
    		double t = pow(4,xaxisBkt)+0.01;
-//	   			Serial.print(xaxisBkt);
-//   			Serial.print(",");
-//   			Serial.print(xAxisScale);
-//   			Serial.print(",");
-//   			Serial.println(xpos);
-//   			Serial.print(t);
-//				Serial.print(",");
-//				Serial.println((int)t);
-
    		int value;
    		char sym;
    		if(xaxisBkt<4){
@@ -124,8 +143,6 @@ void ProfileGrapher::drawAxis(){
    		}
    		sprintf_P(buff,PSTR("%d%c"),value,sym);
 
-//   		systemDisplay.tftScreen.setCursor(XPOS(xpos), YPOSCHR(ORIGINY));
-//   		systemDisplay.tftScreen.print("|");
    		systemDisplay.tftScreen.setCursor(XPOS(xpos), YPOSCHR(0));
    		systemDisplay.tftScreen.print(buff);
    	}
@@ -136,12 +153,14 @@ void ProfileGrapher::drawAxis(){
 
 void ProfileGrapher::tempDataPacket(unsigned long time,unsigned guardValue, unsigned targetValue){
 	unsigned char bucket = BUCKET(time);
-	unsigned bucketCapacity = (unsigned int)(pow(4,bucket));
 
-	if(bucket> ProfileGrapher::currentBucket)
+	if(bucket> ProfileGrapher::currentBucket && bucket < NUMRESULTS){
+		results[PROFILEGUARD][bucket] = results[PROFILEGUARD][ProfileGrapher::currentBucket];			// Copy over previous bucket to new bucket
+		results[PROFILETARGET][bucket] = results[PROFILETARGET][ProfileGrapher::currentBucket];			// Copy over previous bucket to new bucket
 		ProfileGrapher::currentBucket = bucket;
-	results[PROFILEGUARD][bucket] = BucketAVG(bucketCapacity, results[PROFILEGUARD][bucket],guardValue);
-	results[PROFILETARGET][bucket] = BucketAVG(bucketCapacity, results[PROFILETARGET][bucket],targetValue);
+	}
+	results[PROFILEGUARD][bucket] = BucketAVG(results[PROFILEGUARD][bucket],guardValue);		// Update with new value
+	results[PROFILETARGET][bucket] = BucketAVG(results[PROFILETARGET][bucket],targetValue);		// Update with new value
 }
 
 void ProfileGrapher::startNewProfile(unsigned guard, unsigned target){
