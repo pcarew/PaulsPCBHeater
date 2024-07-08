@@ -12,7 +12,7 @@
 unsigned char ProfileGrapher::results[2][NUMRESULTS] = {0};		// 1st row is Guard results, 2nd is target results
 unsigned char ProfileGrapher::currentBucket = 0;				// The bucket being accumulated
 unsigned char ProfileGrapher::guard = 150;
-unsigned char ProfileGrapher::target = 60;
+unsigned char ProfileGrapher::target = 100;
 
 #define width ( systemDisplay.tftScreen.width())
 #define height ( systemDisplay.tftScreen.height())
@@ -75,7 +75,7 @@ void ProfileGrapher::menuAction(int param){
 }
 
 void ProfileGrapher::drawAxis(){
-	char buff[8];
+	char buff[12];
 
 	systemDisplay.tftScreen.drawLine(XPOS(ORIGINX),YPOS(ORIGINY),XPOS((width-ORIGINX)),YPOS(ORIGINY),WHITE);	// XAccess
 	systemDisplay.tftScreen.drawLine(XPOS(ORIGINX),YPOS(ORIGINY),XPOS(ORIGINX),YPOS((height-ORIGINY)),WHITE);	// YAccess
@@ -88,11 +88,11 @@ void ProfileGrapher::drawAxis(){
    	// Ylabels
    	for(double yaxisDeg = yAxisLabelInc;yaxisDeg <yAxisDegMax; yaxisDeg += yAxisLabelInc){
    		int ypos =  YPOSCHR((int)(yaxisDeg*yAxisScale));
-   			Serial.print(yaxisDeg);
-   			Serial.print(",");
-   			Serial.print(yAxisScale);
-   			Serial.print(",");
-   			Serial.println(ypos);
+//   			Serial.print(yaxisDeg);
+//   			Serial.print(",");
+//   			Serial.print(yAxisScale);
+//   			Serial.print(",");
+//   			Serial.println(ypos);
    		systemDisplay.tftScreen.setCursor(XPOSCHR(0), ypos);
    		systemDisplay.tftScreen.print((int)yaxisDeg);
    	}
@@ -128,8 +128,10 @@ void ProfileGrapher::drawAxis(){
 //   		systemDisplay.tftScreen.print("|");
    		systemDisplay.tftScreen.setCursor(XPOS(xpos), YPOSCHR(0));
    		systemDisplay.tftScreen.print(buff);
-
    	}
+   	sprintf_P(buff,PSTR("T:%d G:%d"),ProfileGrapher::target,ProfileGrapher::guard);
+	systemDisplay.tftScreen.setCursor(XPOSCHR(90), YPOSCHR(118));
+	systemDisplay.tftScreen.print(buff);
 }
 
 void ProfileGrapher::tempDataPacket(unsigned long time,unsigned guardValue, unsigned targetValue){
