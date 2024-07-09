@@ -23,7 +23,7 @@ Profile::Profile(int target,int guard,int soak,int slope, const char *name){
 Profile Profile::profiles[NUMBERPROFILES]  {				// @suppress("Symbol is not resolved")
 				//Target, Guard, Soak, Slope, Name
 		Profile(40,60, 					"T 40 G 60"),
-		Profile(50,60,DEFSOAK,DEFSLOPE,	"T 50 G 60"),
+		Profile(60,90,DEFSOAK,DEFSLOPE,	"T 60 G 90"),
 		Profile(100,150, 				"T100 G150"),
 		Profile(150,200,				"T150 G200")
 };
