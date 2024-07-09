@@ -305,6 +305,8 @@ void startStopProfilePage(){
 				ProfileController::activeProfile->bottomGuardTemp,
 				ProfileController::activeProfile->soakDuration
 			);
+		ProfileResults::startNewProfile( ProfileController::activeProfile->bottomGuardTemp, ProfileController::activeProfile->topTargetTemp);
+
 	}else{
 		ProfileController::profileRunning = false;
 //					Serial.println(F("No profile set"));delay(10);
@@ -325,6 +327,7 @@ void restartProfilePage(){
 				ProfileController::activeProfile->bottomGuardTemp,
 				ProfileController::activeProfile->soakDuration
 			);
+	ProfileResults::startNewProfile( ProfileController::activeProfile->bottomGuardTemp, ProfileController::activeProfile->topTargetTemp);
 //	while(!cancelled ){
 //				Serial.print(F("Restart here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
 //		pause();

@@ -12,9 +12,18 @@
 
 #define NUMRESULTS 7
 
+#define LOG10_2		((double)0.30103)					// Log10(2)
 #define LOG10_4		((double)0.60201)					// Log10(4)
-#define LG4			((double)1.3863)					// Ln (4)
-#define BUCKET(n)	((n<4096)?((int)(log(n)/LG4)):6)	// Which array bucket to accumulate value
+#define LG2			((double)0.69315)					// Ln(2)
+#define LG4			((double)1.3863)					// Ln(4)
+
+//#define BUCKET(n)	((n<4096)?((int)(log(n)/LG4)):6)	// Which array bucket to accumulate value
+
+#define BUCKET(seconds)	( (seconds<60)?0: ((seconds<15360?((int)(log((seconds/60))/LG2)) : 7)))	// Which array bucket to accumulate value.
+																								// If time is < minute use bucket 0
+																								// If Time is over 256 minutes (15360 seconds) use the top bucket (7)
+																								// If it's in between, use log2 (seconds/60) to determine bucket#
+
 #define BucketAVG(bucketContents,value)	((int)(((double)bucketContents+(double)value)/2.0))
 
 #define PROFILEGUARD  0

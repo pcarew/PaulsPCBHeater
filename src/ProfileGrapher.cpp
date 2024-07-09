@@ -11,8 +11,8 @@
 
 unsigned char ProfileGrapher::results[2][NUMRESULTS] = {0};		// 1st row is Guard results, 2nd is target results
 unsigned char ProfileGrapher::currentBucket = 0;				// The bucket being accumulated
-unsigned char ProfileGrapher::guard = 150;
-unsigned char ProfileGrapher::target = 100;
+unsigned char ProfileGrapher::guard = 0;
+unsigned char ProfileGrapher::target = 0;
 
 #define width ( systemDisplay.tftScreen.width())
 #define height ( systemDisplay.tftScreen.height())
@@ -57,48 +57,31 @@ void ProfileGrapher::menuAction(int param){
    	int yguard	=  ( (ProfileGrapher::guard *yAxisScale) + (double)ORIGINY);
    	int ytarget	=  ( (ProfileGrapher::target*yAxisScale) + (double)ORIGINY);
 
+	systemDisplay.clear(255,0,255);
+	ProfileGrapher::drawAxis();
+	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(yguard),XPOS(width),YPOS(yguard),RED);		// Guard Temp
+	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(ytarget),XPOS(width),YPOS(ytarget),BLUE);	// Target Temp
+
 	nextDisplayTime = 0;
 	while(!cancelled){
 		time = millis();
 		if(time>nextDisplayTime){
 			nextDisplayTime = time+GRAPHUPDATETIME;
-				Serial.print( ProfileGrapher::currentBucket);
-	oldGXPos = ORIGINX;
-	oldGYPos = ORIGINY;
-	oldTXPos = ORIGINX;
-	oldTYPos = ORIGINY;
-	systemDisplay.clear(255,0,255);
-	ProfileGrapher::drawAxis();
-	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(yguard),XPOS(width),YPOS(yguard),RED);		// Guard Temp
-	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(ytarget),XPOS(width),YPOS(ytarget),BLUE);	// Target Temp
+			oldGXPos = ORIGINX;
+			oldGYPos = ORIGINY;
+			oldTXPos = ORIGINX;
+			oldTYPos = ORIGINY;
 			for(int bucket=0;bucket <= ProfileGrapher::currentBucket;bucket++){
 				xPos = ((bucket+1)*xAxisScale)+ORIGINX;
-//				Serial.print(F(",XInc:"));
-//				Serial.print(xAxisLabelInc);
 
-				yPos = ProfileGrapher::results[PROFILEGUARD][bucket] * yAxisScale;
-				Serial.print(F(" G:"));
-				Serial.print(oldGXPos);
-				Serial.print(F(","));
-				Serial.print(oldGYPos);
-				Serial.print(F(","));
-				Serial.print(xPos);
-				Serial.print(F(","));
-				Serial.print(yPos);
+				yPos = ProfileGrapher::results[PROFILEGUARD][bucket] * yAxisScale+ORIGINY;
 				systemDisplay.tftScreen.drawLine(XPOS(oldGXPos),YPOS(oldGYPos),XPOS(xPos),YPOS(yPos),RED);		// Guard Temp
 				oldGXPos = xPos;
 				oldGYPos = yPos;
 
-				yPos = (ProfileGrapher::results[PROFILETARGET][bucket]+10) * yAxisScale;		// AJPC
-				Serial.print(F(" T:"));
-				Serial.print(oldTXPos);
-				Serial.print(F(","));
-				Serial.print(oldTYPos);
-				Serial.print(F(","));
-				Serial.print(xPos);
-				Serial.print(F(","));
-				Serial.println(yPos);
-				systemDisplay.tftScreen.drawLine(XPOS(oldTXPos),YPOS(oldTYPos),XPOS(xPos),YPOS(yPos),BLUE);		// Guard Temp
+//				Serial.println(ProfileGrapher::results[PROFILETARGET][bucket]);
+				yPos = (ProfileGrapher::results[PROFILETARGET][bucket]) * yAxisScale+ORIGINY;
+				systemDisplay.tftScreen.drawLine(XPOS(oldTXPos),YPOS(oldTYPos),XPOS(xPos),YPOS(yPos),BLUE);		// Target Temp
 				oldTXPos = xPos;
 				oldTYPos = yPos;
 			}
@@ -126,9 +109,10 @@ void ProfileGrapher::drawAxis(){
    	}
 
    	// XLabels
-   	for(double xaxisBkt = xAxisLabelInc;xaxisBkt <xAxisBktMax; xaxisBkt += xAxisLabelInc){
-   		int xpos =  XPOSCHR((int)(xaxisBkt*xAxisScale));
-   		double t = pow(4,xaxisBkt)+0.01;
+   	for(double xaxisBkt = 0;xaxisBkt <xAxisBktMax; xaxisBkt += xAxisLabelInc){
+   		int xpos =  XPOSCHR((int)((xaxisBkt+1)*xAxisScale)+ORIGINX);
+   		int minutes = (int)(pow(2,xaxisBkt)+0.01);
+   		/*
    		int value;
    		char sym;
    		if(xaxisBkt<4){
@@ -142,9 +126,11 @@ void ProfileGrapher::drawAxis(){
    			sym = 'h';
    		}
    		sprintf_P(buff,PSTR("%d%c"),value,sym);
+   		*/
+//   		sprintf_P(buff,PSTR("%dm"),minutes);
 
    		systemDisplay.tftScreen.setCursor(XPOS(xpos), YPOSCHR(0));
-   		systemDisplay.tftScreen.print(buff);
+   		systemDisplay.tftScreen.print(minutes);
    	}
    	sprintf_P(buff,PSTR("T:%d G:%d"),ProfileGrapher::target,ProfileGrapher::guard);
 	systemDisplay.tftScreen.setCursor(XPOSCHR(90), YPOSCHR(118));
@@ -175,67 +161,3 @@ void ProfileGrapher::startNewProfile(unsigned guard, unsigned target){
 	ProfileGrapher::currentBucket = 0;
 }
 
-/**
- * Place holder version
- *
-void ProfileGrapher::menuAction(int param){
-	int height = systemDisplay.tftScreen.width();			// Device values are for portrait mode. We're using landscape
-	int width = systemDisplay.tftScreen.height();			// Device values are for portrait mode. We're using landscape
-// position of the line on screen
-	int xPos = 0;
-	int yPos = 0;
-	int oldXPos = 0;
-	int oldYPos =-1; //height/2;
-	int phase = 0;
-
-	double xDeg;
-	double xRad;
-	double sinValue;
-	uint16_t colour;
-
-	systemDisplay.clear(255,0,255);
-
-	systemDisplay.tftScreen.drawLine(0,63,159,63,WHITE);
-	systemDisplay.tftScreen.drawLine(80,0,80,127,WHITE);
-
-	while(!cancelled){
-		xDeg = (map(xPos,0,159,0,360))+phase;
-		xRad = xDeg*3.141592/180;
-		sinValue = sin(xRad);
-		colour = RGB(0,0,255);
-
-		yPos = map(sinValue*100,-100,100.0,-(height-1)/2,(height-1)/2);
-		yPos = height/2 - yPos-2;
-		if(oldYPos == -1) oldYPos = yPos;
-
-			// draw a line in a nice color
-		systemDisplay.tftScreen.drawLine(oldXPos, oldYPos, xPos, yPos,WHITE);
-		oldXPos = xPos;
-		oldYPos = yPos;
-
-			// if the graph has reached the screen edge
-			// erase the screen and start again
-		if (xPos >= 160) {
-			xPos = 0;
-		    phase += 40;
-			if(phase>160){
-				colour +=3;
-				systemDisplay.clear(255,0,255);
-				systemDisplay.tftScreen.drawLine(0,63,159,63,WHITE);
-				systemDisplay.tftScreen.drawLine(80,0,80,127,WHITE);
-				//    	TFTscreen.fillScreen(colour); // @suppress("Invalid arguments")
-//				systemDisplay.tftScreen.setCursor(10, 10);
-//				systemDisplay.tftScreen.setTextColor(WHITE, BLUE);
-				//    	TFTscreen.print(colour,HEX);
-				phase = 0;
-			}
-			oldXPos = 0;
-			oldYPos = -1; //=height/2;
-		} else {
-    // increment the horizontal position:
-			xPos++;
-		}
-		pause();
-	}
-}
-*/
