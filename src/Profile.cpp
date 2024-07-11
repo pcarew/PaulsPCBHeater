@@ -25,14 +25,16 @@ Profile Profile::profiles[NUMBERPROFILES]  {				// @suppress("Symbol is not reso
 		Profile(40,60, 					"T 40 G 60"),
 		Profile(60,90,DEFSOAK,DEFSLOPE,	"T 60 G 90"),
 		Profile(100,150, 				"T100 G150"),
-		Profile(150,200,				"T150 G200")
+		Profile(150,200,				"T150 G200"),
+		Profile(195,200,				"T195 G200")
 };
 
 MenuItem Profile::profileMenuItems [NUMBERPROFILES] {	// @suppress("Symbol is not resolved")
 	{profiles[0].name,&profiles[0],0,false},
 	{profiles[1].name,&profiles[1],1,false},
 	{profiles[2].name,&profiles[2],2,false},
-	{profiles[3].name,&profiles[3],3,false}
+	{profiles[3].name,&profiles[3],3,false},
+	{profiles[4].name,&profiles[4],4,false}
 
 //	{profiles[0].name,&profiles[0],0,false},
 //	{profiles[1].name,&profiles[1],1,false},
