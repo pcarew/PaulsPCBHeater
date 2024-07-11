@@ -59,18 +59,16 @@ ISR (PCINT2_vect) {			// D0 -> D7 PortD
 	PortDButton::buttonCheck(PIND,millis());
 }
 
-/*
 class ResetScreen: Implements MenuAction{
 		void menuAction(int param){
 			systemDisplay.setup();
 		}
 };
-*/
 
 
 //Menu *menu = NULL;
 MenuItem mainMenuItems[] = {
-//		{"Reset Scrn",new ResetScreen(),SystemId+1,false},
+		{"Reset Scrn",new ResetScreen(),SystemId+1,false},
 		{"Unused SRam",&ramApp,SystemId+2,false},
 		{"Temps",&tempMonitor,TempMonId,false},
 		{"Heater",&heaterController,HeaterConrolId,false},

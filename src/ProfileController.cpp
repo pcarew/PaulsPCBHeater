@@ -260,6 +260,7 @@ void manPage(){
 	if(TemperatureController::getTargetTemperature() != ProfileController::targetTemp){	// Update Temperature Controller if needed
 		TemperatureController::setTemperature(ProfileController::targetTemp,ProfileController::guardTemp,0);
 	}
+	ProfileResults::startNewProfile( ProfileController::guardTemp, ProfileController::targetTemp);
 }
 
 void profileSelectionPage(){
@@ -317,17 +318,17 @@ void startStopProfilePage(){
 }
 
 void restartProfilePage(){
-	systemDisplay.clear();
-	sprintf(dispBuff, "ReStart"); displayElement.setRow(0);  displayElement.show();
-	ProfileController::profileTime = 0;
-	ProfileController::profileRunning = true;
-	ProfileController::targetTemp = ProfileController::activeProfile->topTargetTemp;
-	TemperatureController::setTemperature(
+	if(ProfileController::activeProfile != NULL){
+		ProfileController::profileTime = 0;
+		ProfileController::profileRunning = true;
+		ProfileController::targetTemp = ProfileController::activeProfile->topTargetTemp;
+		TemperatureController::setTemperature(
 				ProfileController::activeProfile->topTargetTemp,
 				ProfileController::activeProfile->bottomGuardTemp,
 				ProfileController::activeProfile->soakDuration
 			);
-	ProfileResults::startNewProfile( ProfileController::activeProfile->bottomGuardTemp, ProfileController::activeProfile->topTargetTemp);
+		ProfileResults::startNewProfile( ProfileController::activeProfile->bottomGuardTemp, ProfileController::activeProfile->topTargetTemp);
+	}
 //	while(!cancelled ){
 //				Serial.print(F("Restart here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
 //		pause();
