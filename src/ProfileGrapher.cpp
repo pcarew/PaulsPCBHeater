@@ -8,11 +8,17 @@
 #include "pos/pos.h"
 #include "ProfileGrapher.h"
 #include "SystemData.h"
+#include "PaulsPCBHeater.h"
 
 unsigned char ProfileGrapher::results[2][NUMRESULTS] = {0};		// 1st row is Guard results, 2nd is target results
 unsigned char ProfileGrapher::currentBucket = 0;				// The bucket being accumulated
 unsigned char ProfileGrapher::guard = 0;
 unsigned char ProfileGrapher::target = 0;
+
+const PROGMEM unsigned char YLabels[] = {
+//		1,2, 5, 11,23, 52
+		1,2, 4, 10,23, 52
+};
 
 #define width ( systemDisplay.tftScreen.width())
 #define height ( systemDisplay.tftScreen.height())
@@ -20,8 +26,14 @@ unsigned char ProfileGrapher::target = 0;
 #define RGB(r, g, b)	(((r&0xF8)<<8)|((g&0xFC)<<3)|(b>>3))
 #define WHITE			ST7735_WHITE
 #define BLUE			ST7735_BLUE
+#define DBLUE			RGB(0,0,139)
 #define RED				ST7735_RED
+#define DROSE			RGB(128,0,64)
 #define GREEN			ST7735_GREEN
+#define CYAN			ST7735_CYAN
+#define LBLUE			RGB(143,217,251)
+#define PINK			RGB(255,193,203)
+#define BLACK			ST7735_BLACK
 
 #define YPOS(y)			(height-y)
 #define XPOS(x) 		(x)
@@ -37,10 +49,25 @@ unsigned char ProfileGrapher::target = 0;
 #define yAxisScale		((double)yAxisLength/(double)yAxisDegMax)
 
 #define xAxisLength 	(width-ORIGINX)
-#define xAxisBktMax		NUMRESULTS
+#define xAxisBktMax		(sizeof(YLabels)/sizeof(unsigned char))
 #define xAxisLabelInc	1
-#define xAxisScale		((double)xAxisLength/(double)xAxisBktMax)
+#define xAxisScale		((double)xAxisLength/((double)NUMRESULTS+1.0))
 
+
+double BUCKET(unsigned  seconds){
+//	Serial.print(F("S:"));Serial.print(seconds);
+	if( seconds<60)
+		return 0;
+	else if(seconds > 3071)
+		return 15.0;
+	else{
+		double  value = log( (double)seconds/60) / LG1_3 +0.9;
+
+//		Serial.print(F(" B:"));Serial.print(value);
+//		Serial.print("<-");
+		return  value;
+	}
+}
 
 void ProfileGrapher::menuAction(int param){
 	unsigned long time;
@@ -57,10 +84,10 @@ void ProfileGrapher::menuAction(int param){
    	int yguard	=  ( (ProfileGrapher::guard *yAxisScale) + (double)ORIGINY);
    	int ytarget	=  ( (ProfileGrapher::target*yAxisScale) + (double)ORIGINY);
 
-	systemDisplay.clear(255,0,255);
+	systemDisplay.clear(0,0,0);
 	ProfileGrapher::drawAxis();
 	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(yguard),XPOS(width),YPOS(yguard),RED);		// Guard Temp
-	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(ytarget),XPOS(width),YPOS(ytarget),BLUE);	// Target Temp
+	systemDisplay.tftScreen.drawLine(XPOS((ORIGINX+1)),YPOS(ytarget),XPOS(width),YPOS(ytarget),LBLUE);	// Target Temp
 
 	nextDisplayTime = 0;
 	while(!cancelled){
@@ -75,7 +102,10 @@ void ProfileGrapher::menuAction(int param){
 				xPos = ((bucket+1)*xAxisScale)+ORIGINX;
 
 				yPos = ProfileGrapher::results[PROFILEGUARD][bucket] * yAxisScale+ORIGINY;
-				systemDisplay.tftScreen.drawLine(XPOS(oldGXPos),YPOS(oldGYPos),XPOS(xPos),YPOS(yPos),RED);		// Guard Temp
+#ifdef PCBTEST
+				yPos += 15;
+#endif
+				systemDisplay.tftScreen.drawLine(XPOS(oldGXPos),YPOS(oldGYPos),XPOS(xPos),YPOS(yPos),PINK);		// Guard Temp, PINK
 				oldGXPos = xPos;
 				oldGYPos = yPos;
 
@@ -97,10 +127,11 @@ void ProfileGrapher::drawAxis(){
 	systemDisplay.tftScreen.drawLine(XPOS(ORIGINX),YPOS(ORIGINY),XPOS(ORIGINX),YPOS((height-ORIGINY)),WHITE);	// YAccess
 
 	systemDisplay.tftScreen.setCursor(XPOSCHR(0), YPOSCHR(0));
-	systemDisplay.tftScreen.setTextColor(WHITE, BLUE);
+	systemDisplay.tftScreen.setTextColor(WHITE, BLACK);
 	systemDisplay.tftScreen.setTextSize(1);
    	systemDisplay.tftScreen.print(0);
 
+//   	Serial.println(xAxisScale);
    	// Ylabels
    	for(double yaxisDeg = yAxisLabelInc;yaxisDeg <yAxisDegMax; yaxisDeg += yAxisLabelInc){
    		int ypos =  YPOSCHR((int)(yaxisDeg*yAxisScale));
@@ -109,9 +140,18 @@ void ProfileGrapher::drawAxis(){
    	}
 
    	// XLabels
-   	for(double xaxisBkt = 0;xaxisBkt <xAxisBktMax; xaxisBkt += xAxisLabelInc){
-   		int xpos =  XPOSCHR((int)((xaxisBkt+1)*xAxisScale)+ORIGINX);
-   		int minutes = (int)(pow(2,xaxisBkt)+0.01);
+   	for(int xaxisLblId = 0;xaxisLblId <xAxisBktMax; xaxisLblId += xAxisLabelInc){
+   		unsigned label = (unsigned)pgm_read_byte(&YLabels[xaxisLblId]);
+   		double bkt = BUCKET((unsigned)label*60);	// Turn it into seconds
+   		int xpos =  (int)(((bkt+1.0)*xAxisScale)+ORIGINX);
+   		if(label >= 10) xpos -= 10;							// for double digit lables, off set left by a digit
+//   	Serial.print(xaxisLblId);
+//   	Serial.print(",");
+//   	Serial.print(label);
+//   	Serial.print(",");
+//   	Serial.print(bkt);
+//   	Serial.print(",");
+//   	Serial.println(xpos);delay(100);
    		/*
    		int value;
    		char sym;
@@ -129,16 +169,17 @@ void ProfileGrapher::drawAxis(){
    		*/
 //   		sprintf_P(buff,PSTR("%dm"),minutes);
 
-   		systemDisplay.tftScreen.setCursor(XPOS(xpos), YPOSCHR(0));
-   		systemDisplay.tftScreen.print(minutes);
+   		systemDisplay.tftScreen.setCursor(XPOSCHR(xpos), YPOSCHR(0));
+   		systemDisplay.tftScreen.print(label);
    	}
    	sprintf_P(buff,PSTR("T:%d G:%d"),ProfileGrapher::target,ProfileGrapher::guard);
+	systemDisplay.tftScreen.setTextColor(WHITE, BLUE);
 	systemDisplay.tftScreen.setCursor(XPOSCHR(90), YPOSCHR(118));
 	systemDisplay.tftScreen.print(buff);
 }
 
 void ProfileGrapher::tempDataPacket(unsigned long time,unsigned guardValue, unsigned targetValue){
-	unsigned char bucket = BUCKET(time);
+	unsigned char bucket = (unsigned char) BUCKET(time);
 
 	if(bucket> ProfileGrapher::currentBucket && bucket < NUMRESULTS){
 		results[PROFILEGUARD][bucket] = results[PROFILEGUARD][ProfileGrapher::currentBucket];			// Copy over previous bucket to new bucket
