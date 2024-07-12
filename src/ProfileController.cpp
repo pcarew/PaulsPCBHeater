@@ -35,8 +35,8 @@ bool ProfileController::profileRunning = false;
 Profile *ProfileController::activeProfile = NULL;
 //ProfileController::ProfileState ProfileController::currantState = ProfileController::NotActive;
 unsigned long ProfileController::profileTime = 0;
-int ProfileController::targetTemp = 50;
-int ProfileController::guardTemp = 100;
+int ProfileController::manualProfileTargetTemp = 50;
+int ProfileController::manualProfileGuardTemp = 100;
 
 #define MainPg 	  (ProfileControlId	+0)
 #define ManTempPg (ProfileControlId	+1)
@@ -114,13 +114,13 @@ void ProfileController::rotaryAction(const int type, int level, RSE::Dir directi
 			break;
 		case ManTempPg:
 			if(manUpdate == ManualUpdate::Target){
-				if(ProfileController::handleRotary(type, level, direction, &ProfileController::targetTemp) == true) manUpdate = ManualUpdate::Guard;
-				if(ProfileController::targetTemp < 0 )
-					ProfileController::targetTemp = 0 ;
+				if(ProfileController::handleRotary(type, level, direction, &ProfileController::manualProfileTargetTemp) == true) manUpdate = ManualUpdate::Guard;
+				if(ProfileController::manualProfileTargetTemp < 0 )
+					ProfileController::manualProfileTargetTemp = 0 ;
 			}else{
-				if(ProfileController::handleRotary(type, level, direction, &ProfileController::guardTemp) == true) manUpdate = ManualUpdate::Target;
-				if(ProfileController::guardTemp < 0 )
-					ProfileController::guardTemp = 0 ;
+				if(ProfileController::handleRotary(type, level, direction, &ProfileController::manualProfileGuardTemp) == true) manUpdate = ManualUpdate::Target;
+				if(ProfileController::manualProfileGuardTemp < 0 )
+					ProfileController::manualProfileGuardTemp = 0 ;
 			}
 			break;
 		case ProfSelPg:
@@ -167,13 +167,21 @@ void ProfileController::update(){
 
 	static unsigned long reportTime = 0;
 	unsigned long time = millis();
-	if(ProfileController::profileRunning == true && time>reportTime){
+	if(time>reportTime){
 		reportTime = time+REPORTINTERVAL;
 		ProfileController::profileTime += REPORTINTERVAL;
-		ProfileResults::tempDataPacket((ProfileController::profileTime/REPORTINTERVAL),				// Convert to seconds
+		if(ProfileController::profileRunning == true ){	// Predefined Profile
+			ProfileResults::tempDataPacket((ProfileController::profileTime/REPORTINTERVAL),				// Convert to seconds
 				ProfileController::activeProfile->bottomGuardTemp, (unsigned)TemperatureMonitoring::brdBot.getTemperature(),
 				ProfileController::activeProfile->topTargetTemp, (unsigned)TemperatureMonitoring::brdTop.getTemperature()
 				);
+		} else {	// Manual Profile
+			ProfileResults::tempDataPacket((ProfileController::profileTime/REPORTINTERVAL),				// Convert to seconds
+				ProfileController::manualProfileGuardTemp, (unsigned)TemperatureMonitoring::brdBot.getTemperature(),
+				ProfileController::manualProfileTargetTemp, (unsigned)TemperatureMonitoring::brdTop.getTemperature()
+				);
+
+		}
 	}
 
 }
@@ -206,7 +214,7 @@ void mainPage(){
 			}
 
 			if(ProfileController::activeProfile == NULL){		// Display either manual temp or profile temp targets
-				sprintf(dispBuff,ProfileController::profileNameFmt, "M:", (ProfileController::targetTemp), (ProfileController::guardTemp));
+				sprintf(dispBuff,ProfileController::profileNameFmt, "M:", (ProfileController::manualProfileTargetTemp), (ProfileController::manualProfileGuardTemp));
 			}else{
 				sprintf(dispBuff,ProfileController::profileNameFmt, "P:", ProfileController::activeProfile->topTargetTemp, ProfileController::activeProfile->bottomGuardTemp);
 			}
@@ -246,10 +254,10 @@ void manPage(){
 		time = millis();					// As we've taken over control of the processor, we need to update time for everyone (and ourselves)
 		if(time>nextDisplayTime){
 			nextDisplayTime = time+120l;	// Check once per period, but only update if needed
-			if( ProfileController::targetTemp != lastTt || ProfileController::guardTemp != lastGt){
-				lastTt = ProfileController::targetTemp;
-				lastGt = ProfileController::guardTemp;
-				sprintf(dispBuff, fmt,  ProfileController::targetTemp, ProfileController::guardTemp);
+			if( ProfileController::manualProfileTargetTemp != lastTt || ProfileController::manualProfileGuardTemp != lastGt){
+				lastTt = ProfileController::manualProfileTargetTemp;
+				lastGt = ProfileController::manualProfileGuardTemp;
+				sprintf(dispBuff, fmt,  ProfileController::manualProfileTargetTemp, ProfileController::manualProfileGuardTemp);
 				displayElement.setRow(1); displayElement.show();
 //								Serial.println(dispBuff);delay(10);
 			}
@@ -257,10 +265,11 @@ void manPage(){
 
 		pause();
 	}
-	if(TemperatureController::getTargetTemperature() != ProfileController::targetTemp){	// Update Temperature Controller if needed
-		TemperatureController::setTemperature(ProfileController::targetTemp,ProfileController::guardTemp,0);
+	if(TemperatureController::getTargetTemperature() != ProfileController::manualProfileTargetTemp){	// Update Temperature Controller if needed
+		TemperatureController::setTemperature(ProfileController::manualProfileTargetTemp,ProfileController::manualProfileGuardTemp,0);
 	}
-	ProfileResults::startNewProfile( ProfileController::guardTemp, ProfileController::targetTemp);
+	ProfileController::profileTime = 0;			// Manual Profile
+	ProfileResults::startNewProfile( ProfileController::manualProfileGuardTemp, ProfileController::manualProfileTargetTemp);
 }
 
 void profileSelectionPage(){
@@ -300,7 +309,7 @@ void startStopProfilePage(){
 		ProfileController::profileRunning = true;
 //		ProfileController::currantState = ProfileController::Adjusting;
 		ProfileController::profileTime = 0;
-		ProfileController::targetTemp = ProfileController::activeProfile->topTargetTemp;
+		ProfileController::manualProfileTargetTemp = ProfileController::activeProfile->topTargetTemp;
 		TemperatureController::setTemperature(
 				ProfileController::activeProfile->topTargetTemp,
 				ProfileController::activeProfile->bottomGuardTemp,
@@ -312,7 +321,7 @@ void startStopProfilePage(){
 		ProfileController::profileRunning = false;
 //					Serial.println(F("No profile set"));delay(10);
 //		ProfileController::currantState = ProfileController::NotActive;
-		ProfileController::targetTemp = NULL;
+		ProfileController::manualProfileTargetTemp = NULL;
 		TemperatureController::setTemperature( NULL,NULL,NULL);
 	}
 }
@@ -321,13 +330,15 @@ void restartProfilePage(){
 	if(ProfileController::activeProfile != NULL){
 		ProfileController::profileTime = 0;
 		ProfileController::profileRunning = true;
-		ProfileController::targetTemp = ProfileController::activeProfile->topTargetTemp;
+		ProfileController::manualProfileTargetTemp = ProfileController::activeProfile->topTargetTemp;
 		TemperatureController::setTemperature(
 				ProfileController::activeProfile->topTargetTemp,
 				ProfileController::activeProfile->bottomGuardTemp,
 				ProfileController::activeProfile->soakDuration
 			);
 		ProfileResults::startNewProfile( ProfileController::activeProfile->bottomGuardTemp, ProfileController::activeProfile->topTargetTemp);
+	}else{
+		ProfileResults::startNewProfile( ProfileController::manualProfileGuardTemp, ProfileController::manualProfileTargetTemp);
 	}
 //	while(!cancelled ){
 //				Serial.print(F("Restart here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
