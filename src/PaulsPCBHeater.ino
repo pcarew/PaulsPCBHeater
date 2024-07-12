@@ -72,7 +72,7 @@ MenuItem mainMenuItems[] = {
 		{"Unused SRam",&ramApp,SystemId+2,false},
 		{"Temps",&tempMonitor,TempMonId,false},
 		{"Heater",&heaterController,HeaterConrolId,false},
-		{"ProCont",&profileController,ProfileControlId,false},
+		{"Profiles",&profileController,ProfileControlId,false},
 		{"Graph",&profileGrapher,ProfileGrapherId,false}
 };
 #define	NUMBERITEMS ( sizeof(mainMenuItems)/sizeof(MenuItem))
