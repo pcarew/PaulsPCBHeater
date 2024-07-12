@@ -23,8 +23,8 @@ public:
 		Target = 1,
 		Guard = 2
 	};
-	static int targetTemp;
-	static int guardTemp;
+	static int manualProfileTargetTemp;
+	static int manualProfileGuardTemp;
 	static bool profileRunning;
 	static Profile *activeProfile;
 	static MenuItem localMenuItems[];
