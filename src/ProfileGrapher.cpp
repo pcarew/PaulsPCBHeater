@@ -70,6 +70,7 @@ double BUCKET(unsigned  seconds){
 }
 
 void ProfileGrapher::menuAction(int param){
+	char buff[12];
 	unsigned long time;
 	int xPos = 0;
 	int yPos = 0;
@@ -115,13 +116,20 @@ void ProfileGrapher::menuAction(int param){
 				oldTXPos = xPos;
 				oldTYPos = yPos;
 			}
+   	sprintf_P(buff,PSTR("T:%d G:%d"),
+				ProfileGrapher::results[PROFILETARGET][currentBucket],
+				ProfileGrapher::results[PROFILEGUARD][currentBucket]
+   			);
+	systemDisplay.tftScreen.setTextColor(RED, WHITE);
+	systemDisplay.tftScreen.setCursor(XPOSCHR(0), YPOSCHR(118));
+	systemDisplay.tftScreen.print(buff);
 		}
 		pause();
 	}
 }
 
 void ProfileGrapher::drawAxis(){
-	char buff[12];
+	char buff[16];
 
 	systemDisplay.tftScreen.drawLine(XPOS(ORIGINX),YPOS(ORIGINY),XPOS((width-ORIGINX)),YPOS(ORIGINY),WHITE);	// XAccess
 	systemDisplay.tftScreen.drawLine(XPOS(ORIGINX),YPOS(ORIGINY),XPOS(ORIGINX),YPOS((height-ORIGINY)),WHITE);	// YAccess
