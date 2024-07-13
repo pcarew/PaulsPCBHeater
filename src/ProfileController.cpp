@@ -309,7 +309,6 @@ void startStopProfilePage(){
 		ProfileController::profileRunning = true;
 //		ProfileController::currantState = ProfileController::Adjusting;
 		ProfileController::profileTime = 0;
-		ProfileController::manualProfileTargetTemp = ProfileController::activeProfile->topTargetTemp;
 		TemperatureController::setTemperature(
 				ProfileController::activeProfile->topTargetTemp,
 				ProfileController::activeProfile->bottomGuardTemp,
@@ -319,18 +318,14 @@ void startStopProfilePage(){
 
 	}else{
 		ProfileController::profileRunning = false;
-//					Serial.println(F("No profile set"));delay(10);
 //		ProfileController::currantState = ProfileController::NotActive;
-		ProfileController::manualProfileTargetTemp = NULL;
 		TemperatureController::setTemperature( NULL,NULL,NULL);
 	}
 }
 
 void restartProfilePage(){
 	if(ProfileController::activeProfile != NULL){
-		ProfileController::profileTime = 0;
 		ProfileController::profileRunning = true;
-		ProfileController::manualProfileTargetTemp = ProfileController::activeProfile->topTargetTemp;
 		TemperatureController::setTemperature(
 				ProfileController::activeProfile->topTargetTemp,
 				ProfileController::activeProfile->bottomGuardTemp,
@@ -340,10 +335,7 @@ void restartProfilePage(){
 	}else{
 		ProfileResults::startNewProfile( ProfileController::manualProfileGuardTemp, ProfileController::manualProfileTargetTemp);
 	}
-//	while(!cancelled ){
-//				Serial.print(F("Restart here. Pg:"));Serial.println((int)ProfileController::activePage);delay(10);
-//		pause();
-//	}
+	ProfileController::profileTime = 0;
 }
 
 void heaterContolPage(){
