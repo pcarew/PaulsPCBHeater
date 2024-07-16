@@ -48,7 +48,7 @@ void HeaterController::update(){
 			zeroCrossing();
 		}
 #endif
-	if(!(ledCount%60) && ledCount != 0 ){
+	if(!(ledCount%60) && ledCount != 0 ){				// Once a second pulse LED with either 'ZeroCrossing' or 'HeaterOn' indicator profile
 		ledCount = 0;
 		if(heaterEnabled == false)
 			LEDController::ledSetMode(LEDController::LEDMode::ZeroCrossing);
@@ -106,8 +106,8 @@ void HeaterController::setRawPwr(unsigned char count){					// Called to set requ
 //Following methods are driven via Zero Crossing interrupt
 void HeaterController::checkACZeroCrossing(){								// Called from PortC ISR
 		int portcValues	= PINC&(PCMSK_Z);
-		int nz	= (portcValues&PCMSK_Z);								// New z value
-		if(HeaterController::prevZeroCrossingState & ~nz){					// new Z is low, previous was high, we have a zero crossing
+		int nz	= (portcValues&PCMSK_Z);									// New z value
+		if(HeaterController::prevZeroCrossingState & ~nz){					// If new Z is low, previous was high, we have a zero crossing
 			zeroCrossing();
 		}
 		HeaterController::prevZeroCrossingState = nz;
@@ -115,7 +115,7 @@ void HeaterController::checkACZeroCrossing(){								// Called from PortC ISR
 
 void HeaterController::zeroCrossing(){
 	digitalWrite(HTR_PIN,LOW);
-	zeroCount++;												// Used for Hz Calculation
+	zeroCount++;													// Used for Hz Calculation
 	ledCount++;
 	frameDetectionAndFiring();
 }
@@ -129,7 +129,7 @@ void HeaterController::frameDetectionAndFiring(){
 	static int frameFireCount = 0;
 	static int skipCount = FRAMESIZE;								// Skip entire 1st frame
 	static int cycleCount = 0;
-//				Serial.println(F("Cycle ISR Called"));							// Dangerous for an ISR derived call
+//				Serial.println(F("Cycle ISR Called"));				// Dangerous for an ISR derived call
 	++cycleCount %= FRAMESIZE;
 
 	if(!cycleCount){
