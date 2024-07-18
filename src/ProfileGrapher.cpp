@@ -116,13 +116,14 @@ void ProfileGrapher::menuAction(int param){
 				oldTXPos = xPos;
 				oldTYPos = yPos;
 			}
-   	sprintf_P(buff,PSTR("T:%d G:%d"),
+   					// Show current values for Target and Guard Temps
+			sprintf_P(buff,PSTR("T:%d G:%d"),
 				ProfileGrapher::results[PROFILETARGET][currentBucket],
 				ProfileGrapher::results[PROFILEGUARD][currentBucket]
    			);
-	systemDisplay.tftScreen.setTextColor(RED, WHITE);
-	systemDisplay.tftScreen.setCursor(XPOSCHR(0), YPOSCHR(118));
-	systemDisplay.tftScreen.print(buff);
+			systemDisplay.tftScreen.setTextColor(RED, WHITE);
+			systemDisplay.tftScreen.setCursor(XPOSCHR(0), YPOSCHR(118));
+			systemDisplay.tftScreen.print(buff);
 		}
 		pause();
 	}
@@ -180,6 +181,7 @@ void ProfileGrapher::drawAxis(){
    		systemDisplay.tftScreen.setCursor(XPOSCHR(xpos), YPOSCHR(0));
    		systemDisplay.tftScreen.print(label);
    	}
+   					// Show setting for Target and Guard Temps
    	sprintf_P(buff,PSTR("T:%d G:%d"),ProfileGrapher::target,ProfileGrapher::guard);
 	systemDisplay.tftScreen.setTextColor(WHITE, BLUE);
 	systemDisplay.tftScreen.setCursor(XPOSCHR(90), YPOSCHR(118));
