@@ -34,6 +34,7 @@ This should build using the standard Arduino IDE, but it is not something I've t
 ## Implementation Details
 ### Hardware
 The underlying micro-controller is a standard Arduino Uno R3. This is coupled with a heating element from a standard hot air gun via a SOlid State Relay. AC Zero crossing detection is also provided in order to minimize EMI. Schematics may be found in the *'/Hardware'* folder along with a functional block diagram [Hardware Block Diagram](doc/PCBPreHeaterHW.pdf) in the *'/doc'* folder.
+![Hardware Block Diagram](doc/PCBPreHeaterHW.pdf)
 
 A set of photos are available in the **'Photos'** folder showing the completed construction.
 
