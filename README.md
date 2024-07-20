@@ -1,5 +1,5 @@
 # Paul's PCB Hot Air Pre-Heater
-This project is all about creating a '**full featured**' PCB Heater. This heater provides a temperature controlled environment using hot air to warm PCB boards.
+This project is all about creating a '**full featured**' PCB Pre-Heater. This heater provides a temperature controlled environment using hot air to warm PCB boards to facilitate BGA rework.
 Most other PCB Heaters (within a reasonable price bracket) are either Infrared, not well controlled or provide no feedback/indication of actual board heat status. 
 
 
@@ -10,7 +10,7 @@ I'd like to give a shout out to Joe Pitz for his instructable that formed the in
 
 - **An Ambient monitor** for tracking the internal temperature or the preheater  
 The *'Ambient'* monitor is for preheater protection and will cause a shutdown if a preset threshold is exceeded.
-- **A Target temperature probe** for the top of the PCB (known as the 'Target' temperature) and  
+- **A Target temperature probe** for the top of the PCB (known as the 'Target' temperature)  
 The *'Target'* temperature is the temperature that is desired.  
 - **A Guard temperature probe** for the bottom of the PCB (known as the 'Guard' temperature)  
 The *'Guard'* temperature, is to prvent over heating or **'shock'** heating of the under side of the PCB board.  
