@@ -2,6 +2,10 @@
 This project is all about creating a '**full featured**' PCB Heater. This heater provides a temperature controlled environment using hot air to warm PCB boards.
 Most other PCB Heaters (within a reasonable price bracket) are either Infrared, not well controlled or provide no feedback/indication of actual board heat status. 
 
+
+I'd like to give a shout out to Joe Pitz for his instructable that formed the inspiration for this temperature controlled version. You can see Joe's at  
+[Joe Pitz 'Instructable'](https://www.instructables.com/Low-Cost-Circuit-Board-Pre-Heat-workstation-for-So/)
+
 **Three** temperature monitors provide all round real time protection and tracking.
 
 - **An Ambient monitor** for tracking the internal temperature or the preheater  
