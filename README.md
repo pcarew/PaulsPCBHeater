@@ -22,7 +22,7 @@ The following features are provided:
 - Serial streaming of Temperature readings for off-heater plotting and/or recording
 - **Fuzzy Logic** / AI based Temperature control engine
 
-![PreHeater](photos/20240711_011926-small.jpg)
+![PreHeater](Photos/20240711_011926-small.jpg)
 ## Development Tools**
 - Eclipse IDE with **Sloeber** Arduino support
 - KiCad V7 for Schematic entry
