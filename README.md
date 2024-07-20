@@ -22,6 +22,7 @@ The following features are provided:
 - Serial streaming of Temperature readings for off-heater plotting and/or recording
 - **Fuzzy Logic** / AI based Temperature control engine
 
+![PreHeater](photos/20240711_011926-small.jpg)
 ## Development Tools**
 - Eclipse IDE with **Sloeber** Arduino support
 - KiCad V7 for Schematic entry
@@ -34,13 +35,14 @@ This should build using the standard Arduino IDE, but it is not something I've t
 ## Implementation Details
 ### Hardware
 The underlying micro-controller is a standard Arduino Uno R3. This is coupled with a heating element from a standard hot air gun via a SOlid State Relay. AC Zero crossing detection is also provided in order to minimize EMI. Schematics may be found in the *'/Hardware'* folder along with a functional block diagram [Hardware Block Diagram](doc/PCBPreHeaterHW.pdf) in the *'/doc'* folder.
-![Hardware Block Diagram](doc/PCBPreHeaterHW.pdf)
+![Hardware Block Diagram](doc/PCBPreHeaterHW.svg)
 
 A set of photos are available in the **'Photos'** folder showing the completed construction.
 
 ### Software
 The PCB Heater organized as a cooperating set of functional areas. The 
 [Software Architecture](doc/PaulsPCBHeaterV2.pdf) PDF provides a diagrammatic overview of the architecture
+![Software Architecture](doc/PaulsPCBHeaterV2.svg)
 
 This preheater has a non-pre-emptive operating system at it's core. This is a 'Real' OS, but only a small fraction of the OS features are utilized due to memory and codespace limitations.
 The architecture is organized with two tasks (a forground/UI task and a background heater task). The Background task is further subdivided by a number of threads that invoke the various background heating and control elements. It was originally planned to have multiple discreet background tasks, but memory constraints dictated that individual threads within the single background heater task were used instead 
