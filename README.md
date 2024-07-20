@@ -23,6 +23,9 @@ The following features are provided:
 - **Fuzzy Logic** / AI based Temperature control engine
 
 ![PreHeater](Photos/20240711_011926-small.jpg)
+
+     *More construction photos are available in /Photos folder*
+
 ## Development Tools**
 - Eclipse IDE with **Sloeber** Arduino support
 - KiCad V7 for Schematic entry
